@@ -94,7 +94,6 @@ class KanbanBoardScreenTest {
         onNodeWithText("생성").performClick()
         onNodeWithText("새로운 태스크가 추가되었습니다.").assertIsDisplayed()
         onNodeWithContentDescription("닫기").performClick()
-        onNodeWithText("안녕").performClick()
 
         // When
         val taskBounds = onNodeWithText("안녕하세요")
