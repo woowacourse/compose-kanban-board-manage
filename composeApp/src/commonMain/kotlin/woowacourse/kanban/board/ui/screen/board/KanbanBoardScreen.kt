@@ -137,7 +137,7 @@ private fun KanbanBoardContent(
 
             Column {
                 KanbanBoardTopAppBar(
-                    title = "Compose Desktop 칸반 보드",
+                    title = projectTitles[projectSelectedIndex],
                     progress = progress,
                     progressPercent = progressPercent,
                     completeCount = completeCount,
