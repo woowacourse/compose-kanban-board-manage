@@ -1,9 +1,9 @@
 package woowacourse.kanban.board.domain
 
-import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.dialog.Status
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 class KanbanTaskTest {
     @Test
@@ -136,5 +136,24 @@ class KanbanTaskTest {
     @Test
     fun `isTagFormatValid 검증 - 태그 중 하나라도 비어있으면 false를 반환한다`() {
         assertThat(KanbanTask.isTagFormatValid(listOf("정상", ""))).isFalse()
+    }
+
+    @Test
+    fun `KanbanTask를 생성할 때 자동으로 id가 생성되고, 중복되지 않는다`() {
+        // Given: id 를 제거한 KanbanTask 두 개 생성
+        val kanbanTask1 = KanbanTask(
+            title = "제목",
+            status = Status.TO_DO,
+            assignee = "별터",
+        )
+        val kanbanTask2 = KanbanTask(
+            title = "제목",
+            status = Status.TO_DO,
+            assignee = "별터",
+        )
+
+        // Then: 두 개의 KanbanTask의 id 가 중복되지 않는다
+        assertThat(kanbanTask1.id).isEqualTo(0L)
+        assertThat(kanbanTask2.id).isEqualTo(1L)
     }
 }

@@ -3,7 +3,7 @@ package woowacourse.kanban.board.domain
 import woowacourse.kanban.board.domain.dialog.Status
 
 data class KanbanTask(
-    val id: Long = getId(),
+    val id: Long = idIndex++,
     val title: String,
     val status: Status,
     val assignee: String,
@@ -29,7 +29,5 @@ data class KanbanTask(
             if (tags.isEmpty()) return true
             return tags.all { it.length in 1..5 }
         }
-
-        private fun getId(): Long = idIndex++
     }
 }
