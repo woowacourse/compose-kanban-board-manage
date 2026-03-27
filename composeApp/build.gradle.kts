@@ -10,6 +10,10 @@ plugins {
     alias(libs.plugins.ktlint)
 }
 
+composeCompiler {
+    enableStrongSkippingMode = false
+}
+
 kotlin {
     androidTarget {
         compilerOptions {
