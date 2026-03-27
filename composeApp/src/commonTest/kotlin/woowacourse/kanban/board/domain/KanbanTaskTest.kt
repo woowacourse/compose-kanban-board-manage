@@ -7,7 +7,7 @@ import kotlin.test.assertFailsWith
 
 class KanbanTaskTest {
     @Test
-    fun `KanbanTask 정상 생성 - 모든 정보가 올바른 경우`() {
+    fun `kanban task 정상 생성 - 모든 정보가 올바른 경우`() {
         // Given
         val title = "새로운 기능 구현"
         val description = "이 기능은 매우 중요합니다."
@@ -153,7 +153,6 @@ class KanbanTaskTest {
         )
 
         // Then: 두 개의 KanbanTask의 id 가 중복되지 않는다
-        assertThat(kanbanTask1.id).isEqualTo(0L)
-        assertThat(kanbanTask2.id).isEqualTo(1L)
+        assertThat(kanbanTask1.id).isNotEqualTo(kanbanTask2.id)
     }
 }

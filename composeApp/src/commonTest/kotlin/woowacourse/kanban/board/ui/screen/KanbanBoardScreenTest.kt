@@ -12,12 +12,11 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
-import kotlin.test.Test
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
-import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.fixture.createKanbanTask
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardScreen
+import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class KanbanBoardScreenTest {
@@ -160,53 +159,32 @@ class KanbanBoardScreenTest {
 
     @Test
     fun `프로젝트에 알맞는 카드가 화면에 표시된다`() = runComposeUiTest {
-        // Given
+        // Given: 각기 다른 타이틀을 가진 태스크 4개를 생성한다.
         val kanbanBoard = KanbanBoard(
             tasks = mutableListOf(
-                KanbanTask(
-                    id = 1,
-                    title = "안녕하세요",
-                    status = Status.TO_DO,
-                    assignee = "다이노",
-                ),
-                KanbanTask(
-                    id = 2,
-                    title = "우아한테크코스",
-                    status = Status.IN_PROGRESS,
-                    assignee = "제임스",
-                ),
-                KanbanTask(
-                    id = 3,
-                    title = "안드로이드",
-                    status = Status.DONE,
-                    assignee = "별터",
-                ),
-                KanbanTask(
-                    id = 4,
-                    title = "8기",
-                    status = Status.TO_DO,
-                    assignee = "볼트",
-                ),
+                createKanbanTask(id = 0L, title = "안녕하세요"),
+                createKanbanTask(id = 1L, title = "우아한테크코스"),
+                createKanbanTask(id = 2L, title = "안드로이드"),
+                createKanbanTask(id = 3L, title = "8기"),
             ),
         )
-
-        val kanbanProject = listOf(KanbanProject("안녕"), KanbanProject("잘가"))
-        kanbanProject[0].addTaskId(1L)
-        kanbanProject[0].addTaskId(2L)
-        kanbanProject[1].addTaskId(3L)
-        kanbanProject[1].addTaskId(4L)
-
+        // Given: '안녕', '잘가'의 타이틀을 가진 2개의 프로젝트를 생성한 후 각각 2개의 태스크를 추가한다.
+        val kanbanProjects = listOf(KanbanProject("안녕"), KanbanProject("잘가"))
+        kanbanProjects[0].addTaskId(0L)
+        kanbanProjects[0].addTaskId(1L)
+        kanbanProjects[1].addTaskId(2L)
+        kanbanProjects[1].addTaskId(3L)
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
                     kanbanBoard = kanbanBoard,
-                    projects = kanbanProject,
+                    projects = kanbanProjects,
                 )
             }
         }
-
-        // When
         onNodeWithText("잘가").performClick()
+
+        // Then: '안녕' 프로젝트에 포함된 태스크는 보이지 않고 '잘가' 프로젝트에 포함된 태스크는 보인다.
         onNodeWithText("안녕하세요").assertDoesNotExist()
         onNodeWithText("우아한테크코스").assertDoesNotExist()
         onNodeWithText("안드로이드").assertIsDisplayed()
