@@ -7,7 +7,7 @@ class KanbanProjectTest {
     @Test
     fun `태스크 ID 리스트를 반환한다`() {
         // Given
-        val taskIds = mutableListOf(1L, 2L)
+        val taskIds = listOf(1L, 2L)
 
         // When
         val kanbanProject = KanbanProject(
