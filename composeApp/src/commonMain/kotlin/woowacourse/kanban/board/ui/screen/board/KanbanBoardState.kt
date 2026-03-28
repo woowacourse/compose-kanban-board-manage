@@ -30,15 +30,6 @@ class KanbanBoardState(
         updateTasks()
     }
 
-    fun getTasks(): List<KanbanTask> {
-        return kanbanBoard.getTasks(projects[selectedProjectIndex].getTaskIds())
-    }
-
-    fun updateTasks() {
-        tasks.clear()
-        tasks.addAll(getTasks())
-    }
-
     fun addTask(kanbanTask: KanbanTask) {
         kanbanBoard.addTask(kanbanTask)
         projects[selectedProjectIndex].addTaskId(kanbanTask.id)
@@ -73,5 +64,15 @@ class KanbanBoardState(
 
     fun clearSnackbar() {
         snackbarMessage = null
+    }
+
+    private fun updateTasks() {
+        tasks.clear()
+        tasks.addAll(getTasks())
+    }
+
+    private fun getTasks(): List<KanbanTask> {
+        val project = projects.getOrNull(selectedProjectIndex) ?: return emptyList()
+        return kanbanBoard.getTasks(project.getTaskIds())
     }
 }
