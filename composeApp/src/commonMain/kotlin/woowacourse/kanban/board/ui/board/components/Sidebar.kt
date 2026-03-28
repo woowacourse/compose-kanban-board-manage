@@ -54,9 +54,9 @@ private fun SidebarHeader(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun NavigationBar(projects: List<Project>, selectedProject: Project, onProjectChange: (Project) -> Unit) {
+private fun NavigationBar(projects: List<Project>, selectedProject: Project, onProjectChange: (Project) -> Unit, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier,
+        modifier = modifier,
     ) {
         projects.forEach {
             BoardSelectButton(
@@ -70,9 +70,9 @@ private fun NavigationBar(projects: List<Project>, selectedProject: Project, onP
 }
 
 @Composable
-private fun BoardSelectButton(onClick: () -> Unit, project: Project, backgroundColor: Color, textColor: Color) {
+private fun BoardSelectButton(onClick: () -> Unit, project: Project, backgroundColor: Color, textColor: Color, modifier: Modifier = Modifier) {
     Button(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(start = 14.dp, end = 14.dp, top = 6.dp),
         onClick = onClick,

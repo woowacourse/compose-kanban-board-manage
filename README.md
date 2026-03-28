@@ -17,4 +17,4 @@
 - [ ] State Holder 를 적용한다
 - [ ] 상태 변경에 대한 로직 고민
 - [ ] Project의 tasks를 val로 변경
-- [ ] Modifier 주입 확인하기
+- [x] Modifier 주입 확인하기
