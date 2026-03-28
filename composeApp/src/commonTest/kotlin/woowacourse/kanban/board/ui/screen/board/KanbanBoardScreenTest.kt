@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.ui.screen
+package woowacourse.kanban.board.ui.screen.board
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.geometry.Offset
@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.Density
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.fixture.createKanbanTask
-import woowacourse.kanban.board.ui.screen.board.KanbanBoardScreen
 import kotlin.test.Test
 
 @Suppress("NonAsciiCharacters")
