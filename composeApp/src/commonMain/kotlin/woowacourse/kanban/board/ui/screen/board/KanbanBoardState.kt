@@ -17,7 +17,7 @@ class KanbanBoardState(
 ) {
     var selectedProjectIndex by mutableIntStateOf(0)
         private set
-    var tasks = mutableStateListOf<KanbanTask>()
+    var tasks by mutableStateOf<List<KanbanTask>>(emptyList())
         private set
     var isNewTaskDialog by mutableStateOf(false)
         private set
@@ -67,8 +67,7 @@ class KanbanBoardState(
     }
 
     private fun updateTasks() {
-        tasks.clear()
-        tasks.addAll(getTasks())
+        tasks = getTasks()
     }
 
     private fun getTasks(): List<KanbanTask> {
