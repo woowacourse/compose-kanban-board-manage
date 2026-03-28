@@ -76,7 +76,7 @@ fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (Int, TaskState) -> Unit
 
                     draggedTask?.let { task ->
                         if (targetStatus != null && task.taskState != targetStatus) {
-                            val idx = tasks.tasks.indexOfFirst { it.id == task.id }
+                            val idx = tasks.items.indexOfFirst { it.id == task.id }
                             if (idx != -1) onTaskStateChange(idx, targetStatus)
                         }
                     }
