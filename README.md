@@ -14,7 +14,7 @@
 
 ## 1단계 리팩토링
 - [x] UUID를 적용하여 Task를 생성한다
-- [ ] State Holder 를 적용한다
+- [x] State Holder 를 적용한다
 - [x] Tasks와 Project를 객체 자체를 반환하도록 하고, 외부에서의 수정을 막기
 - [x] Project의 tasks를 val로 변경
 - [x] Modifier 주입 확인하기

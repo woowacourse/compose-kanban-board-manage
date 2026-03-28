@@ -4,10 +4,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -16,36 +12,22 @@ import woowacourse.kanban.board.domain.Tasks
 import woowacourse.kanban.board.ui.board.components.Sidebar
 
 @Composable
-fun ProjectScreen(projects: List<Project>, onProjectChange: (Project, Tasks) -> Unit, modifier: Modifier = Modifier) {
-    val authors = listOf("다이노", "페임스")
-    var selectedProject by remember { mutableStateOf(projects.first()) }
-    var selectedTasks by remember { mutableStateOf(projects.first().tasks) }
-
+fun ProjectScreen(state: ProjectScreenState, authors: List<String>, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
     ) {
         Sidebar(
-            projects = projects,
-            selectedProject = selectedProject,
-            onProjectChange = {
-                selectedProject = it
-                selectedTasks = it.tasks
-                onProjectChange(it, it.tasks)
-            },
+            projects = state.projects,
+            selectedProject = state.selectedProject,
+            onProjectChange = { state.selectProject(it) },
             modifier = Modifier.width(255.dp),
         )
 
         Board(
-            projectName = selectedProject.name,
-            tasks = selectedTasks,
-            onTaskCreated = {
-                selectedTasks = selectedTasks.copy(tasks = selectedTasks.copy(tasks = selectedTasks.addTask(it)).tasks)
-                onProjectChange(selectedProject, selectedTasks)
-            },
-            onTaskStateChange = { idx, targetStatus ->
-                selectedTasks = selectedTasks.copy(tasks = selectedTasks.copy(tasks = selectedTasks.fixStatus(idx, targetStatus)).tasks)
-                onProjectChange(selectedProject, selectedTasks)
-            },
+            projectName = state.selectedProject.name,
+            tasks = state.selectedProject.tasks,
+            onTaskCreated = { state.onTaskCreated(it) },
+            onTaskStateChange = { idx, taskState -> state.onTaskStateChange(idx, taskState) },
             authors = authors,
             modifier = Modifier.size(width = 1295.dp, height = 909.dp),
         )
@@ -56,11 +38,15 @@ fun ProjectScreen(projects: List<Project>, onProjectChange: (Project, Tasks) -> 
 @Composable
 private fun ProjectScreenPreview() {
     ProjectScreen(
-        projects = listOf(
-            Project("Compose1", Tasks(emptyList())),
-            Project("Compose2", Tasks(emptyList())),
+        state = ProjectScreenState(
+            initialProjects = listOf(
+                Project(
+                    name = "Compose1",
+                    tasks = Tasks(emptyList()),
+                ),
+            ),
         ),
+        authors = listOf("다이노", "페임스"),
         modifier = Modifier,
-        onProjectChange = { _, _ -> },
     )
 }
