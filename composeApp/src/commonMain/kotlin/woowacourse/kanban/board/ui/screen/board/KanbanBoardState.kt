@@ -18,9 +18,12 @@ class KanbanBoardState(
     var selectedProjectIndex by mutableIntStateOf(0)
         private set
     var tasks = mutableStateListOf<KanbanTask>()
+        private set
     var isNewTaskDialog by mutableStateOf(false)
         private set
     val snackBarHostState = SnackbarHostState()
+    var snackbarMessage by mutableStateOf<SnackbarMessage?>(null)
+        private set
 
     fun updateSelectedProjectIndex(newIndex: Int) {
         selectedProjectIndex = newIndex
@@ -61,5 +64,14 @@ class KanbanBoardState(
     fun getProjectsTitles(): List<String> = projects.map { it.title }
 
     fun getCompleteCount(): Int = tasks.count { it.status == Status.DONE }
+
     fun getTotalCount(): Int = tasks.size
+
+    fun showSnackbar(message: SnackbarMessage) {
+        snackbarMessage = message
+    }
+
+    fun clearSnackbar() {
+        snackbarMessage = null
+    }
 }
