@@ -7,7 +7,7 @@ class KanbanBoard(tasks: List<KanbanTask> = emptyList()) {
 
     fun getTasks(kanbanIds: List<Long>): List<KanbanTask> = tasks.filter { kanbanIds.contains(it.id) }
 
-    fun createTask(task: KanbanTask) {
+    fun addTask(task: KanbanTask) {
         tasks.add(task)
     }
 

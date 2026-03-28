@@ -32,7 +32,7 @@ class KanbanBoardTest {
         val newTask = createKanbanTask(description = "새로운 태스크")
 
         // When: 새로운 태스크를 추가한다.
-        kanbanBoard.createTask(
+        kanbanBoard.addTask(
             task = newTask,
         )
 
