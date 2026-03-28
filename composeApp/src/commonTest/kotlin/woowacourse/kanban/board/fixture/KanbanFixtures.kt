@@ -21,11 +21,11 @@ fun createKanbanTask(
     )
 }
 
-fun createKanbanTasks(requiredTaskCount: Int, startId: Long): MutableList<KanbanTask> {
+fun createKanbanTasks(requiredTaskCount: Int, startId: Long): List<KanbanTask> {
     var id = startId
     val tasks = mutableListOf<KanbanTask>()
     repeat(requiredTaskCount) {
         tasks.add(createKanbanTask(id = id++))
     }
-    return tasks
+    return tasks.toList()
 }

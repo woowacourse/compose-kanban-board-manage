@@ -161,7 +161,7 @@ class KanbanBoardScreenTest {
     fun `프로젝트에 알맞는 카드가 화면에 표시된다`() = runComposeUiTest {
         // Given: 각기 다른 타이틀을 가진 태스크 4개를 생성한다.
         val kanbanBoard = KanbanBoard(
-            tasks = mutableListOf(
+            tasks = listOf(
                 createKanbanTask(id = 0L, title = "안녕하세요"),
                 createKanbanTask(id = 1L, title = "우아한테크코스"),
                 createKanbanTask(id = 2L, title = "안드로이드"),

@@ -2,7 +2,9 @@ package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
 
-class KanbanBoard(private val tasks: MutableList<KanbanTask> = mutableListOf()) {
+class KanbanBoard(tasks: List<KanbanTask> = emptyList()) {
+    private val tasks = tasks.toMutableList()
+
     fun getTasks(kanbanIds: List<Long>): List<KanbanTask> = tasks.filter { kanbanIds.contains(it.id) }
 
     fun createTask(task: KanbanTask) {
