@@ -1,3 +1,5 @@
+@file:Suppress("NonAsciiCharacters")
+
 package woowacourse.kanban.board.domain
 
 import org.assertj.core.api.Assertions.assertThat

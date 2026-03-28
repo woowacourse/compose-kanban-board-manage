@@ -18,6 +18,7 @@ import woowacourse.kanban.board.fixture.createKanbanTask
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardScreen
 import kotlin.test.Test
 
+@Suppress("NonAsciiCharacters")
 @OptIn(ExperimentalTestApi::class)
 class KanbanBoardScreenTest {
     @Test

@@ -1,3 +1,5 @@
+@file:Suppress("NonAsciiCharacters")
+
 package woowacourse.kanban.board.ui.component.card
 
 import androidx.compose.ui.test.ExperimentalTestApi
