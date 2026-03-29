@@ -10,12 +10,8 @@ import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.domain.Project
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
-import woowacourse.kanban.board.domain.Tasks
-import java.util.UUID
 
-class ProjectScreenState(
-    private val initialProjects: List<Project>,
-) {
+class ProjectScreenState(private val initialProjects: List<Project>) {
     var projects by mutableStateOf(initialProjects)
         private set
 
@@ -26,8 +22,7 @@ class ProjectScreenState(
         selectedProject = project
     }
 
-    fun onTaskCreated(task: Task) =
-        updateSelectedProject(selectedProject.createNewTask(task))
+    fun onTaskCreated(task: Task) = updateSelectedProject(selectedProject.createNewTask(task))
 
     fun onTaskStateChange(taskIdx: Int, fixedTaskState: TaskState) =
         updateSelectedProject(selectedProject.changeTaskState(taskIdx, fixedTaskState))

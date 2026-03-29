@@ -16,7 +16,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.collections.forEach
 import woowacourse.kanban.board.domain.Project
 import woowacourse.kanban.board.domain.Tasks
 
@@ -54,7 +53,12 @@ private fun SidebarHeader(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun NavigationBar(projects: List<Project>, selectedProject: Project, onProjectChange: (Project) -> Unit, modifier: Modifier = Modifier) {
+private fun NavigationBar(
+    projects: List<Project>,
+    selectedProject: Project,
+    onProjectChange: (Project) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier,
     ) {
@@ -70,7 +74,13 @@ private fun NavigationBar(projects: List<Project>, selectedProject: Project, onP
 }
 
 @Composable
-private fun BoardSelectButton(onClick: () -> Unit, project: Project, backgroundColor: Color, textColor: Color, modifier: Modifier = Modifier) {
+private fun BoardSelectButton(
+    onClick: () -> Unit,
+    project: Project,
+    backgroundColor: Color,
+    textColor: Color,
+    modifier: Modifier = Modifier,
+) {
     Button(
         modifier = modifier
             .fillMaxWidth()

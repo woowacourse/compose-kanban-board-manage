@@ -14,7 +14,7 @@ class ProjectTest {
         val task = Task(
             title = "title",
             taskState = TaskState.TO_DO,
-            author = "samuel"
+            author = "samuel",
         )
 
         // when
@@ -29,8 +29,8 @@ class ProjectTest {
         val project = Project(
             name = "name",
             tasks = Tasks(
-                listOf(Task(title = "title", taskState = TaskState.TO_DO))
-            )
+                listOf(Task(title = "title", taskState = TaskState.TO_DO)),
+            ),
         )
 
         val updatedProject = project.changeTaskState(0, TaskState.DONE)
