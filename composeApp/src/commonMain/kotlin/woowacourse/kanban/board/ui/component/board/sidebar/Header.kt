@@ -12,11 +12,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.ui.KanbanColors
+import woowacourse.kanban.board.ui.KanbanTypography
 
 @Composable
 fun Header(
     title: String,
-    subTitle: String,
+    subtitle: String,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -35,10 +36,8 @@ fun Header(
         )
 
         Text(
-            text = subTitle,
-            color = KanbanColors.sideBarSubtitle,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
+            text = subtitle,
+            style = KanbanTypography.subtitle,
             lineHeight = 20.sp,
             letterSpacing = (-0.15).sp,
         )
@@ -48,5 +47,5 @@ fun Header(
 @Preview(showBackground = true, name = "헤더")
 @Composable
 private fun HeaderPreview() {
-    Header(title = "프로젝트", subTitle = "4주차 미션 보드", modifier = Modifier)
+    Header(title = "프로젝트", subtitle = "4주차 미션 보드", modifier = Modifier)
 }

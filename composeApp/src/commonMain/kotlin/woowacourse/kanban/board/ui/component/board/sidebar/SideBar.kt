@@ -25,7 +25,7 @@ fun SideBar(
             .width(255.dp)
             .fillMaxHeight(),
     ) {
-        Header(title = title, subTitle = subTitle)
+        Header(title = title, subtitle = subTitle)
 
         HorizontalDivider(modifier = Modifier.fillMaxWidth())
 

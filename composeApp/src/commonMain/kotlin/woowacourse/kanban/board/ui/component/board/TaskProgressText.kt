@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.sp
 import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.completion_rate
 import org.jetbrains.compose.resources.stringResource
+import woowacourse.kanban.board.ui.KanbanTypography
 
 @Composable
 fun TaskProgressText(
@@ -25,9 +26,7 @@ fun TaskProgressText(
             completeCount,
             totalCount,
         ),
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Normal,
-        color = Color(0xFF6A7282),
+        style = KanbanTypography.subtitle,
         modifier = modifier,
     )
 }
