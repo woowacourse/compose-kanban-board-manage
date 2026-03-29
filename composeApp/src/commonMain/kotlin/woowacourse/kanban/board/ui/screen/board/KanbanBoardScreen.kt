@@ -23,6 +23,10 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kanbanboard.composeapp.generated.resources.Res
+import kanbanboard.composeapp.generated.resources.kanban_board_subtitle
+import kanbanboard.composeapp.generated.resources.kanban_board_title
+import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
@@ -126,8 +130,8 @@ private fun KanbanBoardContent(
                 .padding(innerPadding),
         ) {
             SideBar(
-                title = "프로젝트",
-                subTitle = "4주차 미션 보드",
+                title = stringResource(Res.string.kanban_board_title),
+                subTitle = stringResource(Res.string.kanban_board_subtitle),
                 titles = projectTitles,
                 selectedIndex = projectSelectedIndex,
                 onTitleClick = updateSelectedProjectIndex,

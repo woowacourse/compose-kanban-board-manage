@@ -7,6 +7,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import kanbanboard.composeapp.generated.resources.Res
+import kanbanboard.composeapp.generated.resources.completion_rate
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TaskProgressText(
@@ -16,7 +19,12 @@ fun TaskProgressText(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = "완료율: $progressPercent% ($completeCount/$totalCount)",
+        text = stringResource(
+            Res.string.completion_rate,
+            progressPercent,
+            completeCount,
+            totalCount,
+        ),
         fontSize = 14.sp,
         fontWeight = FontWeight.Normal,
         color = Color(0xFF6A7282),
