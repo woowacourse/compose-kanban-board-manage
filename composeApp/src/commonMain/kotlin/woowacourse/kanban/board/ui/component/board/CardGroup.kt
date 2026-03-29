@@ -2,6 +2,7 @@ package woowacourse.kanban.board.ui.component.board
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,6 +34,7 @@ fun CardGroup(
                 borderColor = status.toBorderColor(),
                 mainColor = status.toMainColor(),
                 cards = cards.filter { card -> card.status == status },
+                modifier = Modifier.width(320.dp),
                 getIsDropTarget = { getIsDropTarget(status) },
                 onBoundsChanged = { onBoundsChanged(it, status) },
                 onTaskDragStart = onTaskDragStart,
