@@ -48,22 +48,22 @@ fun KanbanBoardScreen(
             projects = projects,
         )
     }
-
-    val snackBarHostState = kanbanBoardState.snackBarHostState
+    val snackBarHostState = remember { SnackbarHostState() }
+    var snackbarMessage by remember { mutableStateOf<SnackbarMessage?>(null) }
 
     val totalCount = kanbanBoardState.getTotalCount()
     val completeCount = kanbanBoardState.getCompleteCount()
     val progress = if (totalCount == 0) 0f else completeCount.toFloat() / totalCount.toFloat()
     val progressPercent = (progress * 100).toInt()
 
-    LaunchedEffect(key1 = kanbanBoardState.snackbarMessage) {
-        kanbanBoardState.snackbarMessage?.let { message ->
+    LaunchedEffect(key1 = snackbarMessage) {
+        snackbarMessage?.let { message ->
             snackBarHostState.showSnackbar(
                 message = message.text,
                 withDismissAction = true,
                 duration = SnackbarDuration.Short,
             )
-            kanbanBoardState.clearSnackbar()
+            snackbarMessage = null
         }
     }
 
@@ -87,12 +87,12 @@ fun KanbanBoardScreen(
         onCreateClick = {
             kanbanBoardState.addTask(it)
             kanbanBoardState.hideNewTaskDialog()
-            kanbanBoardState.showSnackbar(SnackbarMessage.TASK_CREATED)
+            snackbarMessage = SnackbarMessage.TASK_CREATED
         },
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
             kanbanBoardState.moveTask(task, targetStatus)
-            kanbanBoardState.showSnackbar(SnackbarMessage.TASK_MOVED)
+            snackbarMessage = SnackbarMessage.TASK_MOVED
         },
     )
 }
