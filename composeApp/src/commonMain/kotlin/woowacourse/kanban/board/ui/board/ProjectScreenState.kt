@@ -26,19 +26,13 @@ class ProjectScreenState(
         selectedProject = project
     }
 
-    fun onTaskCreated(task: Task) {
-        val newTasks = selectedProject.tasks.addTask(task)
-        updateSelectedProjectTasks(newTasks)
-    }
+    fun onTaskCreated(task: Task) =
+        updateSelectedProject(selectedProject.createNewTask(task))
 
-    fun onTaskStateChange(taskIdx: Int, fixedTaskState: TaskState) {
-        val task = selectedProject.tasks.items[taskIdx].copy(taskState = fixedTaskState)
-        val newTasks = selectedProject.tasks.fixStatus(task)
-        updateSelectedProjectTasks(newTasks)
-    }
+    fun onTaskStateChange(taskIdx: Int, fixedTaskState: TaskState) =
+        updateSelectedProject(selectedProject.changeTaskState(taskIdx, fixedTaskState))
 
-    private fun updateSelectedProjectTasks(newTasks: Tasks) {
-        val updatedProject = selectedProject.copy(tasks = newTasks)
+    private fun updateSelectedProject(updatedProject: Project) {
         selectedProject = updatedProject
         projects = projects.map {
             if (it.name == updatedProject.name) updatedProject else it
@@ -58,6 +52,7 @@ class ProjectScreenState(
 }
 
 @Composable
-fun rememberProjectScreenState(initialProjects: List<Project>): ProjectScreenState = rememberSaveable(initialProjects, saver = ProjectScreenState.Saver) {
-    ProjectScreenState(initialProjects)
-}
+fun rememberProjectScreenState(initialProjects: List<Project>): ProjectScreenState =
+    rememberSaveable(initialProjects, saver = ProjectScreenState.Saver) {
+        ProjectScreenState(initialProjects)
+    }

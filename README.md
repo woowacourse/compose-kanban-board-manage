@@ -19,4 +19,4 @@
 - [x] Project의 tasks를 val로 변경
 - [x] Modifier 주입 확인하기
 - [ ] 도메인 로직에 대한 테스트 추가
-- [ ] ProjectScreenState의 UI와 도메인 로직 분리 
+- [x] ProjectScreenState의 UI와 도메인 로직 분리 
