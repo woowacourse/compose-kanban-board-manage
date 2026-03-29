@@ -1,0 +1,5 @@
+<resources>
+    <string name = "kanban_board_title">프로젝트</string>
+    <string name = "kanban_board_subtitle">4주차 미션 보드</string>
+    <string name = "completion_rate">완료율:  %1$d% (%2$d/%3$d)</string>
+</resources>

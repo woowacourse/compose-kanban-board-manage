@@ -1,40 +1,26 @@
-This is a Kotlin Multiplatform project targeting Android, Desktop (JVM).
+# 🚀 1단계 - 칸반 보드 관리(프로젝트)
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+## 기능 요구 사항
+- 디자인 시안을 참고하여 칸반 보드 프로젝트를 구현한다.
+- 드래그 앤 드롭을 통해 카드 상태를 변경할 수 있게 한다.
 
-### Build and Run Android Application
+## 프로그래밍 요구 사항
+- 여러 번 그려지지 않아도 되는 뷰는 매번 리컴포지션 되지 않아야 한다.
+- 적절한 테스트 방법을 활용하여 기능 요구 사항을 테스트한다.
+- 모든 요구 사항이 테스트 가능하진 않다. 스스로 판단해서 구분한다.
+- 프로젝트 생성을 위한 뷰는 없다. 가짜 데이터와 테스트 더블을 활용한다.
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+## 1단계 기능 목록
 
-### Build and Run Desktop (JVM) Application
+### 도메인
+- [x] 칸반 보드 모델 구현
+- [x] 칸반 보드 모델 테스트 작성
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
-
----
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+### UI
+- [x] 칸반 보드 스크린 왼쪽 사이드바 구현
+  - [x] 사이드바에 있는 텍스트가 길 경우 1줄, overflow 기능
+- [x] 카드 홀더 드래그 기능 구현
+  - [x] 드래그 했을 때 상태를 수정
+- [x] 카드를 옮길 경우 스낵바 표시하는 기능 구현
+- [x] 칸반 보드 스크린 조합 (사이드바 추가)
+- [x] Mock Data를 이용한 테스트 코드 작성
