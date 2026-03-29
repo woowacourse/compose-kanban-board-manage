@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import woowacourse.kanban.board.ui.KanbanColors
 
 @Composable
 fun TitleButton(
@@ -30,13 +31,13 @@ fun TitleButton(
             .fillMaxWidth()
             .shadow(elevation = if (isSelected) 1.dp else 0.dp, shape = RoundedCornerShape(10.dp))
             .clip(shape = RoundedCornerShape(10.dp))
-            .background(color = if (isSelected) Color(0xFFEEF2FF) else Color.Unspecified)
+            .background(color = if (isSelected) KanbanColors.sideBarSelectedButtonBackground else Color.Unspecified)
             .clickable(onClick = onClick)
             .padding(start = 15.dp, end = 41.dp, top = 12.dp, bottom = 12.dp),
     ) {
         Text(
             text = text,
-            color = if (isSelected) Color(0xFF432DD7) else Color(0xFF364153),
+            color = if (isSelected) KanbanColors.sideBarSelectedButtonText else KanbanColors.sideBarUnselectedButtonText,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             lineHeight = 24.sp,

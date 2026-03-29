@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import woowacourse.kanban.board.ui.KanbanColors
 
 @Composable
 fun Header(
@@ -27,7 +27,7 @@ fun Header(
     ) {
         Text(
             text = title,
-            color = Color(0xFF101828),
+            color = KanbanColors.sideBarTitle,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             lineHeight = 28.sp,
@@ -36,7 +36,7 @@ fun Header(
 
         Text(
             text = subTitle,
-            color = Color(0xFF6A7282),
+            color = KanbanColors.sideBarSubtitle,
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
             lineHeight = 20.sp,
