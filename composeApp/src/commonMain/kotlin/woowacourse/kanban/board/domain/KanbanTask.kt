@@ -1,9 +1,14 @@
 package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
+import kotlin.concurrent.atomics.AtomicLong
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.fetchAndIncrement
+import kotlin.concurrent.atomics.incrementAndFetch
 
+@OptIn(ExperimentalAtomicApi::class)
 data class KanbanTask(
-    val id: Long = idIndex++,
+    val id: Long = generateId(),
     val title: String,
     val status: Status,
     val assignee: String,
@@ -19,7 +24,7 @@ data class KanbanTask(
     fun changeStatus(newStatus: Status) = copy(status = newStatus)
 
     companion object {
-        private var idIndex = 0L
+        private val idIndex = AtomicLong(0L)
 
         fun isTitleValid(title: String): Boolean = title.isNotBlank()
 
@@ -28,6 +33,10 @@ data class KanbanTask(
         fun isTagFormatValid(tags: List<String>): Boolean {
             if (tags.isEmpty()) return true
             return tags.all { it.length in 1..5 }
+        }
+
+        private fun generateId(): Long {
+            return idIndex.fetchAndIncrement()
         }
     }
 }
