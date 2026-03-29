@@ -18,5 +18,5 @@
 - [x] Tasks와 Project를 객체 자체를 반환하도록 하고, 외부에서의 수정을 막기
 - [x] Project의 tasks를 val로 변경
 - [x] Modifier 주입 확인하기
-- [ ] 도메인 로직에 대한 테스트 추가
+- [x] 도메인 로직에 대한 테스트 추가
 - [x] ProjectScreenState의 UI와 도메인 로직 분리 

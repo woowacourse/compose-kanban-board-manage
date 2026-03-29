@@ -74,7 +74,7 @@ class BoardTest {
             Board(
                 projectName = "Compose Desktop 칸반 보드",
                 tasks = tasks,
-                onTaskCreated = { tasks = tasks.copy(tasks = tasks.tasks + it) },
+                onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
                 onTaskStateChange = { _, _ -> },
             )
@@ -98,7 +98,7 @@ class BoardTest {
             Board(
                 projectName = "Compose Desktop 칸반 보드",
                 tasks = tasks,
-                onTaskCreated = { tasks = tasks.copy(tasks = tasks.tasks + it) },
+                onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
                 onTaskStateChange = { _, _ -> },
             )
@@ -122,7 +122,7 @@ class BoardTest {
             Board(
                 projectName = "Compose Desktop 칸반 보드",
                 tasks = tasks,
-                onTaskCreated = { tasks = tasks.copy(tasks = tasks.tasks + it) },
+                onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
                 onTaskStateChange = { _, _ -> },
             )
@@ -172,11 +172,11 @@ class BoardTest {
             Board(
                 projectName = "Compose Desktop 칸반 보드",
                 tasks = tasks,
-                onTaskCreated = { tasks = tasks.copy(tasks = tasks.tasks + it) },
+                onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
                 onTaskStateChange = { idx, targetStatus ->
-                    val newTasks = tasks.fixStatus(idx, targetStatus)
-                    tasks = tasks.copy(tasks = newTasks)
+                    val newTask = tasks.items[idx].copy(taskState = targetStatus)
+                    tasks.fixStatus(newTask)
                 },
             )
         }

@@ -103,4 +103,34 @@ class TasksTest {
         // then
         assertThat(toDoTasks.size).isEqualTo(0)
     }
+
+    @Test
+    fun `Task를 추가하면 Tasks의 개수가 늘어나고 해당 Task를 포함한다`() {
+        // given
+        val tasks = Tasks(emptyList())
+        val newTask = Task(title = "새로운 할 일", taskState = TaskState.TO_DO)
+
+        // when
+        val updatedTasks = tasks.addTask(newTask)
+
+        // then
+        assertThat(updatedTasks.items).hasSize(1)
+        assertThat(updatedTasks.items).contains(newTask)
+    }
+
+    @Test
+    fun `Task의 상태를 수정하면 해당 ID를 가진 Task만 업데이트된다`() {
+        // given
+        val task1 = Task(title = "할 일 1", taskState = TaskState.TO_DO)
+        val task2 = Task(title = "할 일 2", taskState = TaskState.TO_DO)
+        val tasks = Tasks(listOf(task1, task2))
+        val updatedTask1 = task1.copy(taskState = TaskState.DONE)
+
+        // when
+        val resultTasks = tasks.fixStatus(updatedTask1)
+
+        // then
+        assertThat(resultTasks.getTasksByState(TaskState.DONE)).containsExactly(updatedTask1)
+        assertThat(resultTasks.getTasksByState(TaskState.TO_DO)).containsExactly(task2)
+    }
 }
