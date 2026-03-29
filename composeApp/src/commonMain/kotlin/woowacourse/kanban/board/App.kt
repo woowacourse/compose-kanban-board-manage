@@ -1,44 +1,38 @@
 package woowacourse.kanban.board
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import kanbanboard.composeapp.generated.resources.Res
-import kanbanboard.composeapp.generated.resources.compose_multiplatform
-import org.jetbrains.compose.resources.painterResource
+import woowacourse.kanban.board.domain.Project
+import woowacourse.kanban.board.domain.Tasks
+import woowacourse.kanban.board.ui.board.ProjectScreen
+import woowacourse.kanban.board.ui.board.rememberProjectScreenState
 
+@Preview(showBackground = true)
 @Composable
-@Preview
 fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                Image(painterResource(Res.drawable.compose_multiplatform), null)
-            }
-        }
-    }
+    val projects = listOf(
+        Project(
+            name = "Compose1",
+            tasks = Tasks(emptyList()),
+        ),
+        Project(
+            name = "Compose2",
+            tasks = Tasks(emptyList()),
+        ),
+        Project(
+            name = "Compose3너무너무길다란이름",
+            tasks = Tasks(emptyList()),
+        ),
+    )
+    val authors = listOf("다이노", "페임스")
+
+    val projectScreenState = rememberProjectScreenState(projects)
+
+    ProjectScreen(
+        state = projectScreenState,
+        authors = authors,
+        modifier = Modifier.fillMaxSize(),
+    )
 }

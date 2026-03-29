@@ -1,40 +1,22 @@
-This is a Kotlin Multiplatform project targeting Android, Desktop (JVM).
+# 칸반 보드 관리(프로젝트)
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+## 1단계 - 칸반 보드 관리(프로젝트) 구현할 기능 목록
 
-### Build and Run Android Application
+- [x] 드래그 앤 드롭을 통해 카드 상태를 변경한다
+  - [x] 태스크를 옮겼을 때 스낵바를 노출한다. 
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+- [x] 사이드바를 구현한다
+  - [x] 프로젝트를 선택할 수 있다.
+  - [x] 너무 긴 프로젝트는 한줄로 말줄임표를 사용한다.
+  - [x] 가짜 데이터를 넣는다. 
+  - [x] 프로젝트 선택 시 해당 칸반 보드를 노출한다.
+  - [x] 프로젝트 선택 시 선택된 프로젝트 제목을 노출한다.
 
-### Build and Run Desktop (JVM) Application
-
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
-
----
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## 1단계 리팩토링
+- [x] UUID를 적용하여 Task를 생성한다
+- [x] State Holder 를 적용한다
+- [x] Tasks와 Project를 객체 자체를 반환하도록 하고, 외부에서의 수정을 막기
+- [x] Project의 tasks를 val로 변경
+- [x] Modifier 주입 확인하기
+- [x] 도메인 로직에 대한 테스트 추가
+- [x] ProjectScreenState의 UI와 도메인 로직 분리 

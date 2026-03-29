@@ -33,6 +33,8 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.material.icons.extended)
+            implementation(libs.compose.components.resources)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -67,7 +69,7 @@ dependencies {
 ktlint {
     filter {
         exclude { element ->
-            val path = element.file.path
+            val path = element.file.path.replace("\\", "/")
             path.contains("/build/") ||
                 (!path.contains("/src/commonMain/") && !path.contains("/src/commonTest/"))
         }
