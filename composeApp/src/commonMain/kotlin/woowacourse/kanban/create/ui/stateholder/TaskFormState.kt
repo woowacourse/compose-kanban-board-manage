@@ -5,9 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import woowacourse.kanban.create.domain.TaskCreateAction
+import woowacourse.kanban.domain.Tags
+import woowacourse.kanban.domain.Title
 
-class TaskFormState(private val action: TaskCreateAction = TaskCreateAction()) {
+class TaskFormState {
     var titleInputValue by mutableStateOf("")
         private set
     var contentInputValue by mutableStateOf("")
@@ -49,9 +50,9 @@ class TaskFormState(private val action: TaskCreateAction = TaskCreateAction()) {
     }
 
     fun onCreateValidate(): Boolean {
-        val result = action.validate(titleInputValue, tagInputValue)
-        isTitleError = result.isTitleError
-        isTagError = result.isTagError
+        isTitleError = !Title.isValid(titleInputValue)
+        isTagError = !Tags.isLengthValid(tagInputValue.split(",")) ||
+            !Tags.isContentValid(tagInputValue.split(","))
 
         if (isTitleError) titleInputValue = ""
         if (isTagError) tagInputValue = ""

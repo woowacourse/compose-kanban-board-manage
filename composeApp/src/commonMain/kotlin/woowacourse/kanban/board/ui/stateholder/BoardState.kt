@@ -40,7 +40,7 @@ class BoardState(initTasks: List<KanbanTask>) {
         status: TaskStatus,
         idx: Int,
     ) {
-        totalTasks[idx] = totalTasks[idx].copy(status = status)
+        totalTasks[idx] = totalTasks[idx].copy(inputStatus = status)
     }
 
     fun getTasksByStatus(status: TaskStatus): List<KanbanTask> {
