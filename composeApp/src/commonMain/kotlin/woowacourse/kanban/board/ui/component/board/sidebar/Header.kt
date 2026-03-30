@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,16 +27,16 @@ fun Header(
     ) {
         Text(
             text = title,
-            color = KanbanColors.sideBarTitle,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = KanbanColors.textPrimary,
+            style = KanbanTypography.title18SemiBold,
             lineHeight = 28.sp,
             letterSpacing = (-0.44).sp,
         )
 
         Text(
             text = subtitle,
-            style = KanbanTypography.subtitle,
+            color = KanbanColors.textSecondary,
+            style = KanbanTypography.title16Regular,
             lineHeight = 20.sp,
             letterSpacing = (-0.15).sp,
         )
