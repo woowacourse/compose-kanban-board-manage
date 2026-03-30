@@ -16,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import woowacourse.kanban.board.model.KanbanProject
+import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.ui.constant.SnackBarText
 import woowacourse.kanban.board.ui.stateholder.BoardState
-import woowacourse.kanban.commonmodel.Assignee
+import woowacourse.kanban.domain.Assignee
 
 @Composable
 fun KanbanPage(

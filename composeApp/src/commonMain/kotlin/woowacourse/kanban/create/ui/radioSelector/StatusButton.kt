@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.Colors
-import woowacourse.kanban.commonmodel.TaskStatus
+import woowacourse.kanban.domain.TaskStatus
 
 private val TaskStatus.displayName: String
     get() = when (this) {

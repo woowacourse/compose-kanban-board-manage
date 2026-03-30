@@ -1,13 +1,13 @@
 package woowacourse.kanban.board.ui.constant
 
-import woowacourse.kanban.board.model.KanbanProject
-import woowacourse.kanban.commonmodel.Assignee
-import woowacourse.kanban.commonmodel.BoardData
-import woowacourse.kanban.commonmodel.KanbanTask
-import woowacourse.kanban.commonmodel.Nickname
-import woowacourse.kanban.commonmodel.Tags
-import woowacourse.kanban.commonmodel.TaskStatus
-import woowacourse.kanban.commonmodel.Title
+import woowacourse.kanban.board.domain.KanbanProject
+import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.BoardData
+import woowacourse.kanban.domain.KanbanTask
+import woowacourse.kanban.domain.Nickname
+import woowacourse.kanban.domain.Tags
+import woowacourse.kanban.domain.TaskStatus
+import woowacourse.kanban.domain.Title
 
 object MockData {
     val ASSIGNEES = listOf(

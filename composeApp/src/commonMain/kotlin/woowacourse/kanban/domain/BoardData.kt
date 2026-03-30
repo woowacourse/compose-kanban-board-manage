@@ -1,4 +1,4 @@
-package woowacourse.kanban.commonmodel
+package woowacourse.kanban.domain
 
 data class BoardData(
     val title: Title,

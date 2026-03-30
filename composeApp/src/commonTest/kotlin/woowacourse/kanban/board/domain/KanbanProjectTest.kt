@@ -1,15 +1,15 @@
-package woowacourse.kanban.board.model
+package woowacourse.kanban.board.domain
 
 import kotlin.test.assertEquals
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import woowacourse.kanban.board.ui.stateholder.BoardState
-import woowacourse.kanban.commonmodel.BoardData
-import woowacourse.kanban.commonmodel.KanbanTask
-import woowacourse.kanban.commonmodel.Nickname
-import woowacourse.kanban.commonmodel.Tags
-import woowacourse.kanban.commonmodel.TaskStatus
-import woowacourse.kanban.commonmodel.Title
+import woowacourse.kanban.domain.BoardData
+import woowacourse.kanban.domain.KanbanTask
+import woowacourse.kanban.domain.Nickname
+import woowacourse.kanban.domain.Tags
+import woowacourse.kanban.domain.TaskStatus
+import woowacourse.kanban.domain.Title
 
 class KanbanProjectTest {
     @Test

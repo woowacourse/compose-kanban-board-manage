@@ -14,15 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import woowacourse.kanban.commonmodel.Assignee
-import woowacourse.kanban.commonmodel.KanbanTask
-import woowacourse.kanban.commonmodel.TaskStatus
-import woowacourse.kanban.create.model.TaskCreateAction
+import woowacourse.kanban.create.domain.TaskCreateAction
 import woowacourse.kanban.create.ui.createTextInput.CreateTextInput
 import woowacourse.kanban.create.ui.radioSelector.CoachButton
 import woowacourse.kanban.create.ui.radioSelector.RadioSelector
 import woowacourse.kanban.create.ui.radioSelector.StatusButton
 import woowacourse.kanban.create.ui.stateholder.TaskFormState
+import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.KanbanTask
+import woowacourse.kanban.domain.TaskStatus
 
 @Composable
 fun TaskCreateDialog(

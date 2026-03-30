@@ -1,4 +1,4 @@
-package woowacourse.kanban.commonmodel
+package woowacourse.kanban.domain
 
 private const val ERROR_TAG = "[ERROR]"
 

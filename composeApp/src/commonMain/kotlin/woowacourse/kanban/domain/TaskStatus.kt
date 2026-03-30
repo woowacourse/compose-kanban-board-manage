@@ -1,4 +1,4 @@
-package woowacourse.kanban.commonmodel
+package woowacourse.kanban.domain
 
 enum class TaskStatus {
     TO_DO,

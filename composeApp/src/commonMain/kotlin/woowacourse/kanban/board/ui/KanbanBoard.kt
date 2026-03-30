@@ -18,10 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.board.ui.constant.MockData
 import woowacourse.kanban.board.ui.stateholder.BoardState
-import woowacourse.kanban.commonmodel.Assignee
-import woowacourse.kanban.commonmodel.KanbanTask
-import woowacourse.kanban.commonmodel.TaskStatus
 import woowacourse.kanban.create.ui.TaskCreateDialog
+import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.KanbanTask
+import woowacourse.kanban.domain.TaskStatus
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

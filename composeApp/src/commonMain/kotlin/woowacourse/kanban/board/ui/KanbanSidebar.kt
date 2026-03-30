@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.Colors
-import woowacourse.kanban.board.model.KanbanProject
+import woowacourse.kanban.board.domain.KanbanProject
 
 @Composable
 fun KanbanSidebar(

@@ -4,8 +4,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import woowacourse.kanban.commonmodel.KanbanTask
-import woowacourse.kanban.commonmodel.TaskStatus
+import woowacourse.kanban.domain.KanbanTask
+import woowacourse.kanban.domain.TaskStatus
 
 class BoardState(initTasks: List<KanbanTask>) {
 

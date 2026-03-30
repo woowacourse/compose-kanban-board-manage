@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.Colors
-import woowacourse.kanban.commonmodel.Assignee
+import woowacourse.kanban.domain.Assignee
 
 @Composable
 fun CoachButton(

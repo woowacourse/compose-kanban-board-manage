@@ -1,11 +1,11 @@
-package woowacourse.kanban.create.model
+package woowacourse.kanban.create.domain
 
-import woowacourse.kanban.commonmodel.Assignee
-import woowacourse.kanban.commonmodel.BoardData
-import woowacourse.kanban.commonmodel.KanbanTask
-import woowacourse.kanban.commonmodel.Tags
-import woowacourse.kanban.commonmodel.TaskStatus
-import woowacourse.kanban.commonmodel.Title
+import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.BoardData
+import woowacourse.kanban.domain.KanbanTask
+import woowacourse.kanban.domain.Tags
+import woowacourse.kanban.domain.TaskStatus
+import woowacourse.kanban.domain.Title
 
 class TaskCreateAction {
 

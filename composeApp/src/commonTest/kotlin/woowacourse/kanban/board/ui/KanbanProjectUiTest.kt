@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import woowacourse.kanban.board.ui.constant.MockData
 import woowacourse.kanban.board.ui.constant.SnackBarText
 import woowacourse.kanban.board.ui.stateholder.BoardState
-import woowacourse.kanban.commonmodel.TaskStatus
+import woowacourse.kanban.domain.TaskStatus
 
 @OptIn(ExperimentalTestApi::class)
 class KanbanProjectUiTest {

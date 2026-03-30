@@ -4,7 +4,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import kotlin.test.assertEquals
 import org.junit.Assert
 import org.junit.Test
-import woowacourse.kanban.commonmodel.Nickname
+import woowacourse.kanban.domain.Nickname
 
 @OptIn(ExperimentalTestApi::class)
 class NicknameTest {
