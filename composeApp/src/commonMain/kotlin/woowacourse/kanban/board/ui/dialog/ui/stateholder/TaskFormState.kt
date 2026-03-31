@@ -5,6 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.KanbanTask
 import woowacourse.kanban.domain.Tags
 import woowacourse.kanban.domain.Title
 
@@ -58,5 +60,16 @@ class TaskFormState {
         if (isTagError) tagInputValue = ""
 
         return isTitleError || isTagError
+    }
+
+    fun setTask(
+        task: KanbanTask,
+        assignees: List<Assignee>,
+    ) {
+        titleInputValue = task.data.title.content
+        contentInputValue = task.data.content
+        tagInputValue = task.data.tags.tags.joinToString()
+        selectedStatusIndex = task.status.ordinal
+        selectedAssigneeIndex = assignees.indexOfFirst { it.nickname == task.data.nickname }
     }
 }

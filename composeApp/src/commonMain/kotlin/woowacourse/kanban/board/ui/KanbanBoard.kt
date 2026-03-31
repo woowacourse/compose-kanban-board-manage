@@ -100,6 +100,7 @@ fun KanbanBoard(
             },
             assignees = assignees,
             modifier = Modifier,
+            currentTask = boardState.currentTask,
         )
     }
 }

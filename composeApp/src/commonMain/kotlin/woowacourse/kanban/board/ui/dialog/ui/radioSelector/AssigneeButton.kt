@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +24,7 @@ import woowacourse.kanban.Colors
 import woowacourse.kanban.domain.Assignee
 
 @Composable
-fun CoachButton(
+fun AssigneeButton(
     isSelected: Boolean,
     assignee: Assignee,
     onClick: () -> Unit,
@@ -65,12 +63,14 @@ fun CoachButton(
             ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "코치 프로필 아이콘",
-                tint = Colors.IconTertiary,
-            )
-            Spacer(modifier = Modifier.width(12.dp))
+            if (assignee.icon != null) {
+                Icon(
+                    imageVector = assignee.icon,
+                    contentDescription = "코치 프로필 아이콘",
+                    tint = Colors.IconTertiary,
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+            }
             Text(
                 assignee.nickname.nickname,
                 fontWeight = FontWeight.W500,

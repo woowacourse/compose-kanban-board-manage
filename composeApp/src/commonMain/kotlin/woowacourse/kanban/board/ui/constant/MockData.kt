@@ -1,5 +1,7 @@
 package woowacourse.kanban.board.ui.constant
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.domain.Assignee
 import woowacourse.kanban.domain.BoardData
@@ -15,11 +17,13 @@ object MockData {
             Nickname(
                 "다이노",
             ),
+            icon = Icons.Default.AccountCircle,
         ),
         Assignee(
             Nickname(
                 "페임스",
             ),
+            icon = Icons.Default.AccountCircle,
         ),
     )
 

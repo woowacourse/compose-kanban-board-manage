@@ -13,8 +13,8 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
 import woowacourse.kanban.board.ui.dialog.ui.TaskManageDialog
-import woowacourse.kanban.board.ui.dialog.ui.radioSelector.CoachButton
-import woowacourse.kanban.board.ui.dialog.ui.radioSelector.RadioSelector
+import woowacourse.kanban.board.ui.dialog.ui.radioSelector.AssigneeButton
+import woowacourse.kanban.board.ui.dialog.ui.radioSelector.RadioGridSelector
 import woowacourse.kanban.board.ui.dialog.ui.radioSelector.StatusButton
 import woowacourse.kanban.domain.Assignee
 import woowacourse.kanban.domain.Nickname
@@ -38,7 +38,7 @@ class DialogTest {
         // given
 
         setContent {
-            RadioSelector(
+            RadioGridSelector(
                 header = "상태 *",
                 TaskStatus.entries.size,
             ) { index ->
@@ -77,11 +77,11 @@ class DialogTest {
         )
 
         setContent {
-            RadioSelector(
+            RadioGridSelector(
                 header = "담당자",
                 listSize = assignees.size,
             ) { index ->
-                CoachButton(
+                AssigneeButton(
                     assignee = assignees[index],
                     isSelected = selectedCoachIndex.value == index,
                     onClick = { selectedCoachIndex.value = index },

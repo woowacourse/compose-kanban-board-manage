@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,13 +16,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import woowacourse.kanban.board.ui.dialog.ui.createTextInput.CreateTextInput
-import woowacourse.kanban.board.ui.dialog.ui.radioSelector.CoachButton
+import woowacourse.kanban.board.ui.dialog.ui.radioSelector.AssigneeButton
+import woowacourse.kanban.board.ui.dialog.ui.radioSelector.RadioGridSelector
 import woowacourse.kanban.board.ui.dialog.ui.radioSelector.RadioSelector
 import woowacourse.kanban.board.ui.dialog.ui.radioSelector.StatusButton
 import woowacourse.kanban.board.ui.dialog.ui.stateholder.TaskFormState
 import woowacourse.kanban.domain.Assignee
 import woowacourse.kanban.domain.BoardData
 import woowacourse.kanban.domain.KanbanTask
+import woowacourse.kanban.domain.Nickname
 import woowacourse.kanban.domain.Tags
 import woowacourse.kanban.domain.TaskStatus
 import woowacourse.kanban.domain.Title
@@ -32,8 +35,23 @@ fun TaskManageDialog(
     onCreateTask: (task: KanbanTask) -> Unit,
     modifier: Modifier,
     assignees: List<Assignee> = emptyList(),
+    currentTask: KanbanTask? = null,
 ) {
-    val state = remember { TaskFormState() }
+    val state = remember {
+        TaskFormState()
+    }
+    val filteredAssignees = remember(state.selectedStatusIndex) {
+        if (TaskStatus.entries[state.selectedStatusIndex] == TaskStatus.TO_DO) {
+            listOf(Assignee(nickname = Nickname("없음"))) + assignees
+        } else {
+            assignees
+        }
+    }
+    LaunchedEffect(currentTask) {
+        if (currentTask != null) {
+            state.setTask(currentTask, filteredAssignees)
+        }
+    }
 
     Dialog(
         onDismissRequest = {
@@ -90,7 +108,7 @@ fun TaskManageDialog(
                     },
                     isError = state.isTagError,
                 )
-                RadioSelector(
+                RadioGridSelector(
                     header = "상태 *",
                     listSize = TaskStatus.entries.size,
                 ) { index ->
@@ -102,10 +120,10 @@ fun TaskManageDialog(
                 }
                 RadioSelector(
                     header = "담당자 *",
-                    assignees.size,
+                    filteredAssignees.size,
                 ) { index ->
-                    CoachButton(
-                        assignee = assignees[index],
+                    AssigneeButton(
+                        assignee = filteredAssignees[index],
                         isSelected = state.selectedAssigneeIndex == index,
                         onClick = { state.onCoachSelect(index) },
                     )
@@ -121,8 +139,7 @@ fun TaskManageDialog(
                                     title = Title(state.titleInputValue),
                                     content = state.contentInputValue,
                                     tags = Tags(state.tagInputValue.split(",")),
-
-                                    nickname = assignees[state.selectedAssigneeIndex].nickname,
+                                    nickname = filteredAssignees[state.selectedAssigneeIndex].nickname,
                                 ),
                                 status = TaskStatus.entries[state.selectedStatusIndex],
                             )

@@ -3,14 +3,15 @@ package woowacourse.kanban.board.ui.dialog.ui.radioSelector
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.board.ui.dialog.ui.HeaderText
 
 @Composable
-fun RadioSelector(
+fun RadioGridSelector(
     header: String,
     listSize: Int,
     modifier: Modifier = Modifier,
@@ -18,7 +19,8 @@ fun RadioSelector(
 ) {
     Column(modifier) {
         HeaderText(title = header)
-        LazyRow(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
