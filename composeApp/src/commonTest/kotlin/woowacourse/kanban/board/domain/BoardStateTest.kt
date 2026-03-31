@@ -55,7 +55,7 @@ class BoardStateTest {
         )
 
         val state = BoardState(
-            initTasks = tasks,
+            initProject = KanbanProject(tasks),
         )
 
         // when : 완료율을 계산하면
@@ -104,21 +104,21 @@ class BoardStateTest {
         // when : 컬럼들을 분류하면 TO_DO, IN_PROGRESS, DONE 상태 별로 리스트에 배치되어야 한다.
 
         val state = BoardState(
-            initTasks = tasks,
+            initProject = KanbanProject(tasks),
         )
 
         // then : TO_DO, IN_PROGRESS, DONE 카드 리스트 각각 하나씩 존재해야 한다
         assertEquals(
             1,
-            state.todoCardList.size,
+            state.getTasksByStatus(TaskStatus.TO_DO).size,
         )
         assertEquals(
             1,
-            state.inProgressCardList.size,
+            state.getTasksByStatus(TaskStatus.IN_PROGRESS).size,
         )
         assertEquals(
             1,
-            state.doneCardList.size,
+            state.getTasksByStatus(TaskStatus.DONE).size,
         )
     }
 }

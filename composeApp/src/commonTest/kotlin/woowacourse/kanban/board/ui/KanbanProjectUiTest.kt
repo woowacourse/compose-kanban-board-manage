@@ -100,8 +100,9 @@ class KanbanProjectUiTest {
             val snackBarHostState = remember { SnackbarHostState() }
 
             val project = MockData.MOCK_PROJECTS.first()
-            state =
-                BoardState(project.getTasks())
+            state = BoardState(
+                project,
+            )
 
             Scaffold(
                 snackbarHost = {
@@ -115,8 +116,8 @@ class KanbanProjectUiTest {
 
             // when : 상태 변경 함수를 호출했을 때
             state.changeStatus(
+                taskId = 0,
                 status = TaskStatus.DONE,
-                idx = 0,
             )
             scope.launch { snackBarHostState.showSnackbar(SnackBarText.EDIT_TASK) }
         }

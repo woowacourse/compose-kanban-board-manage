@@ -14,7 +14,7 @@ import woowacourse.kanban.domain.Title
 class KanbanProjectTest {
     @Test
     fun `새 태스크를 생성했을 때 현재 프로젝트에 삽입되어야 한다`() = runTest {
-        val boardState = BoardState(mutableListOf())
+        val boardState = BoardState(KanbanProject(mutableListOf()))
 
         boardState.addTask(
             KanbanTask(
@@ -39,14 +39,16 @@ class KanbanProjectTest {
                 content = "내용",
                 tags = Tags(),
                 nickname = Nickname("아오"),
+                id = 0,
             ),
             status = TaskStatus.IN_PROGRESS,
         )
 
-        val state = BoardState(mutableListOf(task))
+        val project = KanbanProject(mutableListOf(task))
+        val state = BoardState(project)
 
-        state.changeStatus(TaskStatus.DONE, idx = 0)
+        state.changeStatus(taskId = 0, status = TaskStatus.DONE)
 
-        assertEquals(TaskStatus.DONE, state.getTotalTasks().first().status)
+        assertEquals(TaskStatus.DONE, state.getTasksByStatus(TaskStatus.DONE).first().status)
     }
 }
