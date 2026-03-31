@@ -27,7 +27,7 @@ import woowacourse.kanban.domain.TaskStatus
 import woowacourse.kanban.domain.Title
 
 @Composable
-fun TaskCreateDialog(
+fun TaskManageDialog(
     onDismiss: () -> Unit,
     onCreateTask: (task: KanbanTask) -> Unit,
     modifier: Modifier,

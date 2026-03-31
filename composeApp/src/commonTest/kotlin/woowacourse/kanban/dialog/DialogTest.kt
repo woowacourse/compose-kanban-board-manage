@@ -12,7 +12,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
-import woowacourse.kanban.board.ui.dialog.ui.TaskCreateDialog
+import woowacourse.kanban.board.ui.dialog.ui.TaskManageDialog
 import woowacourse.kanban.board.ui.dialog.ui.radioSelector.CoachButton
 import woowacourse.kanban.board.ui.dialog.ui.radioSelector.RadioSelector
 import woowacourse.kanban.board.ui.dialog.ui.radioSelector.StatusButton
@@ -102,7 +102,7 @@ class DialogTest {
         // given
         setContent {
 
-            TaskCreateDialog(
+            TaskManageDialog(
                 onDismiss = { showDialog.value = false },
                 onCreateTask = {},
                 modifier = Modifier,
@@ -124,7 +124,7 @@ class DialogTest {
         // given
         setContent {
 
-            TaskCreateDialog(
+            TaskManageDialog(
                 onDismiss = { showDialog.value = false },
                 onCreateTask = {},
                 modifier = Modifier,
@@ -144,7 +144,7 @@ class DialogTest {
     fun `제목 검증 혹은 태그 검증에 실패시 생성 버튼을 누르면 제목과 태그에서 에러 표시가 출력되야 한다`() = runComposeUiTest {
         // given
         setContent {
-            TaskCreateDialog(
+            TaskManageDialog(
                 onDismiss = { showDialog.value = false },
                 onCreateTask = {},
                 modifier = Modifier,
