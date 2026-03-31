@@ -15,7 +15,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
+import woowacourse.kanban.board.ui.toTitle
 
 @Composable
 fun StatusOptionCard(
@@ -24,11 +25,7 @@ fun StatusOptionCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val text = when (status) {
-        Status.TO_DO -> "To Do"
-        Status.IN_PROGRESS -> "In Progress"
-        Status.DONE -> "Done"
-    }
+    val text = status.toTitle()
 
     TaskOptionCard(
         isSelected = isSelected,
