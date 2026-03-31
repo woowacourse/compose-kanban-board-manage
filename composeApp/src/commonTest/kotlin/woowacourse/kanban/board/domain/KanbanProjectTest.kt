@@ -47,9 +47,9 @@ class KanbanProjectTest {
         val project = KanbanProject(mutableListOf(task))
         val state = BoardState(project)
 
-        state.changeStatus(taskId = 0, status = TaskStatus.DONE)
+        state.changeStatus(taskId = 0, status = TaskStatus.TO_DO)
 
-        assertEquals(TaskStatus.DONE, state.getTasksByStatus(TaskStatus.DONE).first().status)
+        assertEquals(TaskStatus.TO_DO, state.getTasksByStatus(TaskStatus.TO_DO).first().status)
     }
 
     @Test
@@ -114,5 +114,82 @@ class KanbanProjectTest {
         // then : 상태 변경이 실패해야 한다
         assertEquals(false, resultReview)
         assertEquals(false, resultDone)
+    }
+
+    @Test
+    fun `In Progress 상태의 태스크를 Done으로 바꾸려면 실패한다`() = runTest {
+        // given : In Progress 상태의 태스크목록을 가진 프로젝트와 스테이트홀더가 제공된다
+        val tasks = listOf(
+            KanbanTask(
+                data = BoardData(
+                    title = Title("제목"),
+                    content = "내용",
+                    tags = Tags(),
+                    nickname = Nickname("아오"),
+                    id = 0,
+                ),
+                status = TaskStatus.IN_PROGRESS,
+            ),
+        )
+        val project = KanbanProject(tasks)
+        val state = BoardState(project)
+
+        // when : 상태를 Done으로 바꿀 때
+        val resultDone: Boolean = state.changeStatus(0, TaskStatus.DONE)
+
+        // then : 상태 변경이 실패해야 한다
+        assertEquals(false, resultDone)
+    }
+
+    @Test
+    fun `Review 상태의 태스크를 To Do로 바꾸려면 실패한다`() = runTest {
+        // given : Review 상태의 태스크목록을 가진 프로젝트와 스테이트홀더가 제공된다
+        val tasks = listOf(
+            KanbanTask(
+                data = BoardData(
+                    title = Title("제목"),
+                    content = "내용",
+                    tags = Tags(),
+                    nickname = Nickname("아오"),
+                    id = 0,
+                ),
+                status = TaskStatus.REVIEW,
+            ),
+        )
+        val project = KanbanProject(tasks)
+        val state = BoardState(project)
+
+        // when : 상태를 To Do로 바꿀 때
+        val resultToDo: Boolean = state.changeStatus(0, TaskStatus.TO_DO)
+
+        // then : 상태 변경이 실패해야 한다
+        assertEquals(false, resultToDo)
+    }
+
+    @Test
+    fun `Done 상태의 태스크를 In Progress, Review으로 바꾸려면 실패한다`() = runTest {
+        // given : Done 상태의 태스크목록을 가진 프로젝트와 스테이트홀더가 제공된다
+        val tasks = listOf(
+            KanbanTask(
+                data = BoardData(
+                    title = Title("제목"),
+                    content = "내용",
+                    tags = Tags(),
+                    nickname = Nickname("아오"),
+                    id = 0,
+                ),
+                status = TaskStatus.DONE,
+            ),
+        )
+        val project = KanbanProject(tasks)
+        val state = BoardState(project)
+
+        // when : 상태를 In Progress와 Review로 바꿀 때
+        val resultInProgress: Boolean = state.changeStatus(0, TaskStatus.IN_PROGRESS)
+        val resultReview: Boolean = state.changeStatus(0, TaskStatus.REVIEW)
+
+        // then : 상태 변경이 실패해야 한다
+        assertEquals(false, resultInProgress)
+        assertEquals(false, resultReview)
     }
 }
