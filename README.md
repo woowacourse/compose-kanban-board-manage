@@ -3,7 +3,7 @@
 #### 단위 테스트
 
 - [x] Review, Done 상태인 태스크를 삭제하려고 하면 실패한다
-- [ ] To Do 상태의 태스크를 Review, Done으로 바꾸려면 실패한다
+- [x] To Do 상태의 태스크를 Review, Done으로 바꾸려면 실패한다
 - [ ] In Progress 상태의 태스크를 Done으로 바꾸려면 실패한다
 - [ ] Review 상태의 태스크를 To Do로 바꾸려면 실패한다
 - [ ] Done 상태의 태스크를 In Progress, Review으로 바꾸려면 실패한다

@@ -79,14 +79,40 @@ class KanbanProjectTest {
         )
         val project = KanbanProject(tasks)
         val state = BoardState(project)
+
         // when : 각  태스크를 지울 때
-
         val resultDone: Boolean = state.deleteTask(0)
-
         val resultReview: Boolean = state.deleteTask(1)
 
         // then : 삭제가 실패해야 한다
         assertEquals(false, resultDone)
         assertEquals(false, resultReview)
+    }
+
+    @Test
+    fun `To Do 상태의 태스크를 Review, Done으로 바꾸려면 실패한다`() = runTest {
+        // given : To Do 상태의 태스크목록을 가진 프로젝트와 스테이트홀더가 제공된다
+        val tasks = listOf(
+            KanbanTask(
+                data = BoardData(
+                    title = Title("제목"),
+                    content = "내용",
+                    tags = Tags(),
+                    nickname = Nickname("아오"),
+                    id = 0,
+                ),
+                status = TaskStatus.TO_DO,
+            ),
+        )
+        val project = KanbanProject(tasks)
+        val state = BoardState(project)
+
+        // when : 상태를 Review와 Done으로 바꿀 때
+        val resultReview: Boolean = state.changeStatus(0, TaskStatus.REVIEW)
+        val resultDone: Boolean = state.changeStatus(0, TaskStatus.DONE)
+
+        // then : 상태 변경이 실패해야 한다
+        assertEquals(false, resultReview)
+        assertEquals(false, resultDone)
     }
 }
