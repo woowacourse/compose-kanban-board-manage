@@ -1,4 +1,4 @@
-package woowacourse.kanban.create.ui.createTextInput
+package woowacourse.kanban.board.ui.dialog.ui.createTextInput
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text

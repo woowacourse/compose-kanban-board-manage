@@ -1,4 +1,4 @@
-package woowacourse.kanban.create.ui
+package woowacourse.kanban.board.ui.dialog.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

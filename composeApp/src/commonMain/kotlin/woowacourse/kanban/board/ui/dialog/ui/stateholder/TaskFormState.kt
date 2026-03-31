@@ -1,4 +1,4 @@
-package woowacourse.kanban.create.ui.stateholder
+package woowacourse.kanban.board.ui.dialog.ui.stateholder
 
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
