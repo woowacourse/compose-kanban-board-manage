@@ -80,6 +80,7 @@ fun StatusCardList(
     onTaskDragChange: (Offset) -> Unit = {},
     onTaskDragEnd: () -> Unit = {},
     onTaskDragCancel: () -> Unit = {},
+    onCardClick: (KanbanTask) -> Unit = {},
 ) {
     val isDropTarget by remember { derivedStateOf { getIsDropTarget() } }
     val lastBoundsHolder = remember { mutableStateOf<Rect?>(null) }
@@ -158,6 +159,9 @@ fun StatusCardList(
                 ) {
                     KanbanCard(
                         tasks[it].data,
+                        onClick = {
+                            onCardClick(tasks[it])
+                        },
                     )
                 }
             }

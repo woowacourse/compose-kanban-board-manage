@@ -2,6 +2,7 @@ package woowacourse.kanban.card.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -33,12 +34,14 @@ import woowacourse.kanban.domain.Title
 fun KanbanCard(
     board: BoardData,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
             .width(270.dp)
             .clip(shape = RoundedCornerShape(15.dp))
             .background(Color.White)
+            .clickable(onClick = onClick)
             .border(
                 width = 1.dp,
                 color = Colors.PrimaryBorder,

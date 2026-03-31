@@ -45,7 +45,7 @@ fun KanbanBoard(
             progress = boardState.progress,
             doneTaskCount = boardState.doneCardList.size,
             totalTaskCount = boardState.totalTaskCount,
-            onClick = { boardState.showDialog.value = true },
+            onClick = { boardState.toggleDialog(true) },
             headerTitle = projectTitle,
         )
         Row(
@@ -84,14 +84,17 @@ fun KanbanBoard(
                         currentDragPosition = null
                         draggedTask = null
                     },
+                    onCardClick = { task ->
+                        boardState.toggleDialog(true, task)
+                    },
                 )
             }
         }
     }
 
-    if (boardState.showDialog.value) {
+    if (boardState.showDialog) {
         TaskCreateDialog(
-            onDismiss = { boardState.showDialog.value = false },
+            onDismiss = { boardState.toggleDialog(false) },
             onCreateTask = { task ->
                 onTaskCreated(task)
             },
