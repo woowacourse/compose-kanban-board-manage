@@ -14,6 +14,7 @@ fun RadioSelector(
     header: String,
     listSize: Int,
     modifier: Modifier = Modifier,
+    noneButton: (@Composable () -> Unit)? = null,
     itemContent: @Composable (index: Int) -> Unit,
 ) {
     Column(modifier) {
@@ -22,6 +23,9 @@ fun RadioSelector(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            if (noneButton != null) {
+                item { noneButton() }
+            }
             items(
                 listSize,
             ) { index ->

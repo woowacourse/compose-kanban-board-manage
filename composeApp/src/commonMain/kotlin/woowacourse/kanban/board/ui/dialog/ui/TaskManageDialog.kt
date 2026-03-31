@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import woowacourse.kanban.board.ui.dialog.ui.createTextInput.CreateTextInput
 import woowacourse.kanban.board.ui.dialog.ui.radioSelector.AssigneeButton
+import woowacourse.kanban.board.ui.dialog.ui.radioSelector.NoneAssigneeButton
 import woowacourse.kanban.board.ui.dialog.ui.radioSelector.RadioGridSelector
 import woowacourse.kanban.board.ui.dialog.ui.radioSelector.RadioSelector
 import woowacourse.kanban.board.ui.dialog.ui.radioSelector.StatusButton
@@ -24,7 +25,6 @@ import woowacourse.kanban.board.ui.dialog.ui.stateholder.TaskFormState
 import woowacourse.kanban.domain.Assignee
 import woowacourse.kanban.domain.BoardData
 import woowacourse.kanban.domain.KanbanTask
-import woowacourse.kanban.domain.Nickname
 import woowacourse.kanban.domain.Tags
 import woowacourse.kanban.domain.TaskStatus
 import woowacourse.kanban.domain.Title
@@ -40,16 +40,13 @@ fun TaskManageDialog(
     val state = remember {
         TaskFormState()
     }
-    val filteredAssignees = remember(state.selectedStatusIndex) {
-        if (TaskStatus.entries[state.selectedStatusIndex] == TaskStatus.TO_DO) {
-            listOf(Assignee(nickname = Nickname("없음"))) + assignees
-        } else {
-            assignees
-        }
+    val isToDo = remember(state.selectedStatusIndex) {
+        TaskStatus.entries[state.selectedStatusIndex] == TaskStatus.TO_DO
     }
+
     LaunchedEffect(currentTask) {
         if (currentTask != null) {
-            state.setTask(currentTask, filteredAssignees)
+            state.setTask(currentTask, assignees)
         }
     }
 
@@ -120,10 +117,20 @@ fun TaskManageDialog(
                 }
                 RadioSelector(
                     header = "담당자 *",
-                    filteredAssignees.size,
+                    assignees.size,
+                    noneButton =
+                    if (isToDo) {
+                        {
+                            NoneAssigneeButton(
+                                isSelected = state.selectedAssigneeIndex == null,
+                                onClick = { state.onNoneAssigneeSelect() },
+                            )
+                        }
+                    } else null,
+
                 ) { index ->
                     AssigneeButton(
-                        assignee = filteredAssignees[index],
+                        assignee = assignees[index],
                         isSelected = state.selectedAssigneeIndex == index,
                         onClick = { state.onCoachSelect(index) },
                     )
@@ -139,7 +146,7 @@ fun TaskManageDialog(
                                     title = Title(state.titleInputValue),
                                     content = state.contentInputValue,
                                     tags = Tags(state.tagInputValue.split(",")),
-                                    assignee = filteredAssignees[state.selectedAssigneeIndex],
+                                    assignee = state.selectedAssigneeIndex?.let { assignees[it] },
                                 ),
                                 status = TaskStatus.entries[state.selectedStatusIndex],
                             )

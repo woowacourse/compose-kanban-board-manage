@@ -26,7 +26,7 @@ class TaskFormState {
 
     var selectedStatusIndex by mutableIntStateOf(0)
         private set
-    var selectedAssigneeIndex by mutableIntStateOf(0)
+    var selectedAssigneeIndex: Int? by mutableStateOf(null)
         private set
 
     fun onTitleChange(input: String) {
@@ -51,6 +51,10 @@ class TaskFormState {
         selectedAssigneeIndex = index
     }
 
+    fun onNoneAssigneeSelect() {
+        selectedAssigneeIndex = null
+    }
+
     fun onCreateValidate(): Boolean {
         isTitleError = !Title.isValid(titleInputValue)
         isTagError = !Tags.isLengthValid(tagInputValue.split(",")) ||
@@ -70,6 +74,7 @@ class TaskFormState {
         contentInputValue = task.data.content
         tagInputValue = task.data.tags.tags.joinToString()
         selectedStatusIndex = task.status.ordinal
-        selectedAssigneeIndex = assignees.indexOfFirst { it.nickname == task.data.assignee?.nickname }
+        val foundIndex = assignees.indexOfFirst { it.nickname == task.data.assignee?.nickname }
+        selectedAssigneeIndex = if (foundIndex == -1) null else foundIndex
     }
 }
