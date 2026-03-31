@@ -16,6 +16,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.ui.constant.MockData
 import woowacourse.kanban.board.ui.stateholder.BoardState
 import woowacourse.kanban.create.ui.TaskCreateDialog
@@ -31,7 +32,7 @@ fun KanbanBoard(
     assignees: List<Assignee>,
     modifier: Modifier = Modifier,
     onTaskCreated: (KanbanTask) -> Unit = {},
-    onStatusChanged: (TaskStatus, Int) -> Unit = { _, _ -> },
+    onStatusChanged: (TaskStatus, Long) -> Unit = { _, _ -> },
     selectedStatuses: List<TaskStatus> = TaskStatus.entries,
 ) {
 
@@ -73,10 +74,7 @@ fun KanbanBoard(
 
                         draggedTask?.let { task ->
                             if (targetStatus != null && task.status != targetStatus) {
-                                val idx = boardState.getTotalTasks().indexOfFirst { it.data.id == task.data.id }
-                                if (idx != -1) {
-                                    onStatusChanged(targetStatus, idx)
-                                }
+                                onStatusChanged(targetStatus, task.data.id)
                             }
                         }
                         currentDragPosition = null
@@ -107,7 +105,9 @@ fun KanbanBoard(
 @Composable
 fun KanbanBoardPreview() {
     KanbanBoard(
-        BoardState(initTasks = emptyList()),
+        BoardState(
+            initProject = KanbanProject(emptyList()),
+        ),
         assignees = MockData.ASSIGNEES,
         projectTitle = "",
     )

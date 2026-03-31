@@ -2,22 +2,25 @@ package woowacourse.kanban.board.ui.stateholder
 
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.domain.KanbanTask
 import woowacourse.kanban.domain.TaskStatus
 
-class BoardState(initTasks: List<KanbanTask>) {
+class BoardState(initProject: KanbanProject) {
 
-    private val totalTasks = mutableStateListOf<KanbanTask>().apply { addAll(initTasks) }
+    private var project by mutableStateOf(initProject)
+
+    private val totalTasks by derivedStateOf { project.getTasks() }
 
     val totalTaskCount by derivedStateOf { totalTasks.size }
 
-    val todoCardList: List<KanbanTask> by derivedStateOf { totalTasks.filter { task -> task.status == TaskStatus.TO_DO } }
+    val todoCardList: List<KanbanTask> by derivedStateOf { project.getTasksByStatus(TaskStatus.TO_DO) }
 
-    val inProgressCardList: List<KanbanTask> by derivedStateOf { totalTasks.filter { task -> task.status == TaskStatus.IN_PROGRESS } }
+    val inProgressCardList: List<KanbanTask> by derivedStateOf { project.getTasksByStatus(TaskStatus.IN_PROGRESS) }
 
-    val doneCardList: List<KanbanTask> by derivedStateOf { totalTasks.filter { task -> task.status == TaskStatus.DONE } }
+    val doneCardList: List<KanbanTask> by derivedStateOf { project.getTasksByStatus(TaskStatus.DONE) }
 
     val progress by derivedStateOf {
         if (totalTasks.isEmpty()) 0.0 else doneCardList.size.toDouble() / totalTasks.size.toDouble()
@@ -25,29 +28,18 @@ class BoardState(initTasks: List<KanbanTask>) {
 
     val showDialog = mutableStateOf(false)
 
-    // List로 반환하더라도 toMutableList()를 통해 캐스팅하면 원본 리스트에 대해서
-    // 조작이 가능하다. 반환할 때 toList()를 사용해 새로운 리스트를 만들어 주면
-    // 원본 리스트와는 다른 리스트로 반환되게 됨으로 조작이 차단된다.
-    fun getTotalTasks(): List<KanbanTask> {
-        return totalTasks.toList()
-    }
-
     fun addTask(task: KanbanTask) {
-        totalTasks.add(task)
+        project = project.addTask(task)
     }
 
     fun changeStatus(
+        taskId: Long,
         status: TaskStatus,
-        idx: Int,
     ) {
-        totalTasks[idx] = totalTasks[idx].copy(inputStatus = status)
+        project = project.changeStatus(taskId, status)
     }
 
     fun getTasksByStatus(status: TaskStatus): List<KanbanTask> {
-        return when (status) {
-            TaskStatus.TO_DO -> todoCardList
-            TaskStatus.IN_PROGRESS -> inProgressCardList
-            TaskStatus.DONE -> doneCardList
-        }
+        return project.getTasksByStatus(status)
     }
 }

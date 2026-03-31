@@ -31,7 +31,7 @@ fun KanbanPage(
     var selectedProjectIndex by remember { mutableIntStateOf(0) }
 
     val boardStates = remember(projects) {
-        projects.map { BoardState(it.getTasks()) }
+        projects.map { BoardState(it) }
     }
 
     val scope = rememberCoroutineScope()
@@ -62,8 +62,8 @@ fun KanbanPage(
                         snackbarHostState.showSnackbar(SnackBarText.CREATE_TASK)
                     }
                 },
-                onStatusChanged = { status, idx ->
-                    boardStates[selectedProjectIndex].changeStatus(status = status, idx = idx)
+                onStatusChanged = { status, id ->
+                    boardStates[selectedProjectIndex].changeStatus(status = status, taskId = id)
                     scope.launch {
                         snackbarHostState.currentSnackbarData?.dismiss()
                         snackbarHostState.showSnackbar(SnackBarText.EDIT_TASK)
