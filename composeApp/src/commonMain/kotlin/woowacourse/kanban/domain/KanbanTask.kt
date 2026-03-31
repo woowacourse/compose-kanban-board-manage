@@ -1,18 +1,20 @@
 package woowacourse.kanban.domain
 
+import kotlin.collections.emptyList
+
 class KanbanTask(val data: BoardData, val status: TaskStatus) {
 
     constructor(
         title: Title,
         content: String,
         tags: Tags,
-        assignee: Assignee,
+        assignee: Assignee?,
         status: TaskStatus,
     ) : this(
         data = BoardData(
             title = title,
             content = content,
-            tags = tags,
+            tags = if (tags.tags.all { it.isNotBlank() }) tags else Tags(emptyList()),
             assignee = assignee,
         ),
         status = status,

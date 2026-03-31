@@ -23,7 +23,6 @@ import woowacourse.kanban.board.ui.dialog.ui.radioSelector.RadioSelector
 import woowacourse.kanban.board.ui.dialog.ui.radioSelector.StatusButton
 import woowacourse.kanban.board.ui.dialog.ui.stateholder.TaskFormState
 import woowacourse.kanban.domain.Assignee
-import woowacourse.kanban.domain.BoardData
 import woowacourse.kanban.domain.KanbanTask
 import woowacourse.kanban.domain.Tags
 import woowacourse.kanban.domain.TaskStatus
@@ -142,12 +141,10 @@ fun TaskManageDialog(
                         val isError = state.onCreateValidate()
                         if (isError.not()) {
                             val task = KanbanTask(
-                                data = BoardData(
-                                    title = Title(state.titleInputValue),
-                                    content = state.contentInputValue,
-                                    tags = Tags(state.tagInputValue.split(",")),
-                                    assignee = state.selectedAssigneeIndex?.let { assignees[it] },
-                                ),
+                                title = Title(state.titleInputValue),
+                                content = state.contentInputValue,
+                                tags = Tags(state.tagInputValue.split(",")),
+                                assignee = state.selectedAssigneeIndex?.let { assignees[it] },
                                 status = TaskStatus.entries[state.selectedStatusIndex],
                             )
                             onCreateTask(task)
