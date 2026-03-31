@@ -3,7 +3,7 @@
 package woowacourse.kanban.board.domain
 
 import org.assertj.core.api.Assertions.assertThat
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.fixture.createKanbanTask
 import woowacourse.kanban.board.fixture.createKanbanTasks
 import kotlin.test.Test

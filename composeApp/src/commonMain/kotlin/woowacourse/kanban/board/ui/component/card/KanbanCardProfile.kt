@@ -17,10 +17,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kanbanboard.composeapp.generated.resources.Res
+import kanbanboard.composeapp.generated.resources.assignee_null
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun KanbanCardProfile(
-    crewName: String,
+    assignee: String?,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -36,7 +39,7 @@ fun KanbanCardProfile(
         )
 
         Text(
-            text = crewName,
+            text = assignee ?: stringResource(Res.string.assignee_null),
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             maxLines = 1,
@@ -45,8 +48,8 @@ fun KanbanCardProfile(
     }
 }
 
-@Preview
+@Preview(showBackground = true,)
 @Composable
 private fun KanbanCardProfilePreview() {
-    KanbanCardProfile(crewName = "바드")
+    KanbanCardProfile(assignee = null)
 }

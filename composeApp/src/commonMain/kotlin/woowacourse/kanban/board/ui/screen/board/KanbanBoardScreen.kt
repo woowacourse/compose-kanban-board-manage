@@ -30,7 +30,7 @@ import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
 import woowacourse.kanban.board.ui.component.board.sidebar.SideBar

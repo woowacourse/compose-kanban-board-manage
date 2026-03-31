@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.ui.component.card.KanbanCard
 
 @Composable

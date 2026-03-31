@@ -5,7 +5,7 @@ package woowacourse.kanban.board.ui.screen.board
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.fixture.createKanbanTask
 import kotlin.test.Test
 

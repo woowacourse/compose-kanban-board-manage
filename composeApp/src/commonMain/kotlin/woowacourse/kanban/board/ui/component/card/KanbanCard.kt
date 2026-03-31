@@ -32,12 +32,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 
 @Composable
 fun KanbanCard(
     title: String,
-    crewName: String,
+    crewName: String?,
     modifier: Modifier = Modifier,
     tags: List<String> = emptyList(),
     description: String? = null,
@@ -96,7 +96,7 @@ fun KanbanCard(
 
         HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
 
-        KanbanCardProfile(crewName = crewName)
+        KanbanCardProfile(assignee = crewName)
     }
 }
 

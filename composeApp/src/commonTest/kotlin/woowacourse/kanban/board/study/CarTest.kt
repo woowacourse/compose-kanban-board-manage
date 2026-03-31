@@ -1,3 +1,5 @@
+@file:Suppress("NonAsciiCharacters")
+
 package woowacourse.kanban.board.study
 
 import org.assertj.core.api.Assertions.assertThat
@@ -28,6 +30,6 @@ data class Car(val name: String, val position: Int) {
     }
 }
 // SAM
-fun interface MoveStrategy {
-    fun isMovable(): Boolean
-}
+// fun interface MoveStrategy {
+//     fun isMovable(): Boolean
+// }

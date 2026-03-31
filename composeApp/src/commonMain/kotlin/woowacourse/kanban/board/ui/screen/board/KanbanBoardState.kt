@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 
 class KanbanBoardState(
     val kanbanBoard: KanbanBoard,

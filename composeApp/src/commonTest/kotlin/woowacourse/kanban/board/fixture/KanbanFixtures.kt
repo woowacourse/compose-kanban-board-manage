@@ -1,7 +1,7 @@
 package woowacourse.kanban.board.fixture
 
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 
 fun createKanbanTask(
     id: Long = 0L,

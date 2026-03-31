@@ -1,6 +1,6 @@
 package woowacourse.kanban.board.domain
 
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.fetchAndIncrement
@@ -11,7 +11,7 @@ data class KanbanTask(
     val id: Long = generateId(),
     val title: String,
     val status: Status,
-    val assignee: String,
+    val assignee: String?,
     val description: String? = null,
     val tags: List<String> = emptyList(),
 ) {

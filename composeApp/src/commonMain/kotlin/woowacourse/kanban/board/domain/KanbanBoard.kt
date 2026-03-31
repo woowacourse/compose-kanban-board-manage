@@ -1,6 +1,6 @@
 package woowacourse.kanban.board.domain
 
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 
 class KanbanBoard(tasks: List<KanbanTask> = emptyList()) {
     private val tasks = tasks.toMutableList()

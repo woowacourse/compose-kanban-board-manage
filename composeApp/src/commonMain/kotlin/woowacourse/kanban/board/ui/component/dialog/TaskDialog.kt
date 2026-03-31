@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.ui.component.dialog.component.AssigneeOptionCard
 import woowacourse.kanban.board.ui.component.dialog.component.StatusOptionCard
 import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogCancelButton
