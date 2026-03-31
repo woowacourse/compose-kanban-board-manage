@@ -35,8 +35,12 @@ class BoardState(initProject: KanbanProject) {
     fun changeStatus(
         taskId: Long,
         status: TaskStatus,
-    ) {
-        project = project.changeStatus(taskId, status)
+    ): Boolean {
+        if (project.judgeTaskStatusChangeable(taskId, status)) {
+            project = project.changeStatus(taskId, status)
+            return true
+        }
+        return false
     }
 
     fun getTasksByStatus(status: TaskStatus): List<KanbanTask> {
