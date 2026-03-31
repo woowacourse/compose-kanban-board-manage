@@ -139,7 +139,7 @@ fun TaskManageDialog(
                                     title = Title(state.titleInputValue),
                                     content = state.contentInputValue,
                                     tags = Tags(state.tagInputValue.split(",")),
-                                    nickname = filteredAssignees[state.selectedAssigneeIndex].nickname,
+                                    assignee = filteredAssignees[state.selectedAssigneeIndex],
                                 ),
                                 status = TaskStatus.entries[state.selectedStatusIndex],
                             )

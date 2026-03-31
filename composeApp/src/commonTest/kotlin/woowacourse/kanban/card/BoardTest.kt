@@ -9,6 +9,7 @@ import woowacourse.kanban.card.constant.DEFAULT_CONTENT
 import woowacourse.kanban.card.constant.DEFAULT_NAME
 import woowacourse.kanban.card.constant.DEFAULT_TITLE
 import woowacourse.kanban.card.ui.KanbanCard
+import woowacourse.kanban.domain.Assignee
 import woowacourse.kanban.domain.BoardData
 import woowacourse.kanban.domain.Nickname
 import woowacourse.kanban.domain.Tags
@@ -26,7 +27,7 @@ class BoardTest {
         title = Title(title),
         content = content,
         tags = Tags(tags),
-        nickname = Nickname(nickname),
+        assignee = Assignee(Nickname(nickname)),
     )
 
     @Composable

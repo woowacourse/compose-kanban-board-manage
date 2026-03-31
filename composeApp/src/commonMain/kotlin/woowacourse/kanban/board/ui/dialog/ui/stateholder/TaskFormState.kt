@@ -70,6 +70,6 @@ class TaskFormState {
         contentInputValue = task.data.content
         tagInputValue = task.data.tags.tags.joinToString()
         selectedStatusIndex = task.status.ordinal
-        selectedAssigneeIndex = assignees.indexOfFirst { it.nickname == task.data.nickname }
+        selectedAssigneeIndex = assignees.indexOfFirst { it.nickname == task.data.assignee?.nickname }
     }
 }

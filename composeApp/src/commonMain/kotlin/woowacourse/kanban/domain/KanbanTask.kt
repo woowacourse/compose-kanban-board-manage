@@ -6,14 +6,14 @@ class KanbanTask(val data: BoardData, val status: TaskStatus) {
         title: Title,
         content: String,
         tags: Tags,
-        nickname: Nickname,
+        assignee: Assignee,
         status: TaskStatus,
     ) : this(
         data = BoardData(
             title = title,
             content = content,
             tags = tags,
-            nickname = nickname,
+            assignee = assignee,
         ),
         status = status,
     )

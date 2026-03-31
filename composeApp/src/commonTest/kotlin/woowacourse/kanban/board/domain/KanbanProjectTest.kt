@@ -4,6 +4,7 @@ import kotlin.test.assertEquals
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import woowacourse.kanban.board.ui.stateholder.BoardState
+import woowacourse.kanban.domain.Assignee
 import woowacourse.kanban.domain.BoardData
 import woowacourse.kanban.domain.KanbanTask
 import woowacourse.kanban.domain.Nickname
@@ -22,7 +23,7 @@ class KanbanProjectTest {
                     title = Title("제목"),
                     content = "내용",
                     tags = Tags(),
-                    nickname = Nickname("아오"),
+                    assignee = Assignee(Nickname("아오")),
                 ),
                 status = TaskStatus.DONE,
             ),
@@ -38,7 +39,7 @@ class KanbanProjectTest {
                 title = Title("제목"),
                 content = "내용",
                 tags = Tags(),
-                nickname = Nickname("아오"),
+                assignee = Assignee(Nickname("아오")),
                 id = 0,
             ),
             status = TaskStatus.IN_PROGRESS,
@@ -61,7 +62,7 @@ class KanbanProjectTest {
                     title = Title("제목"),
                     content = "내용",
                     tags = Tags(),
-                    nickname = Nickname("아오"),
+                    assignee = Assignee(Nickname("아오")),
                     id = 0,
                 ),
                 status = TaskStatus.DONE,
@@ -71,7 +72,7 @@ class KanbanProjectTest {
                     title = Title("제목"),
                     content = "내용",
                     tags = Tags(),
-                    nickname = Nickname("아오"),
+                    assignee = Assignee(Nickname("아오")),
                     id = 1,
                 ),
                 status = TaskStatus.REVIEW,
@@ -98,7 +99,7 @@ class KanbanProjectTest {
                     title = Title("제목"),
                     content = "내용",
                     tags = Tags(),
-                    nickname = Nickname("아오"),
+                    assignee = Assignee(Nickname("아오")),
                     id = 0,
                 ),
                 status = TaskStatus.TO_DO,
@@ -125,7 +126,7 @@ class KanbanProjectTest {
                     title = Title("제목"),
                     content = "내용",
                     tags = Tags(),
-                    nickname = Nickname("아오"),
+                    assignee = Assignee(Nickname("아오")),
                     id = 0,
                 ),
                 status = TaskStatus.IN_PROGRESS,
@@ -150,7 +151,7 @@ class KanbanProjectTest {
                     title = Title("제목"),
                     content = "내용",
                     tags = Tags(),
-                    nickname = Nickname("아오"),
+                    assignee = Assignee(Nickname("아오")),
                     id = 0,
                 ),
                 status = TaskStatus.REVIEW,
@@ -175,7 +176,7 @@ class KanbanProjectTest {
                     title = Title("제목"),
                     content = "내용",
                     tags = Tags(),
-                    nickname = Nickname("아오"),
+                    assignee = Assignee(Nickname("아오")),
                     id = 0,
                 ),
                 status = TaskStatus.DONE,
