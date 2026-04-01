@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,13 +21,15 @@ import woowacourse.kanban.Colors
 @Composable
 fun FooterRow(
     onCancel: () -> Unit,
-    onCreate: () -> Unit,
     isCreateError: Boolean,
     modifier: Modifier = Modifier,
+    onCreate: (() -> Unit)? = null,
+    onUpdate: (() -> Unit)? = null,
+    onDelete: (() -> Unit)? = null,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End,
+        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End),
     ) {
         FooterButton(
             modifier = Modifier,
@@ -37,15 +38,32 @@ fun FooterRow(
             textColor = Colors.PrimaryText,
             onClick = onCancel,
         )
-        Spacer(modifier = Modifier.width(12.dp))
-        FooterButton(
-            modifier = Modifier,
-            text = "생성",
-            textColor = Color.White,
-            backgroundColor = if (isCreateError) Colors.ActionPrimaryDisabled else Colors.ActionPrimary,
-            onClick = onCreate,
-            enabled = !isCreateError,
-        )
+        if (onDelete != null)
+            FooterButton(
+                modifier = Modifier,
+                text = "삭제",
+                textColor = Color.White,
+                backgroundColor = Colors.DialogDeleteButtonBg,
+                onClick = onDelete,
+            )
+        if (onUpdate != null)
+            FooterButton(
+                modifier = Modifier,
+                text = "수정",
+                textColor = Color.White,
+                backgroundColor = if (isCreateError) Colors.ActionPrimaryDisabled else Colors.ActionPrimary,
+                onClick = onUpdate,
+                enabled = !isCreateError,
+            )
+        if (onCreate != null)
+            FooterButton(
+                modifier = Modifier,
+                text = "생성",
+                textColor = Color.White,
+                backgroundColor = if (isCreateError) Colors.ActionPrimaryDisabled else Colors.ActionPrimary,
+                onClick = onCreate,
+                enabled = !isCreateError,
+            )
     }
 }
 

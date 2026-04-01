@@ -32,6 +32,7 @@ import woowacourse.kanban.domain.Title
 fun TaskManageDialog(
     onDismiss: () -> Unit,
     onCreateTask: (task: KanbanTask) -> Unit,
+    onUpdateTask: (task: KanbanTask) -> Unit,
     modifier: Modifier,
     assignees: List<Assignee> = emptyList(),
     currentTask: KanbanTask? = null,
@@ -62,6 +63,8 @@ fun TaskManageDialog(
                 ),
         ) {
             DialogBar(
+                label = if (state.isUpdate) "기존 태스크 수정"
+                else "새 태스크 생성",
                 modifier = Modifier.padding(
                     vertical = 28.dp,
                     horizontal = 24.dp,
@@ -137,7 +140,23 @@ fun TaskManageDialog(
                 HorizontalDivider()
                 FooterRow(
                     onCancel = { onDismiss() },
-                    onCreate = {
+                    onCreate = if (state.isUpdate.not()) {
+                        {
+                            val isError = state.onCreateValidate()
+                            if (isError.not()) {
+                                val task = KanbanTask(
+                                    title = Title(state.titleInputValue),
+                                    content = state.contentInputValue,
+                                    tags = Tags(state.tagInputValue.split(",")),
+                                    assignee = state.selectedAssigneeIndex?.let { assignees[it] },
+                                    status = TaskStatus.entries[state.selectedStatusIndex],
+                                )
+                                onCreateTask(task)
+                                onDismiss()
+                            }
+                        }
+                    } else null,
+                    onUpdate = {
                         val isError = state.onCreateValidate()
                         if (isError.not()) {
                             val task = KanbanTask(
@@ -146,8 +165,10 @@ fun TaskManageDialog(
                                 tags = Tags(state.tagInputValue.split(",")),
                                 assignee = state.selectedAssigneeIndex?.let { assignees[it] },
                                 status = TaskStatus.entries[state.selectedStatusIndex],
+                                id = currentTask?.data?.id,
                             )
-                            onCreateTask(task)
+
+                            onUpdateTask(task)
                             onDismiss()
                         }
                     },
