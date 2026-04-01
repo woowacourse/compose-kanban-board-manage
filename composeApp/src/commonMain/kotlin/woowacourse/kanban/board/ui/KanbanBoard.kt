@@ -45,7 +45,7 @@ fun KanbanBoard(
     Column(modifier = modifier) {
         KanbanBoardHeader(
             progress = boardState.progress,
-            doneTaskCount = boardState.doneCardList.size,
+            doneTaskCount = boardState.getTasksByStatus(TaskStatus.DONE).size,
             totalTaskCount = boardState.totalTaskCount,
             onClick = { boardState.toggleDialog(true) },
             headerTitle = projectTitle,

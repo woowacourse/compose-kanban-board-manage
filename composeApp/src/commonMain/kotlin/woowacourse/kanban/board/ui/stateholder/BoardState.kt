@@ -16,14 +16,8 @@ class BoardState(initProject: KanbanProject) {
 
     val totalTaskCount by derivedStateOf { totalTasks.size }
 
-    val todoCardList: List<KanbanTask> by derivedStateOf { project.getTasksByStatus(TaskStatus.TO_DO) }
-
-    val inProgressCardList: List<KanbanTask> by derivedStateOf { project.getTasksByStatus(TaskStatus.IN_PROGRESS) }
-
-    val doneCardList: List<KanbanTask> by derivedStateOf { project.getTasksByStatus(TaskStatus.DONE) }
-
     val progress by derivedStateOf {
-        if (totalTasks.isEmpty()) 0.0 else doneCardList.size.toDouble() / totalTasks.size.toDouble()
+        if (totalTasks.isEmpty()) 0.0 else project.getTasksByStatus(TaskStatus.DONE).size.toDouble() / totalTasks.size.toDouble()
     }
 
     var currentTask by mutableStateOf<KanbanTask?>(null)
@@ -49,7 +43,9 @@ class BoardState(initProject: KanbanProject) {
         taskId: Long,
         status: TaskStatus,
     ): Boolean {
-        if (project.judgeTaskStatusChangeable(taskId, status)) {
+        val targetIndex = project.getTasks().indexOfFirst { it.data.id == taskId }
+        val targetTask = project.getTasks()[targetIndex]
+        if (targetTask.isChangeable(status)) {
             project = project.changeStatus(taskId, status)
             return true
         }
@@ -61,7 +57,9 @@ class BoardState(initProject: KanbanProject) {
     }
 
     fun deleteTask(taskId: Long): Boolean {
-        if (project.judgeTaskRemovable(taskId)) {
+        val targetIndex = project.getTasks().indexOfFirst { it.data.id == taskId }
+        val targetTask = project.getTasks()[targetIndex]
+        if (targetTask.isRemovable) {
             project = project.deleteTask(taskId)
             return true
         }
