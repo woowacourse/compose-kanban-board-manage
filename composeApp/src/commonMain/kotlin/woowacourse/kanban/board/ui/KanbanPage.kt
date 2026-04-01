@@ -17,10 +17,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import woowacourse.kanban.board.domain.KanbanProject
+import woowacourse.kanban.board.domain.TaskReturnType
 import woowacourse.kanban.board.ui.constant.SnackBarText
 import woowacourse.kanban.board.ui.stateholder.BoardState
 import woowacourse.kanban.domain.Assignee
-import woowacourse.kanban.domain.TaskStatus
 
 @Composable
 fun KanbanPage(
@@ -36,10 +36,20 @@ fun KanbanPage(
     }
 
     val scope = rememberCoroutineScope()
-    val showSnackBar: (String) -> Unit = { snackBarText ->
+    val showSnackBar: (TaskReturnType) -> Unit = { type ->
+        val display =
+            when (type) {
+                TaskReturnType.CREATE_SUCCESS -> SnackBarText.CREATE_TASK
+                TaskReturnType.TASK_STATUS_SUCCESS -> SnackBarText.STATUS_EDIT
+                TaskReturnType.UPDATE_SUCCESS -> SnackBarText.UPDATE_TASK
+                TaskReturnType.DELETE_SUCCESS -> SnackBarText.DELETE_TASK
+                TaskReturnType.NOT_UPDATABLE -> SnackBarText.ILLEGAL_STATUS_EDIT
+                TaskReturnType.NOT_DELETABLE -> SnackBarText.ILLEGAL_DELETE
+                TaskReturnType.NOT_ASSIGNED -> SnackBarText.ILLEGAL_STATUS_EDIT_ASSIGNEE
+            }
         scope.launch {
             snackbarHostState.currentSnackbarData?.dismiss()
-            snackbarHostState.showSnackbar(snackBarText)
+            snackbarHostState.showSnackbar(display)
         }
     }
 
@@ -64,39 +74,19 @@ fun KanbanPage(
                 projectTitle = projects[selectedProjectIndex].title,
                 onTaskCreated = { task ->
                     boardStates[selectedProjectIndex].addTask(task)
-                    showSnackBar(SnackBarText.CREATE_TASK)
+                    showSnackBar(TaskReturnType.CREATE_SUCCESS)
                 },
                 onTaskUpdated = { task ->
                     boardStates[selectedProjectIndex].updateTask(task)
-                    showSnackBar(SnackBarText.UPDATE_TASK)
+                    showSnackBar(TaskReturnType.UPDATE_SUCCESS)
                 },
                 onTaskDeleted = { id ->
-                    val isDeletable = boardStates[selectedProjectIndex].deleteTask(taskId = id)
-                    showSnackBar(
-                        if (isDeletable) {
-                            SnackBarText.DELETE_TASK
-                        } else {
-                            SnackBarText.ILLEGAL_DELETE
-                        },
-                    )
+                    val taskReturnType = boardStates[selectedProjectIndex].deleteTask(taskId = id)
+                    showSnackBar(taskReturnType)
                 },
                 onStatusChanged = { status, id ->
-                    if (status != TaskStatus.TO_DO) {
-                        val isAssigned = boardStates[selectedProjectIndex].isAssigned(taskId = id)
-                        if (isAssigned.not()) {
-                            showSnackBar(SnackBarText.ILLEGAL_STATUS_EDIT_ASSIGNEE)
-                            return@KanbanBoard
-                        }
-                    }
-
-                    val isStatusChanged = boardStates[selectedProjectIndex].changeStatus(status = status, taskId = id)
-                    showSnackBar(
-                        if (isStatusChanged) {
-                            SnackBarText.STATUS_EDIT
-                        } else {
-                            SnackBarText.ILLEGAL_STATUS_EDIT
-                        },
-                    )
+                    val taskReturnType = boardStates[selectedProjectIndex].changeStatus(status = status, taskId = id)
+                    showSnackBar(taskReturnType)
                 },
                 assignees = assignees,
             )
