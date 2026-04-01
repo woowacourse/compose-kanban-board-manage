@@ -34,7 +34,7 @@ import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
 import woowacourse.kanban.board.ui.component.board.sidebar.SideBar
-import woowacourse.kanban.board.ui.component.dialog.TaskDialog
+import woowacourse.kanban.board.ui.component.dialog.CreateTaskDialog
 
 @Composable
 fun KanbanBoardScreen(
@@ -185,7 +185,7 @@ private fun KanbanBoardContent(
                 )
             }
             if (isNewTaskDialog) {
-                TaskDialog(
+                CreateTaskDialog(
                     onDismissClick = onDismissClick,
                     onCreateClick = onCreateClick,
                 )

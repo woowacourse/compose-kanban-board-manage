@@ -5,10 +5,16 @@
     <string name = "status_review">Review</string>
     <string name = "status_done">Done</string>
 
+    // tag
+    <string name = "tag_default_message">5자 이내의 태그를 최대 5개까지 등록할 수 있습니다.</string>
+    <string name = "tag_count_error">태그는 5자 이내로 5개까지만 등록할 수 있습니다.</string>
+    <string name = "tag_format_error">태그 형식이 올바르지 않습니다.</string>
+
     // kanban task
+    <string name = "create_task">새 태스크 생성</string>
     <string name = "assignee_null">없음</string>
 
-    // header
+    // kanban board header
     <string name = "kanban_board_title">프로젝트</string>
     <string name = "kanban_board_subtitle">4주차 미션 보드</string>
     <string name = "completion_rate">완료율:  %1$d% (%2$d/%3$d)</string>

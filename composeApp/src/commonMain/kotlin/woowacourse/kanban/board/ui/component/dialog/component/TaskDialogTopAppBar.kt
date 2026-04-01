@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TaskDialogTopAppBar(
+fun TaskDialogTopBar(
     title: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -53,8 +53,8 @@ fun TaskDialogTopAppBar(
 
 @Preview(showBackground = true)
 @Composable
-private fun TaskDialogTopAppBarPreview() {
-    TaskDialogTopAppBar(
+private fun TaskDialogTopBarPreview() {
+    TaskDialogTopBar(
         title = "새 태스크 생성",
         onClick = { },
         modifier = Modifier.width(672.dp),
