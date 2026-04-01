@@ -42,4 +42,12 @@ class BoardState(initProject: KanbanProject) {
     fun getTasksByStatus(status: TaskStatus): List<KanbanTask> {
         return project.getTasksByStatus(status)
     }
+
+    fun deleteTask(taskId: Long): Boolean {
+        if (project.judgeTaskRemovable(taskId)) {
+            project = project.deleteTask(taskId)
+            return true
+        }
+        return false
+    }
 }

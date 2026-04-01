@@ -38,4 +38,22 @@ class KanbanProject(private val inputTasks: List<KanbanTask>, val title: String 
     fun getTasksByStatus(status: TaskStatus): List<KanbanTask> {
         return tasks.filter { it.status == status }
     }
+
+    fun deleteTask(taskId: Long): KanbanProject {
+        val targetIndex = tasks.indexOfFirst { it.data.id == taskId }
+        tasks.removeAt(targetIndex)
+
+        return copy(newInputTasks = tasks.toList())
+    }
+
+    fun judgeTaskRemovable(taskId: Long): Boolean {
+        val targetIndex = tasks.indexOfFirst { it.data.id == taskId }
+
+        return when (tasks[targetIndex].status) {
+            TaskStatus.TO_DO -> true
+            TaskStatus.IN_PROGRESS -> true
+            TaskStatus.DONE -> false
+            TaskStatus.REVIEW -> false
+        }
+    }
 }

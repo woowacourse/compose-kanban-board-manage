@@ -28,6 +28,7 @@ class DialogTest {
             TaskStatus.TO_DO -> "To Do"
             TaskStatus.IN_PROGRESS -> "In Progress"
             TaskStatus.DONE -> "Done"
+            TaskStatus.REVIEW -> "REVIEW"
         }
 
     @Test
