@@ -119,11 +119,11 @@ class KanbanProjectUiTest {
                 taskId = 0,
                 status = TaskStatus.DONE,
             )
-            scope.launch { snackBarHostState.showSnackbar(SnackBarText.EDIT_TASK) }
+            scope.launch { snackBarHostState.showSnackbar(SnackBarText.STATUS_EDIT) }
         }
 
         // then : "태스크가 이동되었습니다" 스낵바가 출력되어야 한다.
         awaitIdle()
-        onNodeWithText(SnackBarText.EDIT_TASK).assertExists()
+        onNodeWithText(SnackBarText.STATUS_EDIT).assertExists()
     }
 }

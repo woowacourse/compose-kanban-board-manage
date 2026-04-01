@@ -113,7 +113,7 @@ class BoardUiTest {
                     modifier = Modifier.padding(innerPadding),
                     onTaskCreated = { task ->
                         scope.launch {
-                            snackBarHostState.showSnackbar(SnackBarText.CREATE_TASK)
+                            snackBarHostState.showSnackbar(SnackBarText.UPDATE_TASK)
                         }
                     },
                 )
@@ -130,7 +130,7 @@ class BoardUiTest {
 
         // then : 칸반 보드 하단에 스낵바가 출력되어야 한다
         waitUntil(timeoutMillis = 5000) {
-            onAllNodesWithText(SnackBarText.CREATE_TASK)
+            onAllNodesWithText(SnackBarText.UPDATE_TASK)
                 .fetchSemanticsNodes().isNotEmpty()
         }
     }

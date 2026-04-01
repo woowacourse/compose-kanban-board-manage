@@ -66,21 +66,21 @@ fun KanbanPage(
                     boardStates[selectedProjectIndex].updateTask(task)
                     scope.launch {
                         snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar(SnackBarText.CREATE_TASK)
+                        snackbarHostState.showSnackbar(SnackBarText.UPDATE_TASK)
                     }
                 },
                 onTaskDeleted = { id ->
                     boardStates[selectedProjectIndex].deleteTask(taskId = id)
                     scope.launch {
                         snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar(SnackBarText.CREATE_TASK)
+                        snackbarHostState.showSnackbar(SnackBarText.DELETE_TASK)
                     }
                 },
                 onStatusChanged = { status, id ->
                     boardStates[selectedProjectIndex].changeStatus(status = status, taskId = id)
                     scope.launch {
                         snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar(SnackBarText.EDIT_TASK)
+                        snackbarHostState.showSnackbar(SnackBarText.STATUS_EDIT)
                     }
                 },
                 assignees = assignees,
