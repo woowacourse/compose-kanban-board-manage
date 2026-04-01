@@ -40,9 +40,9 @@ fun CoachButton(
                 if (isSelected)
                     Modifier.border(
                         width = 2.dp,
-                        color = Colors.SecondarySelectedBorder,
+                        color = Colors.AssigneeSelectedBorder,
                         shape = shape,
-                    ).background(color = Colors.SecondarySelectedBg)
+                    ).background(color = Colors.AssigneeSelectedBg)
                 else
                     Modifier.border(
                         width = 2.dp,

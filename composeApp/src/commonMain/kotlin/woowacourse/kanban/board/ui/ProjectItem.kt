@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.text.style.TextAlign
@@ -30,7 +29,7 @@ fun ProjectItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
-    val bgColor = if (isSelected) Colors.SecondarySelectedBg else Color.Transparent
+    val bgColor = if (isSelected) Colors.AssigneeSelectedBg else Color.Transparent
     val textColor = if (isSelected) Colors.ProjectSelectedText else Colors.PrimaryText
     val selectedBorder = if (isSelected) BorderStroke(1.dp, Colors.PrimaryBorder) else null
     val shadowModifier = if (isSelected) modifier.dropShadow(

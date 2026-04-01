@@ -38,23 +38,27 @@ object Colors {
     val StatusBorderSelected = Color(0xFF1447E6)
     val StatusBgSelected = Color(0xFFEFF6FF)
     val StatusTextSelected = Color(0xFF1447E6)
-    val SecondarySelectedBorder = Color(0xFF615FFF)
-    val SecondarySelectedBg = Color(0xFFEEF2FF)
+    val AssigneeSelectedBorder = Color(0xFF615FFF)
+    val AssigneeSelectedBg = Color(0xFFEEF2FF)
 
     // 칸반 보드 리스트 - 타이틀 색상
     val StatusBgToDo = Color(0xFF155DFC)
     val StatusBgInProgress = Color(0xFFE17100)
     val StatusBgDone = Color(0xFF00A63E)
 
+    val StatusBgReview = Color(0xFF8B5CF6)
+
     // 칸반 보드 리스트 - 배경 색상
     val StatusListBgToDo = Color(0xFFEFF6FF)
     val StatusListBgInProgress = Color(0xFFFFFBEB)
     val StatusListBgDone = Color(0xFFF0FDF4)
+    val StatusListBgReview = Color(0xFFEDE9FE)
 
     // 칸반 보드 리스트 - 테두리 색상
     val StatusListBorderToDo = Color(0xFFBEDBFF)
     val StatusListBorderInProgress = Color(0xFFFEE685)
     val StatusListBorderDone = Color(0xFFB9F8CF)
+    val StatusListBorderReview = Color(0xFFD2C7EA)
 
     // 프로젝트 아이템
     val ProjectSelectedText = Color(0xFF432DD7)

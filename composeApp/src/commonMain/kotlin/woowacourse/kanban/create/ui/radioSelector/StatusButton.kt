@@ -24,6 +24,7 @@ private val TaskStatus.displayName: String
         TaskStatus.TO_DO -> "To Do"
         TaskStatus.IN_PROGRESS -> "In Progress"
         TaskStatus.DONE -> "Done"
+        TaskStatus.REVIEW -> "Review"
     }
 
 @Composable

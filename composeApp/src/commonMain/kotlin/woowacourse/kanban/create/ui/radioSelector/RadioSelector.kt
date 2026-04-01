@@ -21,7 +21,7 @@ fun RadioSelector(
     Column(modifier) {
         HeaderText(title = header)
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            columns = GridCells.Fixed(4),
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {

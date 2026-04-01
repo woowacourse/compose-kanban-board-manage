@@ -42,6 +42,7 @@ private val TaskStatus.displayName: String
         TaskStatus.TO_DO -> "To Do"
         TaskStatus.IN_PROGRESS -> "In Progress"
         TaskStatus.DONE -> "Done"
+        TaskStatus.REVIEW -> "Review"
     }
 
 private val TaskStatus.titleColor: Color
@@ -49,6 +50,7 @@ private val TaskStatus.titleColor: Color
         TaskStatus.TO_DO -> Colors.StatusBgToDo
         TaskStatus.IN_PROGRESS -> Colors.StatusBgInProgress
         TaskStatus.DONE -> Colors.StatusBgDone
+        TaskStatus.REVIEW -> Colors.StatusBgReview
     }
 
 private val TaskStatus.bgColor: Color
@@ -56,6 +58,7 @@ private val TaskStatus.bgColor: Color
         TaskStatus.TO_DO -> Colors.StatusListBgToDo
         TaskStatus.IN_PROGRESS -> Colors.StatusListBgInProgress
         TaskStatus.DONE -> Colors.StatusListBgDone
+        TaskStatus.REVIEW -> Colors.StatusListBgReview
     }
 
 private val TaskStatus.borderColor: Color
@@ -63,6 +66,7 @@ private val TaskStatus.borderColor: Color
         TaskStatus.TO_DO -> Colors.StatusListBorderToDo
         TaskStatus.IN_PROGRESS -> Colors.StatusListBorderInProgress
         TaskStatus.DONE -> Colors.StatusListBorderDone
+        TaskStatus.REVIEW -> Colors.StatusListBorderReview
     }
 
 @Composable
