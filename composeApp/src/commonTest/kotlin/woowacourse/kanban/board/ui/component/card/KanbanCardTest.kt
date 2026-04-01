@@ -31,7 +31,7 @@ class KanbanCardTest {
                 title = task.title,
                 description = task.description,
                 tags = task.tags,
-                assigneeName = task.assignee?.name ?: "없음",
+                assignee = task.assignee,
             )
         }
 
@@ -60,7 +60,7 @@ class KanbanCardTest {
                 title = task.title,
                 description = task.description,
                 tags = task.tags,
-                assigneeName = task.assignee?.name ?: "없음",
+                assignee = task.assignee,
             )
         }
 
@@ -87,7 +87,7 @@ class KanbanCardTest {
                 title = task.title,
                 description = task.description,
                 tags = task.tags,
-                assigneeName = task.assignee?.name ?: "없음",
+                assignee = task.assignee,
             )
         }
 
