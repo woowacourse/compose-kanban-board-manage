@@ -10,12 +10,15 @@ class KanbanTask(val data: BoardData, val status: TaskStatus) {
         tags: Tags,
         assignee: Assignee?,
         status: TaskStatus,
+        id: Long? = System.currentTimeMillis(),
     ) : this(
         data = BoardData(
             title = title,
             content = content,
             tags = if (tags.tags.all { it.isNotBlank() }) tags else Tags(emptyList()),
             assignee = assignee,
+            id = id
+                ?: System.currentTimeMillis(),
         ),
         status = status,
     )

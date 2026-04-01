@@ -70,4 +70,11 @@ class KanbanProject(private val inputTasks: List<KanbanTask>, val title: String 
             TaskStatus.DONE -> targetStatus == TaskStatus.TO_DO
         }
     }
+
+    fun updateTask(task: KanbanTask): KanbanProject {
+        val targetIndex = tasks.indexOfFirst { it.data.id == task.data.id }
+        tasks[targetIndex] = task
+
+        return copy(newInputTasks = tasks.toList())
+    }
 }

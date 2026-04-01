@@ -67,4 +67,8 @@ class BoardState(initProject: KanbanProject) {
         }
         return false
     }
+
+    fun updateTask(task: KanbanTask) {
+        project = project.updateTask(task)
+    }
 }

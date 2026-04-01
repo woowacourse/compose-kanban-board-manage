@@ -32,6 +32,7 @@ fun KanbanBoard(
     assignees: List<Assignee>,
     modifier: Modifier = Modifier,
     onTaskCreated: (KanbanTask) -> Unit = {},
+    onTaskUpdated: (KanbanTask) -> Unit = {},
     onStatusChanged: (TaskStatus, Long) -> Unit = { _, _ -> },
     selectedStatuses: List<TaskStatus> = TaskStatus.entries,
 ) {
@@ -98,6 +99,9 @@ fun KanbanBoard(
             onCreateTask = { task ->
                 onTaskCreated(task)
             },
+            onUpdateTask = { task ->
+                onTaskUpdated(task)
+            },
             assignees = assignees,
             modifier = Modifier,
             currentTask = boardState.currentTask,
@@ -112,7 +116,7 @@ fun KanbanBoardPreview() {
         BoardState(
             initProject = KanbanProject(emptyList()),
         ),
-        assignees = MockData.ASSIGNEES,
         projectTitle = "",
+        assignees = MockData.ASSIGNEES,
     )
 }

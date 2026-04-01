@@ -62,6 +62,13 @@ fun KanbanPage(
                         snackbarHostState.showSnackbar(SnackBarText.CREATE_TASK)
                     }
                 },
+                onTaskUpdated = { task ->
+                    boardStates[selectedProjectIndex].updateTask(task)
+                    scope.launch {
+                        snackbarHostState.currentSnackbarData?.dismiss()
+                        snackbarHostState.showSnackbar(SnackBarText.CREATE_TASK)
+                    }
+                },
                 onStatusChanged = { status, id ->
                     boardStates[selectedProjectIndex].changeStatus(status = status, taskId = id)
                     scope.launch {

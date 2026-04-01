@@ -29,6 +29,9 @@ class TaskFormState {
     var selectedAssigneeIndex: Int? by mutableStateOf(null)
         private set
 
+    var isUpdate: Boolean by mutableStateOf(false)
+        private set
+
     fun onTitleChange(input: String) {
         titleInputValue = input
         if (isTitleError) isTitleError = false
@@ -76,5 +79,7 @@ class TaskFormState {
         selectedStatusIndex = task.status.ordinal
         val foundIndex = assignees.indexOfFirst { it.nickname == task.data.assignee?.nickname }
         selectedAssigneeIndex = if (foundIndex == -1) null else foundIndex
+
+        isUpdate = true
     }
 }
