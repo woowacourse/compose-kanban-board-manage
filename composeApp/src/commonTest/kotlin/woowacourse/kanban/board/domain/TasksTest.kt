@@ -2,6 +2,8 @@ package woowacourse.kanban.board.domain
 
 import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class TasksTest {
 
@@ -127,10 +129,62 @@ class TasksTest {
         val updatedTask1 = task1.copy(taskState = TaskState.DONE)
 
         // when
-        val resultTasks = tasks.fixStatus(updatedTask1)
+        val resultTasks = tasks.updateTask(updatedTask1)
 
         // then
         assertThat(resultTasks.getTasksByState(TaskState.DONE)).containsExactly(updatedTask1)
         assertThat(resultTasks.getTasksByState(TaskState.TO_DO)).containsExactly(task2)
+    }
+
+    @Test
+    fun `Task를 삭제하면 해당 ID를 가진 Task가 삭제된다`() {
+        // given
+        val task1 = Task(title = "할 일 1", taskState = TaskState.TO_DO)
+        val tasks = Tasks(listOf(task1))
+
+        // when
+        val resultTasks = tasks.deleteTask(task1)
+
+        // then
+        assertThat(resultTasks.items).isEmpty()
+    }
+
+    @Test
+    fun `Task를 삭제할 때 주어진 Task가 없다면 그대로 반환한다`() {
+        // given
+        val task1 = Task(title = "할 일 1", taskState = TaskState.TO_DO)
+        val task2 = Task(title = "할 일 2", taskState = TaskState.TO_DO)
+
+        val tasks = Tasks(listOf(task2))
+        val tasks2 = Tasks()
+
+        assertThat(tasks.deleteTask(task1)).isEqualTo(tasks)
+        assertThat(tasks2.deleteTask(task1)).isEqualTo(tasks2)
+    }
+
+    @Test
+    fun `수정할 시 수정된 태스크가 포함된 Tasks를 반환한다`() {
+        // given
+        val task1 = Task(title = "할 일 1", taskState = TaskState.TO_DO)
+        val updatedTask = task1.copy(title = "수정된 할 일", taskState = TaskState.DONE)
+
+        // when
+        val tasks = Tasks(listOf(task1))
+        val resultTasks = tasks.updateTask(updatedTask)
+
+        // then
+        assertThat(resultTasks.items).containsExactly(updatedTask)
+    }
+
+    @Test
+    fun `일치 하지 않는 태스크를 수정하려 할 경우 Tasks를 그대로 반환한다`() {
+        // given
+        val task1 = Task(title = "할 일 1", taskState = TaskState.TO_DO)
+        val task2 = Task(title = "할 일 2", taskState = TaskState.TO_DO)
+
+        // when
+        val tasks = Tasks(listOf(task1))
+
+        assertEquals(tasks, tasks.deleteTask(task2))
     }
 }

@@ -8,7 +8,7 @@ data class Project(val name: String, val tasks: Tasks) {
 
     fun changeTaskState(taskIdx: Int, fixedTaskState: TaskState): Project {
         val task = tasks.items[taskIdx].copy(taskState = fixedTaskState)
-        val newTasks = tasks.fixStatus(task)
+        val newTasks = tasks.updateTask(task)
         return copy(tasks = newTasks)
     }
 }

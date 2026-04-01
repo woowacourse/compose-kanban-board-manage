@@ -176,7 +176,7 @@ class BoardTest {
                 authors = listOf("다이노", "페임스"),
                 onTaskStateChange = { idx, targetStatus ->
                     val newTask = tasks.items[idx].copy(taskState = targetStatus)
-                    tasks.fixStatus(newTask)
+                    tasks.updateTask(newTask)
                 },
             )
         }
