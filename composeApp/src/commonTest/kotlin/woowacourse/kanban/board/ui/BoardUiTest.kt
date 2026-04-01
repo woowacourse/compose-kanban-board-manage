@@ -22,6 +22,13 @@ import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.ui.constant.MockData
 import woowacourse.kanban.board.ui.constant.SnackBarText
 import woowacourse.kanban.board.ui.stateholder.BoardState
+import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.BoardData
+import woowacourse.kanban.domain.KanbanTask
+import woowacourse.kanban.domain.Nickname
+import woowacourse.kanban.domain.Tags
+import woowacourse.kanban.domain.TaskStatus
+import woowacourse.kanban.domain.Title
 
 @OptIn(ExperimentalTestApi::class)
 class BoardUiTest {
@@ -133,5 +140,44 @@ class BoardUiTest {
             onAllNodesWithText(SnackBarText.UPDATE_TASK)
                 .fetchSemanticsNodes().isNotEmpty()
         }
+    }
+
+    @Test
+    fun `To Do 상태인 태스크를 눌러서 다이얼로그를 열면 담당자에 '없음' 버튼이 존재한다`() = runComposeUiTest {
+        // given : To Do 상태의 태스크가 설정된 프로젝트와 보드가 주어진다.
+        setContent {
+            val boardState = remember {
+                BoardState(
+                    KanbanProject(
+                        mutableListOf(
+                            KanbanTask(
+                                data = BoardData(
+                                    title = Title("제목"),
+                                    content = "내용",
+                                    tags = Tags(),
+                                    assignee = Assignee(
+                                        nickname = Nickname("아오"),
+                                    ),
+                                    id = 0,
+                                ),
+                                status = TaskStatus.TO_DO,
+                            ),
+                        ),
+                    ),
+                )
+            }
+            KanbanBoard(
+                assignees = MockData.ASSIGNEES,
+                boardState = boardState,
+                projectTitle = "",
+            )
+        }
+
+        // when : 태스크를 눌렀을 때
+        onNodeWithText("아오").performClick()
+        waitForIdle()
+
+        // then : 다이얼로그의 담당자 리스트에서 "없음"이 존재해야 한다.
+        onNodeWithText("없음").assertExists()
     }
 }

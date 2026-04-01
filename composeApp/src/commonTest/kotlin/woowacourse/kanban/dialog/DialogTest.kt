@@ -105,6 +105,8 @@ class DialogTest {
             TaskManageDialog(
                 onDismiss = { showDialog.value = false },
                 onCreateTask = {},
+                onUpdateTask = {},
+                onDeleteTask = {},
                 modifier = Modifier,
             )
         }
@@ -127,6 +129,8 @@ class DialogTest {
             TaskManageDialog(
                 onDismiss = { showDialog.value = false },
                 onCreateTask = {},
+                onUpdateTask = {},
+                onDeleteTask = {},
                 modifier = Modifier,
             )
         }
@@ -147,6 +151,8 @@ class DialogTest {
             TaskManageDialog(
                 onDismiss = { showDialog.value = false },
                 onCreateTask = {},
+                onUpdateTask = {},
+                onDeleteTask = {},
                 modifier = Modifier,
             )
         }
