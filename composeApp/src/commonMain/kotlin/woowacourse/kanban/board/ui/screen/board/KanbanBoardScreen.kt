@@ -92,8 +92,12 @@ fun KanbanBoardScreen(
         },
         onEditClick = { originalTask, editedTask ->
             kanbanBoardState.editTask(originalTask, editedTask)
+            snackbarMessage = SnackbarMessage.TASK_EDITED
         },
-        onDeleteClick = { kanbanBoardState.deleteTask(it) },
+        onDeleteClick = {
+            kanbanBoardState.deleteTask(it)
+            snackbarMessage = SnackbarMessage.TASK_DELETED
+        },
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
             if (kanbanBoardState.canMoveTask(task, targetStatus)) {

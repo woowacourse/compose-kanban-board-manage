@@ -194,4 +194,50 @@ class KanbanBoardScreenTest {
         onNodeWithText("안드로이드").assertIsDisplayed()
         onNodeWithText("8기").assertIsDisplayed()
     }
+
+    @Test
+    fun `태스크를 삭제했을 때 스낵바가 정상적으로 표시된다`() = runComposeUiTest {
+        // Given: 태스크 한 개를 생성한다.
+        setContent {
+            CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
+                KanbanBoardScreen(
+                    projects = listOf(KanbanProject("안녕")),
+                )
+            }
+        }
+        onNodeWithText("새 태스크 생성").performClick()
+        onNodeWithText("태스크 제목을 입력하세요.").performTextInput("삭제할 태스크")
+        onNodeWithText("생성").performClick()
+
+        // When: 해당 태스크를 클릭한 후 삭제한다.
+        onNodeWithText("삭제할 태스크").performClick()
+        onNodeWithText("삭제").performClick()
+
+        // Then: 삭제할 태스크 라는 이름을 가진 태스크가 사라지고, 스낵바가 표시된다.
+        onNodeWithText("삭제할 태스크").assertDoesNotExist()
+        onNodeWithText(SnackbarMessage.TASK_DELETED.text).assertIsDisplayed()
+    }
+
+    @Test
+    fun `태스크를 수정했을 때 스낵바가 정상적으로 표시된다`() = runComposeUiTest {
+        // Given: 태스크 한 개를 생성한다.
+        setContent {
+            CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
+                KanbanBoardScreen(
+                    projects = listOf(KanbanProject("안녕")),
+                )
+            }
+        }
+        onNodeWithText("새 태스크 생성").performClick()
+        onNodeWithText("태스크 제목을 입력하세요.").performTextInput("수정할 태스크")
+        onNodeWithText("생성").performClick()
+
+        // When: 해당 태스크를 클릭한 후 삭제한다.
+        onNodeWithText("수정할 태스크").performClick()
+        onNodeWithText("수정").performClick()
+
+        // Then: 수정할 태스크 라는 이름을 가진 태스크가 여전히 존재하고, 스낵바가 표시된다.
+        onNodeWithText("수정할 태스크").assertExists()
+        onNodeWithText(SnackbarMessage.TASK_EDITED.text).assertIsDisplayed()
+    }
 }
