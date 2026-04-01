@@ -31,13 +31,15 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import woowacourse.kanban.board.data.AssigneePool
+import woowacourse.kanban.board.domain.Assignee
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.Status
 
 @Composable
 fun KanbanCard(
     title: String,
-    crewName: String?,
+    assignee: Assignee?,
     modifier: Modifier = Modifier,
     tags: List<String> = emptyList(),
     description: String? = null,
@@ -96,7 +98,7 @@ fun KanbanCard(
 
         HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
 
-        KanbanCardProfile(assignee = crewName)
+        KanbanCardProfile(assignee = assignee)
     }
 }
 
@@ -111,37 +113,38 @@ private fun KanbanCardTags(tags: List<String>) {
 }
 
 private class KanbanCardPreviewParameterProvider : PreviewParameterProvider<KanbanTask> {
+    val assignee = AssigneePool.getAll()[0]
     override val values = sequenceOf(
         KanbanTask(
             title = "너무너무 긴 제목은 한 줄까지만 노출합니다",
             description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
             tags = listOf("컴포넌트", "성능", "긴 태그", "최대로", "5자까지"),
             status = Status.TO_DO,
-            assignee = "아키".repeat(10),
+            assignee = assignee,
         ),
         KanbanTask(
             title = "LazyColumn 컴포넌트 구현",
             description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
             tags = listOf("컴포넌트", "성능"),
             status = Status.TO_DO,
-            assignee = "아키",
+            assignee = assignee,
         ),
         KanbanTask(
             title = "LazyColumn 컴포넌트 구현",
             description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
             status = Status.TO_DO,
-            assignee = "아키",
+            assignee = assignee,
         ),
         KanbanTask(
             title = "LazyColumn 컴포넌트 구현",
             tags = listOf("컴포넌트", "성능"),
             status = Status.TO_DO,
-            assignee = "아키",
+            assignee = assignee,
         ),
         KanbanTask(
             title = "LazyColumn 컴포넌트 구현",
             status = Status.TO_DO,
-            assignee = "아키",
+            assignee = null,
         ),
     )
 }
@@ -152,7 +155,7 @@ private fun KanbanCardPreview(@PreviewParameter(KanbanCardPreviewParameterProvid
     Box(modifier = Modifier.padding(12.dp)) {
         KanbanCard(
             title = card.title,
-            crewName = card.assignee,
+            assignee = null,
             tags = card.tags,
             description = card.description,
         )

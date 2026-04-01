@@ -20,10 +20,11 @@ import androidx.compose.ui.unit.sp
 import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.assignee_null
 import org.jetbrains.compose.resources.stringResource
+import woowacourse.kanban.board.domain.Assignee
 
 @Composable
 fun KanbanCardProfile(
-    assignee: String?,
+    assignee: Assignee?,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -31,15 +32,17 @@ fun KanbanCardProfile(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Icon(
-            imageVector = Icons.Default.AccountCircle,
-            contentDescription = "기본 이미지",
-            tint = Color(0xFF838383),
-            modifier = Modifier.size(24.dp),
-        )
+        if (assignee != null) {
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "기본 이미지",
+                tint = Color(0xFF838383),
+                modifier = Modifier.size(24.dp),
+            )
+        }
 
         Text(
-            text = assignee ?: stringResource(Res.string.assignee_null),
+            text = assignee?.name ?: stringResource(Res.string.assignee_null),
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             maxLines = 1,
@@ -48,8 +51,14 @@ fun KanbanCardProfile(
     }
 }
 
-@Preview(showBackground = true,)
+@Preview(showBackground = true, name = "작성자 있음")
 @Composable
-private fun KanbanCardProfilePreview() {
+private fun KanbanCardProfilePreview1() {
+    KanbanCardProfile(assignee = Assignee("별터"))
+}
+
+@Preview(showBackground = true, name = "작성자 없음")
+@Composable
+private fun KanbanCardProfilePreview2() {
     KanbanCardProfile(assignee = null)
 }

@@ -21,10 +21,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kanbanboard.composeapp.generated.resources.Res
+import kanbanboard.composeapp.generated.resources.assignee_null
+import org.jetbrains.compose.resources.stringResource
+import woowacourse.kanban.board.domain.Assignee
 
 @Composable
 fun AssigneeOptionCard(
-    name: String,
+    assignee: Assignee?,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -40,15 +44,17 @@ fun AssigneeOptionCard(
             modifier = Modifier
                 .padding(vertical = 20.dp, horizontal = 16.dp),
         ) {
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "기본 이미지",
-                tint = Color(0xFF838383),
-                modifier = Modifier.size(24.dp),
-            )
+            if (assignee != null) {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "기본 이미지",
+                    tint = Color(0xFF838383),
+                    modifier = Modifier.size(24.dp),
+                )
+            }
 
             Text(
-                text = name,
+                text = assignee?.name ?: stringResource(Res.string.assignee_null),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
@@ -64,7 +70,7 @@ private fun AssigneeOptionCardPreview() {
     var isSelected by remember { mutableStateOf(false) }
 
     AssigneeOptionCard(
-        name = "다이노",
+        assignee = Assignee("다이노"),
         isSelected = isSelected,
         onClick = { isSelected = !isSelected },
     )

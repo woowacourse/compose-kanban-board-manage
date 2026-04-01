@@ -17,10 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kanbanboard.composeapp.generated.resources.Res
+import kanbanboard.composeapp.generated.resources.assignee_null
+import org.jetbrains.compose.resources.stringResource
+import woowacourse.kanban.board.data.AssigneePool
+import woowacourse.kanban.board.domain.Assignee
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.ui.component.dialog.component.AssigneeOptionCard
@@ -47,42 +49,30 @@ fun TaskDialog(
     onDismissClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var titleValue by remember { mutableStateOf("") }
-    var isTitleDirty by remember { mutableStateOf(false) }
+    val state = remember { TaskDialogState() }
     val isTitleError by remember {
         derivedStateOf {
-            isTitleDirty && !KanbanTask.isTitleValid(titleValue)
+            state.isTitleDirty && !KanbanTask.isTitleValid(state.titleValue)
         }
     }
-
-    var descriptionValue by remember { mutableStateOf("") }
-
-    var tagValue by remember { mutableStateOf("") }
     val tags by remember {
         derivedStateOf {
-            tagValue.split(",").map { it.trim() }
+            state.tagValue.split(",").map { it.trim() }
         }
     }
     val isTagCountError by remember {
         derivedStateOf {
-            tagValue.isNotBlank() && !KanbanTask.isTagCountValid(tags)
+            state.tagValue.isNotBlank() && !KanbanTask.isTagCountValid(tags)
         }
     }
     val isTagFormatError by remember {
         derivedStateOf {
-            tagValue.isNotBlank() && !KanbanTask.isTagFormatValid(tags)
+            state.tagValue.isNotBlank() && !KanbanTask.isTagFormatValid(tags)
         }
     }
-
-    val statuses = Status.entries
-    var selectedStatus by remember { mutableStateOf(Status.TO_DO) }
-
-    val assignees = listOf("다이노", "페임스")
-    var selectedAssigneeIndex by remember { mutableIntStateOf(0) }
-
     val enabled by remember {
         derivedStateOf {
-            KanbanTask.isTitleValid(titleValue) && !isTagCountError && !isTagFormatError
+            KanbanTask.isTitleValid(state.titleValue) && !isTagCountError && !isTagFormatError
         }
     }
 
@@ -96,34 +86,34 @@ fun TaskDialog(
     ) {
         TaskDialogContent(
             modifier = modifier,
-            titleValue = titleValue,
+            titleValue = state.titleValue,
             isTitleError = isTitleError,
             onTitleChanged = {
-                titleValue = it
-                isTitleDirty = true
+                state.titleValue = it
+                state.isTitleDirty = true
             },
-            descriptionValue = descriptionValue,
-            onDescriptionChanged = { descriptionValue = it },
-            tagValue = tagValue,
+            descriptionValue = state.descriptionValue,
+            onDescriptionChanged = { state.descriptionValue = it },
+            tagValue = state.tagValue,
             isTagCountError = isTagCountError,
             isTagFormatError = isTagFormatError,
-            onTagChanged = { tagValue = it },
-            statuses = statuses,
-            selectedStatus = selectedStatus,
-            onStatusChanged = { selectedStatus = it },
-            assignees = assignees,
-            selectedAssigneeIndex = selectedAssigneeIndex,
-            onAssigneeChanged = { selectedAssigneeIndex = it },
+            onTagChanged = { state.tagValue = it },
+            statuses = Status.entries,
+            selectedStatus = state.selectedStatus,
+            onStatusChanged = { state.selectedStatus = it },
+            assignees = state.assignees,
+            selectedAssigneeIndex = state.selectedAssigneeIndex,
+            onAssigneeChanged = { state.selectedAssigneeIndex = it },
             enabled = enabled,
             onDismissClick = onDismissClick,
             onCreateClick = {
                 onCreateClick(
                     KanbanTask(
-                        title = titleValue,
-                        description = descriptionValue.takeIf { it.isNotBlank() },
-                        tags = if (tagValue.isEmpty()) emptyList() else tags,
-                        status = selectedStatus,
-                        assignee = assignees[selectedAssigneeIndex],
+                        title = state.titleValue,
+                        description = state.descriptionValue.takeIf { it.isNotBlank() },
+                        tags = if (state.tagValue.isEmpty()) emptyList() else tags,
+                        status = state.selectedStatus,
+                        assignee = state.assignees[state.selectedAssigneeIndex],
                     ),
                 )
             },
@@ -145,7 +135,7 @@ private fun TaskDialogContent(
     statuses: List<Status>,
     selectedStatus: Status,
     onStatusChanged: (Status) -> Unit,
-    assignees: List<String>,
+    assignees: List<Assignee?>,
     selectedAssigneeIndex: Int,
     onAssigneeChanged: (Int) -> Unit,
     enabled: Boolean,
@@ -344,7 +334,7 @@ private fun StatusSegmentedButtons(
 
 @Composable
 private fun AssigneesSegmentedButtons(
-    assignees: List<String>,
+    assignees: List<Assignee?>,
     selectedAssigneeIndex: Int,
     onAssigneeChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -358,9 +348,9 @@ private fun AssigneesSegmentedButtons(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            assignees.forEachIndexed { index, string ->
+            assignees.forEachIndexed { index, assignee ->
                 AssigneeOptionCard(
-                    name = string,
+                    assignee = assignee,
                     isSelected = selectedAssigneeIndex == index,
                     onClick = { onAssigneeChanged(index) },
                 )
@@ -406,7 +396,7 @@ private fun TaskDialogContentPreview() {
         statuses = Status.entries,
         selectedStatus = Status.TO_DO,
         onStatusChanged = {},
-        assignees = listOf("다이노", "페임스"),
+        assignees = AssigneePool.getAll(),
         selectedAssigneeIndex = 0,
         onAssigneeChanged = {},
         enabled = false,

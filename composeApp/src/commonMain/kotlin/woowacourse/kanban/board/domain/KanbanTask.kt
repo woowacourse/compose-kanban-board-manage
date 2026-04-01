@@ -11,7 +11,7 @@ data class KanbanTask(
     val id: Long = generateId(),
     val title: String,
     val status: Status,
-    val assignee: String?,
+    val assignee: Assignee?,
     val description: String? = null,
     val tags: List<String> = emptyList(),
 ) {
