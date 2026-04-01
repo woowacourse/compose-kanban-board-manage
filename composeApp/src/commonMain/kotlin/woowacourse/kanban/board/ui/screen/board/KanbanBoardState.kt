@@ -17,7 +17,7 @@ class KanbanBoardState(
         private set
     var tasks by mutableStateOf<List<KanbanTask>>(emptyList())
         private set
-    var isNewTaskDialog by mutableStateOf(false)
+    var isCreateTaskDialog by mutableStateOf(false)
         private set
 
     fun updateSelectedProjectIndex(newIndex: Int) {
@@ -41,12 +41,12 @@ class KanbanBoardState(
         updateTasks()
     }
 
-    fun showNewTaskDialog() {
-        isNewTaskDialog = true
+    fun showCreateTaskDialog() {
+        isCreateTaskDialog = true
     }
 
-    fun hideNewTaskDialog() {
-        isNewTaskDialog = false
+    fun hideCreateTaskDialog() {
+        isCreateTaskDialog = false
     }
 
     fun getProjectsTitles(): List<String> = projects.map { it.title }

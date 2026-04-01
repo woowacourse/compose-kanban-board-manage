@@ -40,8 +40,8 @@ fun TaskDialogContent(
     selectedStatus: Status,
     onStatusChanged: (Status) -> Unit,
     assignees: List<Assignee?>,
-    selectedAssigneeIndex: Int,
-    onAssigneeChanged: (Int) -> Unit,
+    assignee: Assignee?,
+    onAssigneeChanged: (Assignee?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isTagError = isTagCountError || isTagFormatError
@@ -81,7 +81,7 @@ fun TaskDialogContent(
 
         AssigneesSegmentedButtons(
             assignees = assignees,
-            selectedAssigneeIndex = selectedAssigneeIndex,
+            assignee = assignee,
             onAssigneeChanged = onAssigneeChanged,
         )
     }
@@ -200,8 +200,8 @@ private fun StatusSegmentedButtons(
 @Composable
 private fun AssigneesSegmentedButtons(
     assignees: List<Assignee?>,
-    selectedAssigneeIndex: Int,
-    onAssigneeChanged: (Int) -> Unit,
+    assignee: Assignee?,
+    onAssigneeChanged: (Assignee?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     TaskLabelLayout(
@@ -213,11 +213,11 @@ private fun AssigneesSegmentedButtons(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            assignees.forEachIndexed { index, assignee ->
+            assignees.forEach {
                 AssigneeOptionCard(
-                    assignee = assignee,
-                    isSelected = selectedAssigneeIndex == index,
-                    onClick = { onAssigneeChanged(index) },
+                    assignee = it,
+                    isSelected = it == assignee,
+                    onClick = { onAssigneeChanged(it) },
                 )
             }
         }
@@ -262,7 +262,7 @@ private fun TaskDialogContentPreview() {
         selectedStatus = Status.TO_DO,
         onStatusChanged = {},
         assignees = AssigneePool.getAll(),
-        selectedAssigneeIndex = 0,
+        assignee = AssigneePool.getAll()[0],
         onAssigneeChanged = {},
     )
 }

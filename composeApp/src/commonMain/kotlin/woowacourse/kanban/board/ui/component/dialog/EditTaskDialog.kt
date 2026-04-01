@@ -16,23 +16,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kanbanboard.composeapp.generated.resources.Res
-import kanbanboard.composeapp.generated.resources.create_task
+import kanbanboard.composeapp.generated.resources.edit_task
 import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogCancelButton
 import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogContent
+import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogDeleteButton
 import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogLayout
 import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogSubmitButton
 import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogTopBar
 
 @Composable
-fun CreateTaskDialog(
-    onCreateClick: (KanbanTask) -> Unit,
+fun EditTaskDialog(
+    clickedTask: KanbanTask,
+    onEditClick: (KanbanTask) -> Unit,
+    onDeleteClick: () -> Unit,
     onDismissClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val state = remember { TaskDialogState() }
+    val state = remember {
+        TaskDialogState(
+            initialTitle = clickedTask.title,
+            initialDescription = clickedTask.description ?: "",
+            initialTag = clickedTask.tags.joinToString(","),
+            initialStatus = clickedTask.status,
+            initialAssignee = clickedTask.assignee,
+        )
+    }
     val isTitleError by remember {
         derivedStateOf {
             state.isTitleDirty && !KanbanTask.isTitleValid(state.titleValue)
@@ -70,7 +81,7 @@ fun CreateTaskDialog(
         TaskDialogLayout(
             topBar = {
                 TaskDialogTopBar(
-                    title = stringResource(Res.string.create_task),
+                    title = stringResource(Res.string.edit_task),
                     onClick = onDismissClick,
                     modifier = Modifier.padding(bottom = 4.dp),
                 )
@@ -86,10 +97,15 @@ fun CreateTaskDialog(
                         onClick = onDismissClick,
                     )
                     Spacer(Modifier.width(12.dp))
+                    TaskDialogDeleteButton(
+                        text = "삭제",
+                        onClick = onDeleteClick,
+                    )
+                    Spacer(Modifier.width(12.dp))
                     TaskDialogSubmitButton(
-                        text = "생성",
+                        text = "수정",
                         onClick = {
-                            onCreateClick(
+                            onEditClick(
                                 KanbanTask(
                                     title = state.titleValue,
                                     description = state.descriptionValue.takeIf { it.isNotBlank() },

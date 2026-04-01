@@ -35,6 +35,7 @@ import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
 import woowacourse.kanban.board.ui.component.board.sidebar.SideBar
 import woowacourse.kanban.board.ui.component.dialog.CreateTaskDialog
+import woowacourse.kanban.board.ui.component.dialog.EditTaskDialog
 
 @Composable
 fun KanbanBoardScreen(
@@ -75,19 +76,25 @@ fun KanbanBoardScreen(
         totalCount = totalCount,
         progress = progress,
         progressPercent = progressPercent,
-        isNewTaskDialog = kanbanBoardState.isNewTaskDialog,
+        isCreateTaskDialog = kanbanBoardState.isCreateTaskDialog,
+        snackbarHost = snackBarHostState,
         modifier = modifier,
         onNewTaskClick = {
-            kanbanBoardState.showNewTaskDialog()
+            kanbanBoardState.showCreateTaskDialog()
         },
         onDismissClick = {
-            kanbanBoardState.hideNewTaskDialog()
+            kanbanBoardState.hideCreateTaskDialog()
         },
-        snackHost = snackBarHostState,
         onCreateClick = {
             kanbanBoardState.addTask(it)
-            kanbanBoardState.hideNewTaskDialog()
+            kanbanBoardState.hideCreateTaskDialog()
             snackbarMessage = SnackbarMessage.TASK_CREATED
+        },
+        onEditClick = { taskIdToDelete, editedTask ->
+            /*TODO 태스크 수정*/
+        },
+        onDeleteClick = {
+            /*TODO 태스크 id 일치하는 것 삭제*/
         },
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
@@ -106,23 +113,25 @@ private fun KanbanBoardContent(
     totalCount: Int,
     progress: Float,
     progressPercent: Int,
-    isNewTaskDialog: Boolean,
-    snackHost: SnackbarHostState,
+    isCreateTaskDialog: Boolean,
+    snackbarHost: SnackbarHostState,
     modifier: Modifier = Modifier,
     onNewTaskClick: () -> Unit,
     onDismissClick: () -> Unit,
     onCreateClick: (KanbanTask) -> Unit,
+    onEditClick: (Long, KanbanTask) -> Unit,
+    onDeleteClick: (Long) -> Unit,
     onMoveTask: (KanbanTask, Status) -> Unit,
     updateSelectedProjectIndex: (Int) -> Unit,
 ) {
-    // drag
     var draggedTask by remember { mutableStateOf<KanbanTask?>(null) }
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
     val columnBounds = remember { mutableStateMapOf<Status, Rect>() }
+    var taskToEdit by remember { mutableStateOf<KanbanTask?>(null) }
 
     Scaffold(
         modifier = modifier,
-        snackbarHost = { SnackbarHost(hostState = snackHost) },
+        snackbarHost = { SnackbarHost(hostState = snackbarHost) },
         containerColor = Color.White,
     ) { innerPadding ->
         Row(
@@ -182,12 +191,23 @@ private fun KanbanBoardContent(
                         currentDragPosition = null
                         draggedTask = null
                     },
+                    onTaskClick = { task ->
+                        taskToEdit = task
+                    },
                 )
             }
-            if (isNewTaskDialog) {
+            if (isCreateTaskDialog) {
                 CreateTaskDialog(
                     onDismissClick = onDismissClick,
                     onCreateClick = onCreateClick,
+                )
+            }
+            taskToEdit?.let { task ->
+                EditTaskDialog(
+                    clickedTask = task,
+                    onEditClick = { onEditClick(task.id, it) },
+                    onDeleteClick = { onDeleteClick(task.id) },
+                    onDismissClick = { taskToEdit = null },
                 )
             }
         }
@@ -221,12 +241,14 @@ private fun KanbanBoardContentPreview() {
         totalCount = 6,
         progress = 0.5f,
         progressPercent = 50,
-        isNewTaskDialog = false,
+        isCreateTaskDialog = false,
+        snackbarHost = remember { SnackbarHostState() },
         modifier = Modifier.fillMaxSize(),
         onNewTaskClick = { },
         onCreateClick = { },
-        snackHost = remember { SnackbarHostState() },
         onDismissClick = { },
+        onEditClick = { _, _ -> },
+        onDeleteClick = { },
         updateSelectedProjectIndex = { },
         onMoveTask = { _, _ -> },
     )

@@ -27,6 +27,7 @@ fun CardGroup(
     onTaskDragChange: (Offset) -> Unit = { },
     onTaskDragEnd: () -> Unit = { },
     onTaskDragCancel: () -> Unit = { },
+    onTaskClick: (KanbanTask) -> Unit = { },
 ) {
     Row(
         modifier = modifier,
@@ -38,7 +39,7 @@ fun CardGroup(
                 bodyColor = status.toBodyColor(),
                 borderColor = status.toBorderColor(),
                 mainColor = status.toMainColor(),
-                cards = cards.filter { card -> card.status == status },
+                tasks = cards.filter { card -> card.status == status },
                 modifier = Modifier.width(320.dp),
                 getIsDropTarget = { getIsDropTarget(status) },
                 onBoundsChanged = { onBoundsChanged(it, status) },
@@ -46,6 +47,7 @@ fun CardGroup(
                 onTaskDragChange = onTaskDragChange,
                 onTaskDragEnd = onTaskDragEnd,
                 onTaskDragCancel = onTaskDragCancel,
+                onTaskClick = onTaskClick,
             )
         }
     }

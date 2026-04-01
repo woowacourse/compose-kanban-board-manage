@@ -12,6 +12,7 @@
 
     // kanban task
     <string name = "create_task">새 태스크 생성</string>
+    <string name = "edit_task">기존 태스크 수정</string>
     <string name = "assignee_null">없음</string>
 
     // kanban board header

@@ -31,9 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kanbanboard.composeapp.generated.resources.Res
-import kanbanboard.composeapp.generated.resources.assignee_null
-import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.data.AssigneePool
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.Status
@@ -45,7 +42,7 @@ fun CardHolder(
     mainColor: Color,
     bodyColor: Color,
     borderColor: Color,
-    cards: List<KanbanTask>,
+    tasks: List<KanbanTask>,
     modifier: Modifier = Modifier,
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = { },
@@ -53,6 +50,7 @@ fun CardHolder(
     onTaskDragChange: (Offset) -> Unit = { },
     onTaskDragEnd: () -> Unit = { },
     onTaskDragCancel: () -> Unit = { },
+    onTaskClick: (KanbanTask) -> Unit = { },
 ) {
     val isDropTarget by remember {
         derivedStateOf {
@@ -81,7 +79,7 @@ fun CardHolder(
         CardHolderTitle(
             text = title,
             color = mainColor,
-            cardCount = cards.size,
+            cardCount = tasks.size,
         )
 
         LazyColumn(
@@ -95,15 +93,16 @@ fun CardHolder(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(
-                items = cards,
+                items = tasks,
                 key = { it.id },
-            ) { card ->
+            ) { task ->
                 KanbanCard(
-                    title = card.title,
-                    assignee = card.assignee,
-                    tags = card.tags,
-                    description = card.description,
-                    onDragStart = { onTaskDragStart(card) },
+                    title = task.title,
+                    assignee = task.assignee,
+                    tags = task.tags,
+                    description = task.description,
+                    onClick = { onTaskClick(task) },
+                    onDragStart = { onTaskDragStart(task) },
                     onDragChange = onTaskDragChange,
                     onDragEnd = onTaskDragEnd,
                     onDragCancel = onTaskDragCancel,
@@ -159,7 +158,7 @@ private fun CardHolderPreview() {
         mainColor = Color(0xFF155DFC),
         bodyColor = Color(0xFFEFF6FF),
         borderColor = Color(0xFFBEDBFF),
-        cards = listOf(
+        tasks = listOf(
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",

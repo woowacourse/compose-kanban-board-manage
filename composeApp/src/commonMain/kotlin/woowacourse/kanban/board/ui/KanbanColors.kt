@@ -13,4 +13,7 @@ object KanbanColors {
         val selectedText = Color(0xFF432DD7)
         val unselectedText = Color(0xFF364153)
     }
+
+    // Dialog
+    val deleteBackground = Color(0xFFDB6365)
 }

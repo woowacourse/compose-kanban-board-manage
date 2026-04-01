@@ -21,7 +21,7 @@ class CardHolderTest {
                 mainColor = Color(0xFF155DFC),
                 bodyColor = Color(0xFFEFF6FF),
                 borderColor = Color(0xFFBEDBFF),
-                cards = listOf(
+                tasks = listOf(
                     KanbanTask(
                         title = "LazyColumn 컴포넌트 구현",
                         description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",

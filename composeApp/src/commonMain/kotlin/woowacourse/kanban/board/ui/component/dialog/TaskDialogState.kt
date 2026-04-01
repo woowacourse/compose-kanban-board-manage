@@ -8,19 +8,28 @@ import woowacourse.kanban.board.data.AssigneePool
 import woowacourse.kanban.board.domain.Assignee
 import woowacourse.kanban.board.domain.Status
 
-class TaskDialogState {
+class TaskDialogState(
+    initialTitle: String = "",
+    initialDescription: String = "",
+    initialTag: String = "",
+    initialStatus: Status = Status.TO_DO,
+    initialAssignee: Assignee? = null,
+) {
     private val allAssignees: List<Assignee> = AssigneePool.getAll()
 
-    var titleValue by mutableStateOf("")
+    var titleValue by mutableStateOf(initialTitle)
     var isTitleDirty by mutableStateOf(false)
-    var descriptionValue by mutableStateOf("")
-    var tagValue by mutableStateOf("")
-    var selectedStatus by mutableStateOf(Status.TO_DO)
+    var descriptionValue by mutableStateOf(initialDescription)
+    var tagValue by mutableStateOf(initialTag)
+    var selectedStatus by mutableStateOf(initialStatus)
     val assignees: List<Assignee?>
         get() = if (selectedStatus.isRequiredAssignee) {
             allAssignees
         } else {
             listOf(null) + allAssignees
         }
-    var selectedAssigneeIndex by mutableIntStateOf(0)
+    var assignee by mutableStateOf<Assignee?>(initialAssignee)
+    var selectedAssigneeIndex by mutableIntStateOf(
+        assignees.indexOf(initialAssignee).takeIf { it >= 0 } ?: 0,
+    )
 }
