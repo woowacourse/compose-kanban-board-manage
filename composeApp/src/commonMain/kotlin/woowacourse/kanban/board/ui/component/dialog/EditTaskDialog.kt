@@ -100,7 +100,6 @@ fun EditTaskDialog(
                     TaskDialogDeleteButton(
                         text = "삭제",
                         onClick = onDeleteClick,
-                        enabled = state.selectedStatus.isDeletable,
                     )
                     Spacer(Modifier.width(12.dp))
                     TaskDialogSubmitButton(

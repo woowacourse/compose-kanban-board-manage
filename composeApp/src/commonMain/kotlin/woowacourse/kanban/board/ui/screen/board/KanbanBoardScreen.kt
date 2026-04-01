@@ -43,7 +43,7 @@ fun KanbanBoardScreen(
     projects: List<KanbanProject> = listOf(KanbanProject("Compose1")),
     kanbanBoard: KanbanBoard = KanbanBoard(),
 ) {
-    val kanbanBoardState = remember {
+    val state = remember {
         KanbanBoardState(
             kanbanBoard = kanbanBoard,
             projects = projects,
@@ -52,8 +52,8 @@ fun KanbanBoardScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     var snackbarMessage by remember { mutableStateOf<SnackbarMessage?>(null) }
 
-    val totalCount = kanbanBoardState.getTotalCount()
-    val completeCount = kanbanBoardState.getCompleteCount()
+    val totalCount = state.getTotalCount()
+    val completeCount = state.getCompleteCount()
     val progress = if (totalCount == 0) 0f else completeCount.toFloat() / totalCount.toFloat()
     val progressPercent = (progress * 100).toInt()
 
@@ -69,39 +69,47 @@ fun KanbanBoardScreen(
     }
 
     KanbanBoardContent(
-        projectTitles = kanbanBoardState.getProjectsTitles(),
-        projectSelectedIndex = kanbanBoardState.selectedProjectIndex,
-        cards = kanbanBoardState.tasks,
+        projectTitles = state.getProjectsTitles(),
+        projectSelectedIndex = state.selectedProjectIndex,
+        cards = state.tasks,
         completeCount = completeCount,
         totalCount = totalCount,
         progress = progress,
         progressPercent = progressPercent,
-        isCreateTaskDialog = kanbanBoardState.isCreateTaskDialog,
+        isCreateTaskDialog = state.isCreateTaskDialog,
         snackbarHost = snackBarHostState,
         modifier = modifier,
         onNewTaskClick = {
-            kanbanBoardState.showCreateTaskDialog()
+            state.showCreateTaskDialog()
         },
         onDismissClick = {
-            kanbanBoardState.hideCreateTaskDialog()
+            state.hideCreateTaskDialog()
         },
         onCreateClick = {
-            kanbanBoardState.addTask(it)
-            kanbanBoardState.hideCreateTaskDialog()
+            state.addTask(it)
+            state.hideCreateTaskDialog()
             snackbarMessage = SnackbarMessage.TASK_CREATED
         },
         onEditClick = { originalTask, editedTask ->
-            kanbanBoardState.editTask(originalTask, editedTask)
+            state.editTask(originalTask, editedTask)
             snackbarMessage = SnackbarMessage.TASK_EDITED
         },
         onDeleteClick = {
-            kanbanBoardState.deleteTask(it)
-            snackbarMessage = SnackbarMessage.TASK_DELETED
+            if (it.status.isDeletable) {
+                state.deleteTask(it)
+                snackbarMessage = SnackbarMessage.TASK_DELETED
+            } else {
+                snackbarMessage = SnackbarMessage.TASK_DELETE_NOT_ALLOWED
+            }
         },
-        updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
+        updateSelectedProjectIndex = { state.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
-            if (kanbanBoardState.canMoveTask(task, targetStatus)) {
-                kanbanBoardState.moveTask(task, targetStatus)
+            if (!task.validateAssigneeRequirement(targetStatus)) {
+                snackbarMessage = SnackbarMessage.TASK_ASSIGNEE_REQUIRED
+            } else if (!task.validateStatusTransition(targetStatus)) {
+                snackbarMessage = SnackbarMessage.TASK_MOVE_NOT_ALLOWED
+            } else {
+                state.moveTask(task, targetStatus)
                 snackbarMessage = SnackbarMessage.TASK_MOVED
             }
         },

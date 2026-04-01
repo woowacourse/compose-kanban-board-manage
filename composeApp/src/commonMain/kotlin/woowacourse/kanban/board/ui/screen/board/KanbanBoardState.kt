@@ -33,14 +33,6 @@ class KanbanBoardState(
         updateTasks()
     }
 
-    fun canMoveTask(
-        task: KanbanTask,
-        targetStatus: Status,
-    ): Boolean {
-        return task.canMoveTo(newStatus = targetStatus, assignee = task.assignee)
-                && task.status.canTransitionTo(targetStatus)
-    }
-
     fun moveTask(
         task: KanbanTask,
         targetStatus: Status,

@@ -19,9 +19,15 @@ data class KanbanTask(
         require(isTagFormatValid(tags)) { "태그의 길이는 1에서 5자로 설정해야됩니다." }
     }
 
-    fun canMoveTo(newStatus: Status, assignee: Assignee?) = newStatus.validateAssignee(assignee)
-
     fun changeStatus(newStatus: Status) = copy(status = newStatus)
+
+    fun validateStatusTransition(targetStatus: Status): Boolean {
+        return this.status.canTransitionTo(targetStatus)
+    }
+
+    fun validateAssigneeRequirement(targetStatus: Status): Boolean {
+        return targetStatus.validateAssignee(this.assignee)
+    }
 
     companion object {
         private val idIndex = AtomicLong(0L)
