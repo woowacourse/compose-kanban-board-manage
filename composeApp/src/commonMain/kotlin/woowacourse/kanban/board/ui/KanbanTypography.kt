@@ -25,6 +25,11 @@ object KanbanTypography {
         fontWeight = FontWeight.Normal,
     )
 
+    val label14Medium = TextStyle(
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Medium,
+    )
+
     val label16Medium = TextStyle(
         fontSize = 16.sp,
         fontWeight = FontWeight.Medium,

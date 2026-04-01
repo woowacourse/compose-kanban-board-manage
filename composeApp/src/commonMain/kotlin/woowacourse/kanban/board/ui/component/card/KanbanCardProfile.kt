@@ -24,7 +24,7 @@ import woowacourse.kanban.board.domain.Assignee
 
 @Composable
 fun KanbanCardProfile(
-    assignee: Assignee?,
+    assignee: Assignee,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -42,7 +42,7 @@ fun KanbanCardProfile(
         }
 
         Text(
-            text = assignee?.name ?: stringResource(Res.string.assignee_null),
+            text = assignee.name,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             maxLines = 1,
@@ -55,10 +55,4 @@ fun KanbanCardProfile(
 @Composable
 private fun KanbanCardProfilePreview1() {
     KanbanCardProfile(assignee = Assignee("별터"))
-}
-
-@Preview(showBackground = true, name = "작성자 없음")
-@Composable
-private fun KanbanCardProfilePreview2() {
-    KanbanCardProfile(assignee = null)
 }

@@ -5,14 +5,22 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.data.AssigneePool
+import woowacourse.kanban.board.domain.Assignee
 import woowacourse.kanban.board.domain.Status
 
 class TaskDialogState {
+    private val allAssignees: List<Assignee> = AssigneePool.getAll()
+
     var titleValue by mutableStateOf("")
     var isTitleDirty by mutableStateOf(false)
     var descriptionValue by mutableStateOf("")
     var tagValue by mutableStateOf("")
     var selectedStatus by mutableStateOf(Status.TO_DO)
-    val assignees = AssigneePool.getAll()
+    val assignees: List<Assignee?>
+        get() = if (selectedStatus.isRequiredAssignee) {
+            allAssignees
+        } else {
+            listOf(null) + allAssignees
+        }
     var selectedAssigneeIndex by mutableIntStateOf(0)
 }

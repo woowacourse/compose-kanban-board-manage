@@ -96,9 +96,10 @@ fun KanbanCard(
             KanbanCardTags(tags = tags)
         }
 
-        HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
-
-        KanbanCardProfile(assignee = assignee)
+        if (assignee != null) {
+            HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
+            KanbanCardProfile(assignee = assignee)
+        }
     }
 }
 
@@ -155,7 +156,7 @@ private fun KanbanCardPreview(@PreviewParameter(KanbanCardPreviewParameterProvid
     Box(modifier = Modifier.padding(12.dp)) {
         KanbanCard(
             title = card.title,
-            assignee = null,
+            assignee = card.assignee,
             tags = card.tags,
             description = card.description,
         )

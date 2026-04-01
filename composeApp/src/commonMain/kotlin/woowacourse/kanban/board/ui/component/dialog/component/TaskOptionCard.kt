@@ -27,6 +27,7 @@ fun TaskOptionCard(
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    width: Int = 200,
     content: @Composable BoxScope.() -> Unit,
 ) {
     val backgroundColor = if (isSelected) Color.Blue.copy(alpha = 0.1f) else Color.White
@@ -43,7 +44,7 @@ fun TaskOptionCard(
                 color = borderColor,
                 shape = cardShape,
             )
-            .width(200.dp),
+            .width(width.dp),
     ) {
         content()
     }
