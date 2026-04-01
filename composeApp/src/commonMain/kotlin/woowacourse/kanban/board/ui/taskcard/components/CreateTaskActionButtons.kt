@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.board.ui.theme.DisabledContainer
 import woowacourse.kanban.board.ui.theme.OnSurface
@@ -51,4 +52,20 @@ fun CreateTaskActionButtons(isNewTaskEnabled: Boolean, onDismissRequest: () -> U
             Text(text = "생성", textAlign = TextAlign.Center)
         }
     }
+}
+
+@Preview
+@Composable
+private fun CreateTaskActionButtonsPreview() {
+    CreateTaskActionButtons(
+        isNewTaskEnabled = true,
+        onDismissRequest = {  },
+        onCreateClick = {  },
+    )
+
+    CreateTaskActionButtons(
+        isNewTaskEnabled = false,
+        onDismissRequest = {  },
+        onCreateClick = {  },
+    )
 }

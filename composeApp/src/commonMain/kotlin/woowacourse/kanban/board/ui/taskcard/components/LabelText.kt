@@ -4,6 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.ui.theme.TextSecondary
 
@@ -15,5 +16,13 @@ fun LabelText(label: String, modifier: Modifier = Modifier) {
         fontWeight = FontWeight.W500,
         fontSize = 14.sp,
         color = TextSecondary,
+    )
+}
+
+@Preview
+@Composable
+private fun LabelTextPreview() {
+    LabelText(
+        label = "Samuel"
     )
 }

@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.board.domain.TaskState
 import woowacourse.kanban.board.ui.board.components.toText
@@ -141,4 +142,23 @@ private fun CustomButton(
     ) {
         content()
     }
+}
+
+@Preview
+@Composable
+private fun TaskStateSelectFieldPreview() {
+    TaskStateSelectField(
+        selectedState = TaskState.TO_DO,
+        onStateChanged = { },
+    )
+}
+
+@Preview
+@Composable
+private fun AuthorSelectFieldPreview() {
+    AuthorSelectField(
+        authors = listOf("다이노", "검프", "시"),
+        selectedAuthor = "다이노",
+        onAuthorSelected = { },
+    )
 }
