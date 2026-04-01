@@ -44,6 +44,9 @@ import woowacourse.kanban.board.ui.theme.DoneTitle
 import woowacourse.kanban.board.ui.theme.InProgressBorder
 import woowacourse.kanban.board.ui.theme.InProgressContent
 import woowacourse.kanban.board.ui.theme.InProgressTitle
+import woowacourse.kanban.board.ui.theme.ReviewBorder
+import woowacourse.kanban.board.ui.theme.ReviewContent
+import woowacourse.kanban.board.ui.theme.ReviewTitle
 import woowacourse.kanban.board.ui.theme.ToDoBorder
 import woowacourse.kanban.board.ui.theme.ToDoContent
 import woowacourse.kanban.board.ui.theme.ToDoTitle
@@ -181,23 +184,27 @@ private fun StateTasksTitle(titleColor: Color, taskState: TaskState, tasks: Task
 fun TaskState.toText(): String = when (this) {
     TaskState.TO_DO -> "To Do"
     TaskState.IN_PROGRESS -> "In Progress"
+    TaskState.REVIEW -> "Review"
     TaskState.DONE -> "Done"
 }
 
 private fun TaskState.titleColor(): Color = when (this) {
     TaskState.TO_DO -> ToDoTitle
     TaskState.IN_PROGRESS -> InProgressTitle
+    TaskState.REVIEW -> ReviewTitle
     TaskState.DONE -> DoneTitle
 }
 
 private fun TaskState.contentColor(): Color = when (this) {
     TaskState.TO_DO -> ToDoContent
     TaskState.IN_PROGRESS -> InProgressContent
+    TaskState.REVIEW -> ReviewContent
     TaskState.DONE -> DoneContent
 }
 
 private fun TaskState.borderColor(): Color = when (this) {
     TaskState.TO_DO -> ToDoBorder
     TaskState.IN_PROGRESS -> InProgressBorder
+    TaskState.REVIEW -> ReviewBorder
     TaskState.DONE -> DoneBorder
 }
