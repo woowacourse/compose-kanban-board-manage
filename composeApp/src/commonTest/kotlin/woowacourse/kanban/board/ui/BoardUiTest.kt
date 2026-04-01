@@ -240,7 +240,7 @@ class BoardUiTest {
         onNodeWithText("삭제").performClick()
         waitForIdle()
 
-        // then : 다이얼로그의 담당자 리스트에서 "없음"이 존재해야 한다.
+        // then : 태스크의 숫자가 변하지 않아야 한다.
         assertEquals(2, boardState.totalTaskCount)
     }
 }
