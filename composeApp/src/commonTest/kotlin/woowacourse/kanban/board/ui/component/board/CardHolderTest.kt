@@ -7,11 +7,8 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.runComposeUiTest
-import woowacourse.kanban.board.domain.Assignee
-import kotlin.test.Test
-import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.fixture.createKanbanTasks
+import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class CardHolderTest {
