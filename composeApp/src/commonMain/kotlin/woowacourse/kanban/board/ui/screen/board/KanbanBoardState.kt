@@ -38,6 +38,7 @@ class KanbanBoardState(
         targetStatus: Status,
     ): Boolean {
         return task.canMoveTo(newStatus = targetStatus, assignee = task.assignee)
+                && task.status.canTransitionTo(targetStatus)
     }
 
     fun moveTask(

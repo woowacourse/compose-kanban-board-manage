@@ -9,4 +9,24 @@ enum class Status(val isDeletable: Boolean, val isRequiredAssignee: Boolean) {
     fun validateAssignee(assignee: Assignee?): Boolean {
         return if (isRequiredAssignee) assignee != null else true
     }
+
+    fun canTransitionTo(targetStatus: Status): Boolean {
+        return when (this) {
+            TO_DO -> {
+                targetStatus == IN_PROGRESS
+            }
+
+            IN_PROGRESS -> {
+                targetStatus == TO_DO || targetStatus == REVIEW
+            }
+
+            REVIEW -> {
+                targetStatus == IN_PROGRESS || targetStatus == DONE
+            }
+
+            DONE -> {
+                targetStatus == TO_DO
+            }
+        }
+    }
 }

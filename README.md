@@ -35,7 +35,7 @@
   - In Progress: 태스크 삭제 가능. 담당자 지정 필수
   - Review: 태스크 삭제 불가능. 담당자 지정 필수
   - Done: 태스크 삭제 불가능. 담당자 지정 필수
-- [ ] 태스크 상태 전이 규칙 적용 (허용된 상태로만 전이 가능)
+- [x] 태스크 상태 전이 규칙 적용 (허용된 상태로만 전이 가능)
   - To Do → In Progress
   - In Progress -> To Do 또는 Review
   - Review -> In Progress 또는 Done
