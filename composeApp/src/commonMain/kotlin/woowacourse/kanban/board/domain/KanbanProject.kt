@@ -46,31 +46,6 @@ class KanbanProject(private val inputTasks: List<KanbanTask>, val title: String 
         return copy(newInputTasks = tasks.toList())
     }
 
-    fun judgeTaskRemovable(taskId: Long): Boolean {
-        val targetIndex = tasks.indexOfFirst { it.data.id == taskId }
-
-        return when (tasks[targetIndex].status) {
-            TaskStatus.TO_DO -> true
-            TaskStatus.IN_PROGRESS -> true
-            TaskStatus.DONE -> false
-            TaskStatus.REVIEW -> false
-        }
-    }
-
-    fun judgeTaskStatusChangeable(
-        taskId: Long,
-        targetStatus: TaskStatus,
-    ): Boolean {
-        val targetIndex = tasks.indexOfFirst { it.data.id == taskId }
-
-        return when (tasks[targetIndex].status) {
-            TaskStatus.TO_DO -> targetStatus == TaskStatus.IN_PROGRESS
-            TaskStatus.IN_PROGRESS -> targetStatus == TaskStatus.TO_DO || targetStatus == TaskStatus.REVIEW
-            TaskStatus.REVIEW -> targetStatus == TaskStatus.IN_PROGRESS || targetStatus == TaskStatus.DONE
-            TaskStatus.DONE -> targetStatus == TaskStatus.TO_DO
-        }
-    }
-
     fun updateTask(task: KanbanTask): KanbanProject {
         val targetIndex = tasks.indexOfFirst { it.data.id == task.data.id }
         tasks[targetIndex] = task

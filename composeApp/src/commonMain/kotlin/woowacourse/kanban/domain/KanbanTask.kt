@@ -30,6 +30,15 @@ class KanbanTask(val data: BoardData, val status: TaskStatus) {
         return KanbanTask(inputData, inputStatus)
     }
 
+    fun isChangeable(targetStatus: TaskStatus): Boolean {
+        return when (status) {
+            TaskStatus.TO_DO -> targetStatus == TaskStatus.IN_PROGRESS
+            TaskStatus.IN_PROGRESS -> targetStatus == TaskStatus.TO_DO || targetStatus == TaskStatus.REVIEW
+            TaskStatus.REVIEW -> targetStatus == TaskStatus.IN_PROGRESS || targetStatus == TaskStatus.DONE
+            TaskStatus.DONE -> targetStatus == TaskStatus.TO_DO
+        }
+    }
+
     val isRemovable: Boolean
         get() = when (status) {
             TaskStatus.TO_DO -> true
