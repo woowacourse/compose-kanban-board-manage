@@ -90,16 +90,16 @@ fun KanbanBoardScreen(
             kanbanBoardState.hideCreateTaskDialog()
             snackbarMessage = SnackbarMessage.TASK_CREATED
         },
-        onEditClick = { taskIdToDelete, editedTask ->
-            /*TODO 태스크 수정*/
+        onEditClick = { originalTask, editedTask ->
+            kanbanBoardState.editTask(originalTask, editedTask)
         },
-        onDeleteClick = {
-            /*TODO 태스크 id 일치하는 것 삭제*/
-        },
+        onDeleteClick = { kanbanBoardState.deleteTask(it) },
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
-            kanbanBoardState.moveTask(task, targetStatus)
-            snackbarMessage = SnackbarMessage.TASK_MOVED
+            if (kanbanBoardState.canMoveTask(task, targetStatus)) {
+                kanbanBoardState.moveTask(task, targetStatus)
+                snackbarMessage = SnackbarMessage.TASK_MOVED
+            }
         },
     )
 }
@@ -119,8 +119,8 @@ private fun KanbanBoardContent(
     onNewTaskClick: () -> Unit,
     onDismissClick: () -> Unit,
     onCreateClick: (KanbanTask) -> Unit,
-    onEditClick: (Long, KanbanTask) -> Unit,
-    onDeleteClick: (Long) -> Unit,
+    onEditClick: (KanbanTask, KanbanTask) -> Unit,
+    onDeleteClick: (KanbanTask) -> Unit,
     onMoveTask: (KanbanTask, Status) -> Unit,
     updateSelectedProjectIndex: (Int) -> Unit,
 ) {
@@ -205,8 +205,14 @@ private fun KanbanBoardContent(
             taskToEdit?.let { task ->
                 EditTaskDialog(
                     clickedTask = task,
-                    onEditClick = { onEditClick(task.id, it) },
-                    onDeleteClick = { onDeleteClick(task.id) },
+                    onEditClick = {
+                        onEditClick(task, it)
+                        taskToEdit = null
+                    },
+                    onDeleteClick = {
+                        onDeleteClick(task)
+                        taskToEdit = null
+                    },
                     onDismissClick = { taskToEdit = null },
                 )
             }

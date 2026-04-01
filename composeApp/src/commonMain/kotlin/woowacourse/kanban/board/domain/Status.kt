@@ -1,12 +1,12 @@
 package woowacourse.kanban.board.domain
 
-enum class Status(val isRequiredAssignee: Boolean) {
-    TO_DO(false),
-    IN_PROGRESS(true),
-    REVIEW(true),
-    DONE(true);
+enum class Status(val isDeletable: Boolean, val isRequiredAssignee: Boolean) {
+    TO_DO(true, false),
+    IN_PROGRESS(true, true),
+    REVIEW(false, true),
+    DONE(false, true);
 
     fun validateAssignee(assignee: Assignee?): Boolean {
-        return !(assignee == null && isRequiredAssignee)
+        return if (isRequiredAssignee) assignee != null else true
     }
 }

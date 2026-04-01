@@ -26,11 +26,18 @@ class KanbanBoardState(
         updateTasks()
     }
 
-    fun addTask(kanbanTask: KanbanTask) {
+    fun addTask(task: KanbanTask) {
         val project = projects.getOrNull(selectedProjectIndex) ?: return
-        kanbanBoard.addTask(kanbanTask)
-        project.addTaskId(kanbanTask.id)
+        kanbanBoard.addTask(task)
+        project.addTaskId(task.id)
         updateTasks()
+    }
+
+    fun canMoveTask(
+        task: KanbanTask,
+        targetStatus: Status,
+    ): Boolean {
+        return task.canMoveTo(newStatus = targetStatus, assignee = task.assignee)
     }
 
     fun moveTask(
@@ -38,6 +45,21 @@ class KanbanBoardState(
         targetStatus: Status,
     ) {
         kanbanBoard.changeTaskStatus(task, targetStatus)
+        updateTasks()
+    }
+
+    fun deleteTask(task: KanbanTask) {
+        val project = projects.getOrNull(selectedProjectIndex) ?: return
+        kanbanBoard.deleteTask(task)
+        project.deleteTaskId(task.id)
+        updateTasks()
+    }
+
+    fun editTask(originalTask: KanbanTask, editedTask: KanbanTask) {
+        val project = projects.getOrNull(selectedProjectIndex) ?: return
+        kanbanBoard.editTask(originalTask, editedTask)
+        project.deleteTaskId(originalTask.id)
+        project.addTaskId(editedTask.id)
         updateTasks()
     }
 

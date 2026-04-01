@@ -11,4 +11,8 @@ class KanbanProject(
     fun addTaskId(taskId: Long) {
         taskIds.add(taskId)
     }
+
+    fun deleteTaskId(taskId: Long) {
+        taskIds.remove(taskId)
+    }
 }

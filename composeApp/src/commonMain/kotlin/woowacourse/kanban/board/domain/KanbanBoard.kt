@@ -13,9 +13,18 @@ class KanbanBoard(tasks: List<KanbanTask> = emptyList()) {
         task: KanbanTask,
         newStatus: Status,
     ) {
-        val newTask = task.changeStatus(newStatus = newStatus, assignee = task.assignee)
+        val newTask = task.changeStatus(newStatus = newStatus)
 
         tasks.remove(task)
         tasks.add(newTask)
+    }
+
+    fun deleteTask(task: KanbanTask) {
+        tasks.remove(task)
+    }
+
+    fun editTask(originalTask: KanbanTask, editedTask: KanbanTask) {
+        tasks.remove(originalTask)
+        tasks.add(editedTask)
     }
 }
