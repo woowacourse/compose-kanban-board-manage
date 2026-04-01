@@ -151,8 +151,8 @@ private fun TaskDialogContent(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
             .background(Color.White)
-            .padding(vertical = 28.dp, horizontal = 24.dp)
-            .width(672.dp),
+            .width(672.dp)
+            .padding(vertical = 28.dp, horizontal = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         TaskDialogTopAppBar(
@@ -316,6 +316,7 @@ private fun StatusSegmentedButtons(
         modifier = modifier,
     ) {
         Row(
+            modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             statuses.forEach {

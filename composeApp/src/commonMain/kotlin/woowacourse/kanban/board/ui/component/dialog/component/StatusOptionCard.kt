@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.domain.Status
+import woowacourse.kanban.board.ui.KanbanTypography
 import woowacourse.kanban.board.ui.toTitle
 
 @Composable
@@ -31,14 +32,15 @@ fun StatusOptionCard(
         isSelected = isSelected,
         onClick = onClick,
         modifier = modifier,
+        width = 147,
     ) {
         Text(
             text = text,
-            color = if (isSelected) Color.Blue else Black,
-            fontSize = 16.sp,
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(vertical = 14.dp, horizontal = 16.dp),
+                .padding(vertical = 14.dp),
+            color = if (isSelected) Color.Blue else Black,
+            style = KanbanTypography.label16Medium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

@@ -1,7 +1,5 @@
 package woowacourse.kanban.board.domain
 
-import woowacourse.kanban.board.domain.Status
-
 class KanbanBoard(tasks: List<KanbanTask> = emptyList()) {
     private val tasks = tasks.toMutableList()
 
@@ -15,7 +13,7 @@ class KanbanBoard(tasks: List<KanbanTask> = emptyList()) {
         task: KanbanTask,
         newStatus: Status,
     ) {
-        val newTask = task.changeStatus(newStatus = newStatus)
+        val newTask = task.changeStatus(newStatus = newStatus, assignee = task.assignee)
 
         tasks.remove(task)
         tasks.add(newTask)
