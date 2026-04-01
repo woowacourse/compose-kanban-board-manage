@@ -17,10 +17,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kanbanboard.composeapp.generated.resources.Res
-import kanbanboard.composeapp.generated.resources.assignee_null
-import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.domain.Assignee
+import woowacourse.kanban.board.ui.KanbanTypography
 
 @Composable
 fun KanbanCardProfile(
@@ -32,19 +30,16 @@ fun KanbanCardProfile(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        if (assignee != null) {
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "기본 이미지",
-                tint = Color(0xFF838383),
-                modifier = Modifier.size(24.dp),
-            )
-        }
+        Icon(
+            imageVector = Icons.Default.AccountCircle,
+            contentDescription = "기본 이미지",
+            tint = Color(0xFF838383),
+            modifier = Modifier.size(24.dp),
+        )
 
         Text(
             text = assignee.name,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
+            style = KanbanTypography.body14Medium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

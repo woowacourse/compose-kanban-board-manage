@@ -9,27 +9,30 @@ object KanbanTypography {
         fontSize = 14.sp,
         fontWeight = FontWeight.Normal,
     )
-
     val title24Medium = TextStyle(
         fontSize = 24.sp,
         fontWeight = FontWeight.Medium,
     )
-
     val title18SemiBold = TextStyle(
         fontSize = 18.sp,
         fontWeight = FontWeight.SemiBold,
     )
-
+    val body16Regular = TextStyle(
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Normal,
+    )
+    val body14Medium = TextStyle(
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Medium,
+    )
     val label16Regular = TextStyle(
         fontSize = 16.sp,
         fontWeight = FontWeight.Normal,
     )
-
     val label14Medium = TextStyle(
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
     )
-
     val label16Medium = TextStyle(
         fontSize = 16.sp,
         fontWeight = FontWeight.Medium,
