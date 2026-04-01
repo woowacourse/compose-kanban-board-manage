@@ -20,6 +20,7 @@ import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.ui.constant.SnackBarText
 import woowacourse.kanban.board.ui.stateholder.BoardState
 import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.TaskStatus
 
 @Composable
 fun KanbanPage(
@@ -35,6 +36,12 @@ fun KanbanPage(
     }
 
     val scope = rememberCoroutineScope()
+    val showSnackBar: (String) -> Unit = { snackBarText ->
+        scope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(snackBarText)
+        }
+    }
 
     Scaffold(
         snackbarHost = {
@@ -57,31 +64,39 @@ fun KanbanPage(
                 projectTitle = projects[selectedProjectIndex].title,
                 onTaskCreated = { task ->
                     boardStates[selectedProjectIndex].addTask(task)
-                    scope.launch {
-                        snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar(SnackBarText.CREATE_TASK)
-                    }
+                    showSnackBar(SnackBarText.CREATE_TASK)
                 },
                 onTaskUpdated = { task ->
                     boardStates[selectedProjectIndex].updateTask(task)
-                    scope.launch {
-                        snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar(SnackBarText.UPDATE_TASK)
-                    }
+                    showSnackBar(SnackBarText.UPDATE_TASK)
                 },
                 onTaskDeleted = { id ->
-                    boardStates[selectedProjectIndex].deleteTask(taskId = id)
-                    scope.launch {
-                        snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar(SnackBarText.DELETE_TASK)
-                    }
+                    val isDeletable = boardStates[selectedProjectIndex].deleteTask(taskId = id)
+                    showSnackBar(
+                        if (isDeletable) {
+                            SnackBarText.DELETE_TASK
+                        } else {
+                            SnackBarText.ILLEGAL_DELETE
+                        },
+                    )
                 },
                 onStatusChanged = { status, id ->
-                    boardStates[selectedProjectIndex].changeStatus(status = status, taskId = id)
-                    scope.launch {
-                        snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar(SnackBarText.STATUS_EDIT)
+                    if (status != TaskStatus.TO_DO) {
+                        val isAssigned = boardStates[selectedProjectIndex].isAssigned(taskId = id)
+                        if (isAssigned.not()) {
+                            showSnackBar(SnackBarText.ILLEGAL_STATUS_EDIT_ASSIGNEE)
+                            return@KanbanBoard
+                        }
                     }
+
+                    val isStatusChanged = boardStates[selectedProjectIndex].changeStatus(status = status, taskId = id)
+                    showSnackBar(
+                        if (isStatusChanged) {
+                            SnackBarText.STATUS_EDIT
+                        } else {
+                            SnackBarText.ILLEGAL_STATUS_EDIT
+                        },
+                    )
                 },
                 assignees = assignees,
             )

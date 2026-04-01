@@ -39,6 +39,12 @@ class BoardState(initProject: KanbanProject) {
         project = project.addTask(task)
     }
 
+    fun isAssigned(taskId: Long): Boolean {
+        val targetIndex = project.getTasks().indexOfFirst { it.data.id == taskId }
+        val targetTask = project.getTasks()[targetIndex]
+        return targetTask.data.assignee != null
+    }
+
     fun changeStatus(
         taskId: Long,
         status: TaskStatus,

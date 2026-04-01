@@ -175,19 +175,9 @@ fun TaskManageDialog(
                             }
                         }
                     } else null,
-                    onDelete = if (state.isUpdate) {
+                    onDelete = if (state.isUpdate && currentTask != null) {
                         {
-//                            삭제해야한다. 이건 프로젝트 책임이겠지
-//                            근데? 특정 TaskStatus에 따라서 삭제를 방지해야함
-//                            상태 검증은 누구의 책임?
-//                            태스크의 책임이겠지
-//                            어 근데 이러면 아 돼네
-                            if (currentTask != null && currentTask.isRemovable
-
-                            ) {
-                                onDeleteTask(currentTask.data.id)
-                            }
-
+                            onDeleteTask(currentTask.data.id)
                             onDismiss()
                         }
                     } else null,
