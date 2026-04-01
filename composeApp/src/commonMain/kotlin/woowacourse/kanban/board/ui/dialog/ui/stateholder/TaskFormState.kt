@@ -22,7 +22,7 @@ class TaskFormState {
         private set
     var isTagError by mutableStateOf(false)
         private set
-    val isCreateError by derivedStateOf { isTitleError || isTagError }
+    val isFormError by derivedStateOf { isTitleError || isTagError }
 
     var selectedStatusIndex by mutableIntStateOf(0)
         private set

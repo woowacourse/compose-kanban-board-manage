@@ -33,6 +33,7 @@ fun KanbanBoard(
     modifier: Modifier = Modifier,
     onTaskCreated: (KanbanTask) -> Unit = {},
     onTaskUpdated: (KanbanTask) -> Unit = {},
+    onTaskDeleted: (Long) -> Unit = {},
     onStatusChanged: (TaskStatus, Long) -> Unit = { _, _ -> },
     selectedStatuses: List<TaskStatus> = TaskStatus.entries,
 ) {
@@ -101,6 +102,9 @@ fun KanbanBoard(
             },
             onUpdateTask = { task ->
                 onTaskUpdated(task)
+            },
+            onDeleteTask = { id ->
+                onTaskDeleted(id)
             },
             assignees = assignees,
             modifier = Modifier,

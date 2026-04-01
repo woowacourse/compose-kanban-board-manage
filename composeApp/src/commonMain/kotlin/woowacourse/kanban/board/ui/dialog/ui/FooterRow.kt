@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +20,7 @@ import woowacourse.kanban.Colors
 @Composable
 fun FooterRow(
     onCancel: () -> Unit,
-    isCreateError: Boolean,
+    isFormError: Boolean,
     modifier: Modifier = Modifier,
     onCreate: (() -> Unit)? = null,
     onUpdate: (() -> Unit)? = null,
@@ -51,18 +50,18 @@ fun FooterRow(
                 modifier = Modifier,
                 text = "수정",
                 textColor = Color.White,
-                backgroundColor = if (isCreateError) Colors.ActionPrimaryDisabled else Colors.ActionPrimary,
+                backgroundColor = if (isFormError) Colors.ActionPrimaryDisabled else Colors.ActionPrimary,
                 onClick = onUpdate,
-                enabled = !isCreateError,
+                enabled = !isFormError,
             )
         if (onCreate != null)
             FooterButton(
                 modifier = Modifier,
                 text = "생성",
                 textColor = Color.White,
-                backgroundColor = if (isCreateError) Colors.ActionPrimaryDisabled else Colors.ActionPrimary,
+                backgroundColor = if (isFormError) Colors.ActionPrimaryDisabled else Colors.ActionPrimary,
                 onClick = onCreate,
-                enabled = !isCreateError,
+                enabled = !isFormError,
             )
     }
 }

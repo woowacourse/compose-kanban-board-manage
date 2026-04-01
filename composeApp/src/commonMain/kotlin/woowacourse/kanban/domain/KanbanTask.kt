@@ -29,4 +29,12 @@ class KanbanTask(val data: BoardData, val status: TaskStatus) {
     ): KanbanTask {
         return KanbanTask(inputData, inputStatus)
     }
+
+    val isRemovable: Boolean
+        get() = when (status) {
+            TaskStatus.TO_DO -> true
+            TaskStatus.IN_PROGRESS -> true
+            TaskStatus.REVIEW -> false
+            TaskStatus.DONE -> false
+        }
 }
