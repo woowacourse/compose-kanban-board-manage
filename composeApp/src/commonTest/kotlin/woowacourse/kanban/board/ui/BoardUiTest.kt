@@ -17,6 +17,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.dp
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.launch
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.ui.constant.MockData
@@ -179,5 +180,67 @@ class BoardUiTest {
 
         // then : 다이얼로그의 담당자 리스트에서 "없음"이 존재해야 한다.
         onNodeWithText("없음").assertExists()
+    }
+
+    @Test
+    fun `Review,Done 상태 태스크의 수정 다이얼로그에서 삭제할 수 없다`() = runComposeUiTest {
+        // given : Review, Done 상태의 태스크들이 설정된 프로젝트와 보드가 주어진다.
+        lateinit var boardState: BoardState
+        setContent {
+            boardState = remember {
+                BoardState(
+                    KanbanProject(
+                        mutableListOf(
+                            KanbanTask(
+                                data = BoardData(
+                                    title = Title("리뷰제목"),
+                                    content = "내용",
+                                    tags = Tags(),
+                                    assignee = Assignee(
+                                        nickname = Nickname("아오"),
+                                    ),
+                                    id = 0,
+                                ),
+                                status = TaskStatus.REVIEW,
+                            ),
+                            KanbanTask(
+                                data = BoardData(
+                                    title = Title("완료제목"),
+                                    content = "내용",
+                                    tags = Tags(),
+                                    assignee = Assignee(
+                                        nickname = Nickname("아오"),
+                                    ),
+                                    id = 1,
+                                ),
+                                status = TaskStatus.DONE,
+                            ),
+                        ),
+                    ),
+                )
+            }
+            KanbanBoard(
+                assignees = MockData.ASSIGNEES,
+                boardState = boardState,
+                projectTitle = "",
+            )
+        }
+
+        // when : Review 태스크를 누르고 태스크 관리 다이얼로그에서 삭제 버튼을 누른다.
+        onNodeWithText("리뷰제목").performClick()
+        waitForIdle()
+
+        onNodeWithText("삭제").performClick()
+        waitForIdle()
+
+        // when : Done 태스크를 누르고 태스크 관리 다이얼로그에서 삭제 버튼을 누른다.
+        onNodeWithText("완료제목").performClick()
+        waitForIdle()
+
+        onNodeWithText("삭제").performClick()
+        waitForIdle()
+
+        // then : 다이얼로그의 담당자 리스트에서 "없음"이 존재해야 한다.
+        assertEquals(2, boardState.totalTaskCount)
     }
 }
