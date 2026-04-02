@@ -21,12 +21,12 @@ data class KanbanTask(
 
     fun changeStatus(newStatus: Status) = copy(status = newStatus)
 
-    fun validateStatusTransition(targetStatus: Status): Boolean {
-        return this.status.canTransitionTo(targetStatus)
+    fun isValidStatusTransition(targetStatus: Status): Boolean {
+        return this.status.isValidTransition(targetStatus)
     }
 
-    fun validateAssigneeRequirement(targetStatus: Status): Boolean {
-        return targetStatus.validateAssignee(this.assignee)
+    fun isValidAssigneeRequirement(targetStatus: Status): Boolean {
+        return targetStatus.isValidAssignee(this.assignee)
     }
 
     companion object {

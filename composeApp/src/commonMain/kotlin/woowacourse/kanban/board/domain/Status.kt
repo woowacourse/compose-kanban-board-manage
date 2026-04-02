@@ -6,11 +6,11 @@ enum class Status(val isDeletable: Boolean, val isRequiredAssignee: Boolean) {
     REVIEW(false, true),
     DONE(false, true);
 
-    fun validateAssignee(assignee: Assignee?): Boolean {
+    fun isValidAssignee(assignee: Assignee?): Boolean {
         return if (isRequiredAssignee) assignee != null else true
     }
 
-    fun canTransitionTo(targetStatus: Status): Boolean {
+    fun isValidTransition(targetStatus: Status): Boolean {
         return when (this) {
             TO_DO -> {
                 targetStatus == IN_PROGRESS

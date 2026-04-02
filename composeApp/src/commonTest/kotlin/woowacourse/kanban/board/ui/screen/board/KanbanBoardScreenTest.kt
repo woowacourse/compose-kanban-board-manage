@@ -103,9 +103,10 @@ class KanbanBoardScreenTest {
             .fetchSemanticsNode()
             .boundsInRoot
 
-        val doneBounds = onNodeWithText("Done")
+        val doneBounds = onNodeWithText("In Progress")
             .fetchSemanticsNode()
             .boundsInRoot
+
         onNodeWithText("안녕하세요").performTouchInput {
             down(center)
             moveTo(

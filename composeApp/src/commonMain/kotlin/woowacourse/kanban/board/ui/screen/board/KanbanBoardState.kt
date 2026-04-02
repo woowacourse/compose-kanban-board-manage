@@ -76,6 +76,6 @@ class KanbanBoardState(
 
     private fun loadTasks(): List<KanbanTask> {
         val project = projects.getOrNull(selectedProjectIndex) ?: return emptyList()
-        return kanbanBoard.getTasks(project.getTaskIds())
+        return kanbanBoard.getTasksByIds(project.getTaskIds())
     }
 }

@@ -104,9 +104,9 @@ fun KanbanBoardScreen(
         },
         updateSelectedProjectIndex = { state.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
-            if (!task.validateAssigneeRequirement(targetStatus)) {
+            if (!task.isValidAssigneeRequirement(targetStatus)) {
                 snackbarMessage = SnackbarMessage.TASK_ASSIGNEE_REQUIRED
-            } else if (!task.validateStatusTransition(targetStatus)) {
+            } else if (!task.isValidStatusTransition(targetStatus)) {
                 snackbarMessage = SnackbarMessage.TASK_MOVE_NOT_ALLOWED
             } else {
                 state.moveTask(task, targetStatus)

@@ -3,7 +3,9 @@ package woowacourse.kanban.board.domain
 class KanbanBoard(tasks: List<KanbanTask> = emptyList()) {
     private val tasks = tasks.toMutableList()
 
-    fun getTasks(kanbanIds: List<Long>): List<KanbanTask> = tasks.filter { kanbanIds.contains(it.id) }
+    fun getAllTasks() = tasks.toList()
+
+    fun getTasksByIds(kanbanIds: List<Long>): List<KanbanTask> = tasks.filter { kanbanIds.contains(it.id) }
 
     fun addTask(task: KanbanTask) {
         tasks.add(task)
