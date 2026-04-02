@@ -29,6 +29,7 @@ fun ProjectScreen(state: ProjectScreenState, authors: List<String>, modifier: Mo
             onTaskCreated = { state.onTaskCreated(it) },
             onTaskStateChange = { idx, taskState -> state.onTaskStateChange(idx, taskState) },
             authors = authors,
+            onTaskDeleted = { state.selectedProject.tasks.deleteTask(it) },
             modifier = Modifier.size(width = 1295.dp, height = 909.dp),
         )
     }

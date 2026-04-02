@@ -52,7 +52,7 @@ import woowacourse.kanban.board.ui.theme.ToDoContent
 import woowacourse.kanban.board.ui.theme.ToDoTitle
 
 @Composable
-fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (Int, TaskState) -> Unit, modifier: Modifier = Modifier) {
+fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (Int, TaskState) -> Unit, onClickCard: (Task) -> Unit, modifier: Modifier = Modifier) {
     var draggedTask by remember { mutableStateOf<Task?>(null) }
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
     val columnBounds = remember { mutableStateMapOf<TaskState, Rect>() }
@@ -72,6 +72,7 @@ fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (Int, TaskState) -> Unit
                     currentDragPosition?.let { columnBounds[taskState]?.contains(it) } ?: false
                 },
                 onBoundsChanged = { rect -> columnBounds[taskState] = rect },
+                onClickCard = onClickCard,
                 onTaskDragStart = { task -> draggedTask = task },
                 onTaskDragChange = { pos -> currentDragPosition = pos },
                 onTaskDragEnd = {
@@ -108,6 +109,7 @@ private fun StateTasks(
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = {},
     onTaskDragStart: (Task) -> Unit = {},
+    onClickCard: (Task) -> Unit = {},
     onTaskDragChange: (Offset) -> Unit = {},
     onTaskDragEnd: () -> Unit = {},
     onTaskDragCancel: () -> Unit = {},
@@ -146,6 +148,7 @@ private fun StateTasks(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
+            onClickCard = onClickCard,
         )
     }
 }

@@ -48,6 +48,7 @@ import woowacourse.kanban.board.ui.theme.TextSecondary
 @Composable
 fun TaskCard(
     task: Task,
+    onClickCard: (Task) -> Unit,
     modifier: Modifier = Modifier,
     onDragStart: () -> Unit = {},
     onDragChange: (Offset) -> Unit,
@@ -60,6 +61,7 @@ fun TaskCard(
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
         ),
+        onClick = { onClickCard(task) },
         border = BorderStroke(1.dp, OutlineVariant),
         modifier = modifier
             .width(286.dp)
@@ -89,8 +91,10 @@ fun TaskCard(
             Title(title = task.title)
             if (task.content.isNotEmpty()) Content(content = task.content)
             if (task.tags.isNotEmpty()) Tags(tags = task.tags)
-            HorizontalDivider(color = OutlineVariant)
-            Profile(author = task.author)
+            if (task.author.isNotEmpty()) {
+                HorizontalDivider(color = OutlineVariant)
+                Profile(author = task.author)
+            }
         }
     }
 }
@@ -169,14 +173,38 @@ private fun Profile(author: String) {
 @Preview
 @Composable
 private fun TaskCardPreview() {
-    TaskCard(
-        Task(
-            title = "LazyColumn 컴포넌트 구현",
-            content = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
-            tags = listOf("컴포넌트", "성능"),
-            author = "다이노",
-        ),
-        onDragChange = {},
-        modifier = Modifier.padding(16.dp),
-    )
+    Column {
+        TaskCard(
+            Task(
+                title = "LazyColumn 컴포넌트 구현",
+                content = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
+                tags = listOf("컴포넌트", "성능"),
+                author = "다이노",
+            ),
+            onDragChange = {},
+            onClickCard = {},
+            modifier = Modifier.padding(16.dp),
+        )
+        TaskCard(
+            Task(
+                title = "LazyColumn 컴포넌트 구현",
+                content = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
+                tags = listOf("컴포넌트", "성능"),
+                author = "",
+            ),
+            onDragChange = {},
+            onClickCard = {},
+            modifier = Modifier.padding(16.dp),
+        )
+        TaskCard(
+            Task(
+                title = "LazyColumn 컴포넌트 구현",
+                tags = listOf("컴포넌트", "성능"),
+                author = "",
+            ),
+            onDragChange = {},
+            onClickCard = {},
+            modifier = Modifier.padding(16.dp),
+        )
+    }
 }

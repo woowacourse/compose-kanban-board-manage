@@ -29,6 +29,7 @@ import woowacourse.kanban.board.domain.Tasks
 import woowacourse.kanban.board.ui.board.components.BoardHeader
 import woowacourse.kanban.board.ui.board.components.CreateTaskModalDialog
 import woowacourse.kanban.board.ui.board.components.KanbanBoardContent
+import woowacourse.kanban.board.ui.board.components.UpdateTaskModalDialog
 import woowacourse.kanban.board.ui.theme.OutlineVariant
 import woowacourse.kanban.board.ui.theme.Primary
 
@@ -37,11 +38,14 @@ fun Board(
     projectName: String,
     tasks: Tasks,
     onTaskCreated: (Task) -> Unit,
+    onTaskDeleted: (Task) -> Unit,
     authors: List<String>,
-    modifier: Modifier = Modifier,
     onTaskStateChange: (Int, TaskState) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    var openDialog by remember { mutableStateOf(false) }
+    var openCreateDialog by remember { mutableStateOf(false) }
+    var openUpdateDialog by remember { mutableStateOf(false) }
+    var updateTask by remember { mutableStateOf<Task?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -55,7 +59,7 @@ fun Board(
                 BoardHeader(
                     projectName = projectName,
                     tasks = tasks,
-                    onClick = { openDialog = true },
+                    onClick = { openCreateDialog = true },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.White),
@@ -75,21 +79,25 @@ fun Board(
                             )
                         }
                     },
+                    onClickCard = { task ->
+                        updateTask = task
+                        openUpdateDialog = true
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Primary),
                 )
             }
 
-            if (openDialog) {
+            if (openCreateDialog) {
                 CreateTaskModalDialog(
                     authors = authors,
                     onDismissRequest = {
-                        openDialog = false
+                        openCreateDialog = false
                     },
                     onConfirmation = {
                         onTaskCreated(it)
-                        openDialog = false
+                        openCreateDialog = false
                         scope.launch {
                             snackbarHostState.currentSnackbarData?.dismiss()
                             snackbarHostState.showSnackbar(
@@ -152,5 +160,6 @@ private fun BoardPreview() {
         authors = listOf("다이노", "페임스"),
         modifier = Modifier.size(width = 1295.dp, height = 909.dp),
         onTaskStateChange = { _, _ -> },
+        onTaskDeleted = {},
     )
 }

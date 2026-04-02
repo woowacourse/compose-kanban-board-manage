@@ -80,7 +80,7 @@ fun UpdateTaskCardModal(
         UpdateTaskActionButtons(
             taskInputState.init.not() && taskInputState.isNewTaskEnabled,
             onDismissRequest,
-            onDeleteRequest = onDeleteRequest,
+            onDeleteRequest = { onDeleteRequest() },
             onUpdateRequest = {
                 onUpdateRequest(
                     Task(
