@@ -107,7 +107,7 @@ private fun AuthorsContent(
                     text = "없음",
                     color = TextPrimary,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(vertical = 18.dp, horizontal = 5.dp)
+                    modifier = Modifier.padding(vertical = 18.dp, horizontal = 5.dp),
                 )
             },
             modifier = Modifier.semantics { selected = selectedAuthor == "" },

@@ -5,18 +5,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import woowacourse.kanban.board.ui.theme.DeleteContainer
 import woowacourse.kanban.board.ui.theme.DisabledContainer
 import woowacourse.kanban.board.ui.theme.OnSurface
 import woowacourse.kanban.board.ui.theme.OnSurfaceVariant
@@ -24,7 +18,12 @@ import woowacourse.kanban.board.ui.theme.PrimaryContainer
 import woowacourse.kanban.board.ui.theme.TextSecondary
 
 @Composable
-fun CreateTaskActionButtons(isNewTaskEnabled: Boolean, onDismissRequest: () -> Unit, onCreateClick: () -> Unit, modifier: Modifier = Modifier) {
+fun CreateTaskActionButtons(
+    isNewTaskEnabled: Boolean,
+    onDismissRequest: () -> Unit,
+    onCreateClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
@@ -61,13 +60,13 @@ fun CreateTaskActionButtons(isNewTaskEnabled: Boolean, onDismissRequest: () -> U
 private fun CreateTaskActionButtonsPreview() {
     CreateTaskActionButtons(
         isNewTaskEnabled = true,
-        onDismissRequest = {  },
-        onCreateClick = {  },
+        onDismissRequest = { },
+        onCreateClick = { },
     )
 
     CreateTaskActionButtons(
         isNewTaskEnabled = false,
-        onDismissRequest = {  },
-        onCreateClick = {  },
+        onDismissRequest = { },
+        onCreateClick = { },
     )
 }

@@ -18,7 +18,6 @@ import woowacourse.kanban.board.ui.theme.OnSurfaceVariant
 import woowacourse.kanban.board.ui.theme.PrimaryContainer
 import woowacourse.kanban.board.ui.theme.TextSecondary
 
-
 @Composable
 fun UpdateTaskActionButtons(
     isUpdateTaskEnabled: Boolean,
@@ -26,7 +25,7 @@ fun UpdateTaskActionButtons(
     onDismissRequest: () -> Unit,
     onDeleteRequest: () -> Unit,
     onUpdateRequest: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -52,7 +51,7 @@ fun UpdateTaskActionButtons(
                 disabledContentColor = OnSurfaceVariant,
                 disabledContainerColor = DisabledContainer,
             ),
-            text = "삭제"
+            text = "삭제",
         )
         Spacer(modifier = Modifier.width(12.dp))
         RoundedBottomButtons(
@@ -64,7 +63,7 @@ fun UpdateTaskActionButtons(
                 disabledContainerColor = DisabledContainer,
                 disabledContentColor = OnSurfaceVariant,
             ),
-            text = "수정"
+            text = "수정",
         )
     }
 }

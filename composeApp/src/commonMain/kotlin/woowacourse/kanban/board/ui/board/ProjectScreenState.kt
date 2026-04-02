@@ -7,10 +7,10 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import java.util.UUID
 import woowacourse.kanban.board.domain.Project
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
-import java.util.UUID
 
 class ProjectScreenState(private val initialProjects: List<Project>) {
     var projects by mutableStateOf(initialProjects)

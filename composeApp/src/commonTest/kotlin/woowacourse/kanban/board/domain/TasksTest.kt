@@ -1,13 +1,10 @@
 package woowacourse.kanban.board.domain
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import woowacourse.kanban.board.exception.TasksException
-import woowacourse.kanban.board.exception.TransStateError
-import woowacourse.kanban.board.exception.TransStateException
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class TasksTest {
 

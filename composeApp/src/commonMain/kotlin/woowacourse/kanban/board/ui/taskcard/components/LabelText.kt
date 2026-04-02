@@ -23,6 +23,6 @@ fun LabelText(label: String, modifier: Modifier = Modifier) {
 @Composable
 private fun LabelTextPreview() {
     LabelText(
-        label = "Samuel"
+        label = "Samuel",
     )
 }

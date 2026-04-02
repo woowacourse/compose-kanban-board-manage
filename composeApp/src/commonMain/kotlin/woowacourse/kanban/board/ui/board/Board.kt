@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import java.util.UUID
 import kotlinx.coroutines.launch
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
@@ -35,7 +36,6 @@ import woowacourse.kanban.board.ui.board.components.KanbanBoardContent
 import woowacourse.kanban.board.ui.board.components.UpdateTaskModalDialog
 import woowacourse.kanban.board.ui.theme.OutlineVariant
 import woowacourse.kanban.board.ui.theme.Primary
-import java.util.UUID
 
 @Composable
 fun Board(

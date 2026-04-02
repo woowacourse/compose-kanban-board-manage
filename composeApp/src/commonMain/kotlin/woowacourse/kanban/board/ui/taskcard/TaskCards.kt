@@ -47,6 +47,6 @@ private fun TaskCardsPreview() {
         onTaskDragChange = {},
         onTaskDragEnd = {},
         onTaskDragCancel = {},
-        onClickCard = {}
+        onClickCard = {},
     )
 }

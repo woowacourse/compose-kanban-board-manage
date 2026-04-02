@@ -16,14 +16,14 @@ fun RoundedBottomButtons(
     text: String,
     shapes: RoundedCornerShape = RoundedCornerShape(10.dp),
     colors: ButtonColors,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = { onClick() },
         enabled = enabled,
         shape = shapes,
         colors = colors,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Text(text = text, textAlign = TextAlign.Center)
     }

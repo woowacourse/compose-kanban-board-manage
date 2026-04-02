@@ -16,7 +16,6 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
-import woowacourse.kanban.board.domain.Project
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
 import woowacourse.kanban.board.domain.Tasks
@@ -34,6 +33,11 @@ class BoardTest {
                 onTaskCreated = {},
                 authors = listOf("다이노", "페임스"),
                 onTaskStateChange = { _, _ -> },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = {},
+                onTaskDeleted = {},
             )
         }
 
@@ -54,6 +58,11 @@ class BoardTest {
                 onTaskCreated = {},
                 authors = listOf("다이노", "페임스"),
                 onTaskStateChange = { _, _ -> },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = {},
+                onTaskDeleted = {},
             )
         }
 
@@ -77,6 +86,11 @@ class BoardTest {
                 onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
                 onTaskStateChange = { _, _ -> },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = {},
+                onTaskDeleted = {},
             )
         }
 
@@ -101,6 +115,11 @@ class BoardTest {
                 onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
                 onTaskStateChange = { _, _ -> },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = {},
+                onTaskDeleted = {},
             )
         }
 
@@ -125,6 +144,11 @@ class BoardTest {
                 onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
                 onTaskStateChange = { _, _ -> },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = {},
+                onTaskDeleted = {},
             )
         }
 
@@ -142,22 +166,6 @@ class BoardTest {
     @Test
     fun `태스크의 상태를 변경하면 Snackbar를 노출한다`() = runComposeUiTest {
         // given
-        val projects =
-            listOf(
-                Project(
-                    name = "Compose1",
-                    tasks = Tasks(emptyList()),
-                ),
-                Project(
-                    name = "Compose2",
-                    tasks = Tasks(emptyList()),
-                ),
-                Project(
-                    name = "Compose3너무너무길다란이름",
-                    tasks = Tasks(emptyList()),
-                ),
-            )
-
         setContent {
             var tasks by remember {
                 mutableStateOf(
@@ -174,10 +182,16 @@ class BoardTest {
                 tasks = tasks,
                 onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { idx, targetStatus ->
-                    val newTask = tasks.items[idx].copy(taskState = targetStatus)
-                    tasks.updateTask(newTask)
+                onTaskStateChange = { id, targetStatus ->
+                    val task = tasks.items.first { it.id == id }
+                    val newTask = task.copy(taskState = targetStatus)
+                    tasks = tasks.updateTask(newTask)
                 },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = {},
+                onTaskDeleted = {},
             )
         }
 

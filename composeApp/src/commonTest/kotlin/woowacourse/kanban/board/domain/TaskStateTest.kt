@@ -1,9 +1,9 @@
 package woowacourse.kanban.board.domain
 
+import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import woowacourse.kanban.board.exception.TransStateError
 import woowacourse.kanban.board.exception.TransStateException
-import kotlin.test.Test
 
 class TaskStateTest {
     @Test

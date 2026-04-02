@@ -31,9 +31,9 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.UUID
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
 import woowacourse.kanban.board.domain.Tasks
@@ -50,10 +50,14 @@ import woowacourse.kanban.board.ui.theme.ReviewTitle
 import woowacourse.kanban.board.ui.theme.ToDoBorder
 import woowacourse.kanban.board.ui.theme.ToDoContent
 import woowacourse.kanban.board.ui.theme.ToDoTitle
-import java.util.UUID
 
 @Composable
-fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (UUID, TaskState) -> Unit, onClickCard: (Task) -> Unit, modifier: Modifier = Modifier) {
+fun KanbanBoardContent(
+    tasks: Tasks,
+    onTaskStateChange: (UUID, TaskState) -> Unit,
+    onClickCard: (Task) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var draggedTask by remember { mutableStateOf<Task?>(null) }
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
     val columnBounds = remember { mutableStateMapOf<TaskState, Rect>() }
