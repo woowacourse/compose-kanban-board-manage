@@ -41,7 +41,7 @@ fun CreateTaskCardModal(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        CreateTaskHeader(onDismissRequest)
+        CreateTaskHeader(titleText = "새 태스크 생성", onDismissRequest = onDismissRequest)
         HorizontalDivider()
         TitleInputField(taskInputState.title, taskInputState.titleError) {
             onStateChange(

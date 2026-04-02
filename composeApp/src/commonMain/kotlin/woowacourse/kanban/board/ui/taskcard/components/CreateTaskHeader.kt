@@ -17,14 +17,14 @@ import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.ui.theme.TextPrimary
 
 @Composable
-fun CreateTaskHeader(onDismissRequest: () -> Unit) {
+fun CreateTaskHeader(titleText: String, onDismissRequest: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "새 태스크 생성",
+            text = titleText,
             fontSize = 20.sp,
             color = TextPrimary,
             fontWeight = FontWeight.W600,
@@ -43,5 +43,5 @@ fun CreateTaskHeader(onDismissRequest: () -> Unit) {
 @Preview
 @Composable
 private fun CreateTaskHeaderPreview() {
-    CreateTaskHeader(onDismissRequest = {})
+    CreateTaskHeader(titleText = "새 태스크 생성", onDismissRequest = {})
 }
