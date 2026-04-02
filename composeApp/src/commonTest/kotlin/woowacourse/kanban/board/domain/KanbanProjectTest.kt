@@ -33,4 +33,19 @@ class KanbanProjectTest {
         assertThat(kanbanProject.getTaskIds().contains(1L)).isTrue
         assertThat(kanbanProject.getTaskIds().contains(0L)).isFalse
     }
+
+    @Test
+    fun `deleteTaskId()로 태스크 ID를 삭제했을 때 칸반프로젝트가 해당 태스크의 ID를 가지고 있지 않다`() {
+        // Given: 기본 칸반 프로젝트 생성
+        val kanbanProject = KanbanProject("안녕")
+        kanbanProject.addTaskId(0L)
+        kanbanProject.addTaskId(1L)
+
+        // When: 0L인 ID 제거
+        kanbanProject.deleteTaskId(0L)
+
+        // Then: 1L인 ID 는 갖고있지만, 0L인 ID 는 가지고 있지 않는다
+        assertThat(kanbanProject.getTaskIds().contains(1L)).isTrue
+        assertThat(kanbanProject.getTaskIds().contains(0L)).isFalse
+    }
 }
