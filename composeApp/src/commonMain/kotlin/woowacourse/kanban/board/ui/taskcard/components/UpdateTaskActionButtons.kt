@@ -22,6 +22,7 @@ import woowacourse.kanban.board.ui.theme.TextSecondary
 @Composable
 fun UpdateTaskActionButtons(
     isUpdateTaskEnabled: Boolean,
+    isDeleteEnabled: Boolean,
     onDismissRequest: () -> Unit,
     onDeleteRequest: () -> Unit,
     onUpdateRequest: () -> Unit,
@@ -44,13 +45,13 @@ fun UpdateTaskActionButtons(
         Spacer(modifier = Modifier.width(12.dp))
         RoundedBottomButtons(
             onClick = { onDeleteRequest() },
+            enabled = isDeleteEnabled,
             colors = ButtonDefaults.buttonColors(
                 containerColor = DeleteContainer,
                 contentColor = OnSurfaceVariant,
                 disabledContentColor = OnSurfaceVariant,
                 disabledContainerColor = DisabledContainer,
             ),
-            enabled = true,
             text = "삭제"
         )
         Spacer(modifier = Modifier.width(12.dp))
@@ -76,5 +77,6 @@ private fun UpdateTaskActionButtonsPreview() {
         onUpdateRequest = { },
         onDeleteRequest = { },
         isUpdateTaskEnabled = true,
+        isDeleteEnabled = true,
     )
 }

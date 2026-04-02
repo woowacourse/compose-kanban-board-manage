@@ -63,7 +63,7 @@ fun AuthorSelectField(isNecessary: Boolean, authors: List<String>, selectedAutho
 private fun TaskStateContent(selectedState: TaskState, onStateChanged: (TaskState) -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         TaskState.entries.forEach {
             CustomButton(
@@ -74,11 +74,13 @@ private fun TaskStateContent(selectedState: TaskState, onStateChanged: (TaskStat
                     Text(
                         text = it.toText(),
                         color = if (selectedState == it) TaskStateSelected else TaskStateText,
-                        modifier = Modifier.width(180.dp).padding(vertical = 16.dp),
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                         textAlign = TextAlign.Center,
                     )
                 },
-                modifier = Modifier.semantics { selected = selectedState == it },
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { selected = selectedState == it },
             )
         }
     }

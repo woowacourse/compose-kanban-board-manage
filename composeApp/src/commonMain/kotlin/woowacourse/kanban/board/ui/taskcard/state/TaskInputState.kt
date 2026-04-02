@@ -17,6 +17,10 @@ data class TaskInputState(
         get() = title.isEmpty() && content.isEmpty() && tags.isEmpty()
     val isNewTaskEnabled: Boolean
         get() = titleError == TitleError.NONE && tagError == TagError.NONE
+    val isUpdateTaskEnabled: Boolean
+        get() = isNewTaskEnabled && init.not()
+    val isDeleteEnabled: Boolean
+        get() = selectedState == TaskState.TO_DO || selectedState == TaskState.IN_PROGRESS
     val needProfile: Boolean
         get() = selectedState != TaskState.TO_DO
 }
