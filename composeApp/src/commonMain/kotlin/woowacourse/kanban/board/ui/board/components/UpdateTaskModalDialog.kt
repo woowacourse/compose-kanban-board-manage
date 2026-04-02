@@ -21,13 +21,24 @@ import woowacourse.kanban.board.ui.taskcard.state.TaskInputState
 
 @Composable
 fun UpdateTaskModalDialog(
+    task: Task,
     authors: List<String>,
     onDismissRequest: () -> Unit,
     onUpdateRequest: (Task) -> Unit,
     onDeleteRequest: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = authors.first())) }
+    var taskInputState by remember {
+        mutableStateOf(
+            TaskInputState(
+                title = task.title,
+                content = task.content,
+                tags = task.tags.joinToString(","),
+                selectedState = task.taskState,
+                selectedAuthor = task.author,
+            ),
+        )
+    }
 
     Dialog(
         onDismissRequest = {},
@@ -52,6 +63,7 @@ fun UpdateTaskModalDialog(
 @Composable
 private fun UpdateTaskModalDialogPreview() {
     UpdateTaskModalDialog(
+        task = Task(title = "test"),
         authors = listOf("다이노", "페임스"),
         onDismissRequest = {},
         onUpdateRequest = {},

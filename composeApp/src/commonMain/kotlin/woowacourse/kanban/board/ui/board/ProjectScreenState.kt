@@ -18,6 +18,11 @@ class ProjectScreenState(private val initialProjects: List<Project>) {
     var selectedProject by mutableStateOf(projects.first())
         private set
 
+    var updatingTask by mutableStateOf<Task?>(null)
+        private set
+
+    var openUpdateDialog by mutableStateOf(false)
+
     fun selectProject(project: Project) {
         selectedProject = project
     }
@@ -26,6 +31,20 @@ class ProjectScreenState(private val initialProjects: List<Project>) {
 
     fun onTaskStateChange(taskIdx: Int, fixedTaskState: TaskState) =
         updateSelectedProject(selectedProject.changeTaskState(taskIdx, fixedTaskState))
+
+    fun onTaskUpdated(task: Task) = updateSelectedProject(selectedProject.copy(tasks = selectedProject.tasks.updateTask(task)))
+
+    fun onTaskDeleted(task: Task) = updateSelectedProject(selectedProject.copy(tasks = selectedProject.tasks.deleteTask(task)))
+
+    fun onClickCard(task: Task) {
+        updatingTask = task
+        openUpdateDialog = true
+    }
+
+    fun closeUpdateDialog() {
+        openUpdateDialog = false
+        updatingTask = null
+    }
 
     private fun updateSelectedProject(updatedProject: Project) {
         selectedProject = updatedProject
