@@ -1,5 +1,9 @@
 package woowacourse.kanban.board.domain
 
+import woowacourse.kanban.board.domain.TaskState.Companion.isCorrectStateChange
+import woowacourse.kanban.board.exception.TransStateError
+import woowacourse.kanban.board.exception.TransStateException
+
 data class Tasks(private val tasks: List<Task> = emptyList()) {
     val items: List<Task> get() = tasks
     val totalCount: Int = tasks.size
@@ -9,7 +13,10 @@ data class Tasks(private val tasks: List<Task> = emptyList()) {
 
     fun updateTask(updatedTask: Task): Tasks {
         val newTasks = tasks.map { task ->
-            if (task.id == updatedTask.id) updatedTask else task
+            if (task.id == updatedTask.id) {
+                checkCorrectStateChange(task, updatedTask)
+                updatedTask
+            } else task
         }
         return copy(tasks = newTasks)
     }
@@ -17,7 +24,11 @@ data class Tasks(private val tasks: List<Task> = emptyList()) {
     fun addTask(task: Task): Tasks = copy(tasks = tasks + task)
 
     fun deleteTask(task: Task): Tasks {
-        if(tasks.contains(task).not()) return copy(tasks = tasks)
+        if (tasks.contains(task).not()) return copy(tasks = tasks)
         return copy(tasks = tasks - task)
+    }
+
+    private fun checkCorrectStateChange(task: Task, updatedTask: Task) {
+        if (!isCorrectStateChange(task.taskState, updatedTask.taskState)) throw TransStateException(TransStateError.CANT_TRANSFER)
     }
 }

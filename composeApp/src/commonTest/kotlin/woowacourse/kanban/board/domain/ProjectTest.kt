@@ -33,8 +33,8 @@ class ProjectTest {
             ),
         )
 
-        val updatedProject = project.changeTaskState(0, TaskState.DONE)
+        val updatedProject = project.changeTaskState(0, TaskState.IN_PROGRESS)
 
-        assertThat(updatedProject.tasks.items[0].taskState).isEqualTo(TaskState.DONE)
+        assertThat(updatedProject.tasks.items[0].taskState).isEqualTo(TaskState.IN_PROGRESS)
     }
 }

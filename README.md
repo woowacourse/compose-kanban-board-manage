@@ -8,11 +8,11 @@
 - [ ] 상태별 태스크의 특징을 적용한다.
     - [ ] To Do를 제외한 모든 상태는 담당자를 지정해야한다.
     - [ ] To Do, In Progress는 삭제가 가능하지만 나머지는 불가능하다.
-- [ ] 상태는 전이 규칙을 가진다. 규칙은 아래와 같다. 규칙 외 전이는 불가능하다.
-    - [ ] To Do는 In Progress(작업 시작)로만 전이 가능하다.
-    - [ ] In Progress는 To Do(다시 계획) 또는 Review(리뷰 요청)로 전이 가능하다.
-    - [ ] Review는 In Progress(수정 필요) 또는 Done(승인 완료)로 전이 가능하다.
-    - [ ] Done 은 To Do로 전이 가능하다. (재작업)
+- [x] 상태는 전이 규칙을 가진다. 규칙은 아래와 같다. 규칙 외 전이는 불가능하다.
+    - [x] To Do는 In Progress(작업 시작)로만 전이 가능하다.
+    - [x] In Progress는 To Do(다시 계획) 또는 Review(리뷰 요청)로 전이 가능하다.
+    - [x] Review는 In Progress(수정 필요) 또는 Done(승인 완료)로 전이 가능하다.
+    - [x] Done 은 To Do로 전이 가능하다. (재작업)
 
 ### UI
 - [ ] 태스크를 클릭하면 수정 Dialog가 표시된다.
