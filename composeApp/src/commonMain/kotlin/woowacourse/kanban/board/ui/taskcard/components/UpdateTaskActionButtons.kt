@@ -5,15 +5,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.board.ui.theme.DeleteContainer
@@ -23,8 +18,15 @@ import woowacourse.kanban.board.ui.theme.OnSurfaceVariant
 import woowacourse.kanban.board.ui.theme.PrimaryContainer
 import woowacourse.kanban.board.ui.theme.TextSecondary
 
+
 @Composable
-fun CreateTaskActionButtons(isNewTaskEnabled: Boolean, onDismissRequest: () -> Unit, onCreateClick: () -> Unit, modifier: Modifier = Modifier) {
+fun UpdateTaskActionButtons(
+    isUpdateTaskEnabled: Boolean,
+    onDismissRequest: () -> Unit,
+    onDeleteRequest: () -> Unit,
+    onUpdateRequest: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
@@ -35,39 +37,44 @@ fun CreateTaskActionButtons(isNewTaskEnabled: Boolean, onDismissRequest: () -> U
             colors = ButtonDefaults.buttonColors(
                 containerColor = PrimaryContainer,
                 contentColor = TextSecondary,
-                disabledContentColor = DisabledContainer,
-                disabledContainerColor = DisabledContainer,
             ),
             enabled = true,
             text = "취소",
         )
         Spacer(modifier = Modifier.width(12.dp))
         RoundedBottomButtons(
-            onClick = { onCreateClick() },
-            enabled = isNewTaskEnabled,
+            onClick = { onDeleteRequest() },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = DeleteContainer,
+                contentColor = OnSurfaceVariant,
+                disabledContentColor = OnSurfaceVariant,
+                disabledContainerColor = DisabledContainer,
+            ),
+            enabled = true,
+            text = "삭제"
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        RoundedBottomButtons(
+            onClick = { onUpdateRequest() },
+            enabled = isUpdateTaskEnabled,
             colors = ButtonDefaults.buttonColors(
                 containerColor = OnSurface,
                 contentColor = OnSurfaceVariant,
                 disabledContainerColor = DisabledContainer,
                 disabledContentColor = OnSurfaceVariant,
             ),
-            text = "생성",
+            text = "수정"
         )
     }
 }
 
 @Preview
 @Composable
-private fun CreateTaskActionButtonsPreview() {
-    CreateTaskActionButtons(
-        isNewTaskEnabled = true,
-        onDismissRequest = {  },
-        onCreateClick = {  },
-    )
-
-    CreateTaskActionButtons(
-        isNewTaskEnabled = false,
-        onDismissRequest = {  },
-        onCreateClick = {  },
+private fun UpdateTaskActionButtonsPreview() {
+    UpdateTaskActionButtons(
+        onDismissRequest = { },
+        onUpdateRequest = { },
+        onDeleteRequest = { },
+        isUpdateTaskEnabled = true,
     )
 }

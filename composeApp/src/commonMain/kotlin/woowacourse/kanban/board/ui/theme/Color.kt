@@ -9,6 +9,7 @@ val OnSurfaceVariant = Color.White
 val Outline = Color(0xFF79747E)
 val OutlineVariant = Color(0xFFE5E7EB)
 val OnError = Color(0xFFB3261E)
+val DeleteContainer = Color(0xFFDB6365)
 val TextPrimary = Color(0xFF101828)
 val TextSecondary = Color(0xFF364153)
 val TextTertiary = Color(0xFF45454F)

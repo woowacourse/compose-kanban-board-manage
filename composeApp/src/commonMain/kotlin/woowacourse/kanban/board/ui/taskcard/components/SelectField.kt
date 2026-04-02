@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -47,9 +48,11 @@ fun TaskStateSelectField(selectedState: TaskState, onStateChanged: (TaskState) -
 }
 
 @Composable
-fun AuthorSelectField(authors: List<String>, selectedAuthor: String, onAuthorSelected: (String) -> Unit) {
-    LabelText("담당자 *")
+fun AuthorSelectField(isNecessary: Boolean, authors: List<String>, selectedAuthor: String, onAuthorSelected: (String) -> Unit) {
+    val authorLabelText = if (isNecessary) "담당자 *" else "담당자"
+    LabelText(authorLabelText)
     AuthorsContent(
+        isNecessary = isNecessary,
         selectedAuthor = selectedAuthor,
         onAuthorSelected = onAuthorSelected,
         authors = authors,
@@ -83,6 +86,7 @@ private fun TaskStateContent(selectedState: TaskState, onStateChanged: (TaskStat
 
 @Composable
 private fun AuthorsContent(
+    isNecessary: Boolean,
     selectedAuthor: String,
     onAuthorSelected: (String) -> Unit,
     authors: List<String>,
@@ -92,6 +96,20 @@ private fun AuthorsContent(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        if (!isNecessary) CustomButton(
+            borderColor = if (selectedAuthor == "") AuthorSelected else OutlineVariant,
+            backgroundColor = if (selectedAuthor == "") SelectedAuthorBackground else OnSurfaceVariant,
+            onClick = { onAuthorSelected("") },
+            content = {
+                Text(
+                    text = "없음",
+                    color = TextPrimary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(vertical = 18.dp, horizontal = 5.dp)
+                )
+            },
+            modifier = Modifier.semantics { selected = selectedAuthor == "" },
+        )
         authors.forEach {
             CustomButton(
                 borderColor = if (selectedAuthor == it) AuthorSelected else OutlineVariant,
@@ -156,9 +174,18 @@ private fun TaskStateSelectFieldPreview() {
 @Preview
 @Composable
 private fun AuthorSelectFieldPreview() {
-    AuthorSelectField(
-        authors = listOf("다이노", "검프", "시"),
-        selectedAuthor = "다이노",
-        onAuthorSelected = { },
-    )
+    Column {
+        AuthorSelectField(
+            authors = listOf("다이노", "검프", "시"),
+            selectedAuthor = "다이노",
+            onAuthorSelected = { },
+            isNecessary = true,
+        )
+        AuthorSelectField(
+            authors = listOf("다이노", "검프", "시"),
+            selectedAuthor = "다이노",
+            onAuthorSelected = { },
+            isNecessary = false,
+        )
+    }
 }
