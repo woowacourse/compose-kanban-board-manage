@@ -103,6 +103,41 @@ fun Board(
                         .align(Alignment.Center),
                 )
             }
+
+            if(openUpdateDialog) {
+                UpdateTaskModalDialog(
+                    authors = authors,
+                    onDismissRequest = {
+                        openUpdateDialog = false
+                        updateTask = null
+                    },
+                    onUpdateRequest = {
+                        onTaskCreated(it)
+                        openUpdateDialog = false
+                        scope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar(
+                                message = "태스크가 수정되었습니다.",
+                                withDismissAction = true,
+                            )
+                        }
+                        updateTask = null
+                    },
+                    onDeleteRequest = {
+                        onTaskDeleted(updateTask!!)
+                        openUpdateDialog = false
+                        scope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar(
+                                message = "태스크가 삭제되었습니다.",
+                                withDismissAction = true,
+                            )
+                        }
+                        updateTask = null
+                    },
+                    modifier = Modifier
+                )
+            }
         }
     }
 }
