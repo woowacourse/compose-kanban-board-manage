@@ -73,7 +73,7 @@ fun UpdateTaskCardModal(
         TaskStateSelectField(taskInputState.selectedState) { newTaskState ->
             onStateChange(taskInputState.copy(selectedState = newTaskState))
         }
-        AuthorSelectField(false, authors, taskInputState.selectedAuthor) { newAuthor ->
+        AuthorSelectField(isNecessary = taskInputState.needProfile, authors, taskInputState.selectedAuthor) { newAuthor ->
             onStateChange(taskInputState.copy(selectedAuthor = newAuthor))
         }
         HorizontalDivider()

@@ -35,6 +35,7 @@ import woowacourse.kanban.board.ui.board.components.KanbanBoardContent
 import woowacourse.kanban.board.ui.board.components.UpdateTaskModalDialog
 import woowacourse.kanban.board.ui.theme.OutlineVariant
 import woowacourse.kanban.board.ui.theme.Primary
+import java.util.UUID
 
 @Composable
 fun Board(
@@ -47,7 +48,7 @@ fun Board(
     onTaskUpdated: (Task) -> Unit,
     onTaskDeleted: (Task) -> Unit,
     authors: List<String>,
-    onTaskStateChange: (Int, TaskState) -> Unit,
+    onTaskStateChange: (UUID, TaskState) -> Unit,
     modifier: Modifier = Modifier,
     updatingTask: Task? = null,
 ) {
@@ -154,7 +155,6 @@ fun Board(
                             }.onSuccess {
                                 snackbarHostState.currentSnackbarData?.dismiss()
                                 snackbarHostState.showSnackbar(message = "태스크가 수정되었습니다.", withDismissAction = true)
-                                closeUpdateDialog()
                             }.onFailure { e ->
                                 val message = when (e) {
                                     is TransStateException -> "해당 상태로 옮길 수 없습니다"
@@ -167,7 +167,6 @@ fun Board(
                                 }
                                 snackbarHostState.currentSnackbarData?.dismiss()
                                 snackbarHostState.showSnackbar(message = message, withDismissAction = true)
-
                             }
                         }
                         closeUpdateDialog()
@@ -182,6 +181,7 @@ fun Board(
                                     message = "태스크가 삭제되었습니다.",
                                     withDismissAction = true,
                                 )
+                                closeUpdateDialog()
                             }.onFailure { e ->
                                 val message = if (e is TasksException && e.error == TasksError.INVALID_DELETE) {
                                     "해당 상태에서는 태스크 삭제가 불가합니다."

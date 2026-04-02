@@ -17,4 +17,6 @@ data class TaskInputState(
         get() = title.isEmpty() && content.isEmpty() && tags.isEmpty()
     val isNewTaskEnabled: Boolean
         get() = titleError == TitleError.NONE && tagError == TagError.NONE
+    val needProfile: Boolean
+        get() = selectedState != TaskState.TO_DO
 }
