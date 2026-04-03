@@ -15,6 +15,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
+import woowacourse.kanban.board.domain.Project
 import kotlin.test.Test
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
@@ -207,5 +208,47 @@ class BoardTest {
 
         // then
         onNodeWithText("태스크가 이동되었습니다.").assertIsDisplayed()
+    }
+
+    @Test
+    fun `올바르지 않은 상태 전이를 시도할 경우 Snackbar를 노출한다`() = runComposeUiTest {
+        // given
+        setContent {
+            val state = ProjectScreenState(
+                initialProjects = listOf(
+                    Project(
+                        "Compose Desktop 칸반 보드",
+                        Tasks(listOf(Task(title = "title", taskState = TaskState.TO_DO, author = "페임스"))),
+                    ),
+                ),
+            )
+
+            Board(
+                projectName = state.selectedProject.name,
+                tasks = state.selectedProject.tasks,
+                onTaskCreated = { state.onTaskCreated(it) },
+                authors = listOf("다이노", "페임스"),
+                onTaskStateChange = { id, taskState -> state.onTaskStateChange(id, taskState) },
+                openUpdateDialog = state.openUpdateDialog,
+                updatingTask = state.updatingTask,
+                closeUpdateDialog = { state.closeUpdateDialog() },
+                onClickCard = { state.onClickCard(task = it) },
+                onTaskUpdated = { state.onTaskUpdated(it) },
+                onTaskDeleted = { state.onTaskDeleted(it) },
+            )
+        }
+
+        val targetColumnBounds = onNodeWithText("Review").fetchSemanticsNode().boundsInRoot
+
+        // when
+        onNodeWithText("title").performTouchInput {
+            down(center)
+            advanceEventTime(1000)
+            moveTo(targetColumnBounds.center)
+            up()
+        }
+
+        // then
+        onNodeWithText("해당 상태로 옮길 수 없습니다.").assertIsDisplayed()
     }
 }
