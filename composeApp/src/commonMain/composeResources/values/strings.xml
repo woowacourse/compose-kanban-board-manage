@@ -6,8 +6,8 @@
     <string name = "status_done">Done</string>
 
     // tag
-    <string name = "tag_default_message">5자 이내의 태그를 최대 5개까지 등록할 수 있습니다.</string>
-    <string name = "tag_count_error">태그는 5자 이내로 5개까지만 등록할 수 있습니다.</string>
+    <string name = "tag_default_message">%1$d자 이내의 태그를 최대 %2$d개까지 등록할 수 있습니다.</string>
+    <string name = "tag_count_error">태그는 %1$d자 이내로 %2$d개까지만 등록할 수 있습니다.</string>
     <string name = "tag_format_error">태그 형식이 올바르지 않습니다.</string>
 
     // kanban task
@@ -19,4 +19,15 @@
     <string name = "kanban_board_title">프로젝트</string>
     <string name = "kanban_board_subtitle">4주차 미션 보드</string>
     <string name = "completion_rate">완료율:  %1$d% (%2$d/%3$d)</string>
+
+    // task dialog
+    <string name = "label_dialog_title">제목</string>
+    <string name = "hint_dialog_title">태스크 제목을 입력하세요.</string>
+    <string name = "error_dialog_title">제목을 입력해 주세요.</string>
+    <string name = "label_dialog_description">설명</string>
+    <string name = "hint_dialog_description">태스크에 대한 자세한 설명을 입력하세요.</string>
+    <string name = "label_dialog_tag">태그</string>
+    <string name = "hint_dialog_tag">태그를 쉼표로 구분하여 입력하세요 (예: 버그, 긴급)</string>
+    <string name = "label_dialog_status">상태</string>
+    <string name = "label_dialog_assignee">담당자</string>
 </resources>

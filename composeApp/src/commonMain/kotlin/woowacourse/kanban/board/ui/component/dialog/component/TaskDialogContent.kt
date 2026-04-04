@@ -17,6 +17,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kanbanboard.composeapp.generated.resources.Res
+import kanbanboard.composeapp.generated.resources.error_dialog_title
+import kanbanboard.composeapp.generated.resources.hint_dialog_description
+import kanbanboard.composeapp.generated.resources.hint_dialog_tag
+import kanbanboard.composeapp.generated.resources.hint_dialog_title
+import kanbanboard.composeapp.generated.resources.label_dialog_assignee
+import kanbanboard.composeapp.generated.resources.label_dialog_description
+import kanbanboard.composeapp.generated.resources.label_dialog_status
+import kanbanboard.composeapp.generated.resources.label_dialog_tag
+import kanbanboard.composeapp.generated.resources.label_dialog_title
 import kanbanboard.composeapp.generated.resources.tag_count_error
 import kanbanboard.composeapp.generated.resources.tag_default_message
 import kanbanboard.composeapp.generated.resources.tag_format_error
@@ -46,9 +55,9 @@ fun TaskDialogContent(
 ) {
     val isTagError = isTagCountError || isTagFormatError
     val tagErrorMessage = when {
-        isTagCountError -> stringResource(Res.string.tag_count_error)
+        isTagCountError -> stringResource(Res.string.tag_count_error, 5, 5)
         isTagFormatError -> stringResource(Res.string.tag_format_error)
-        else -> stringResource(Res.string.tag_default_message)
+        else -> stringResource(Res.string.tag_default_message, 5, 5)
     }
 
     Column(
@@ -88,25 +97,6 @@ fun TaskDialogContent(
 }
 
 @Composable
-private fun DescriptionField(
-    descriptionValue: String,
-    onDescriptionChanged: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    TaskLabelLayout(
-        label = "설명",
-        modifier = modifier,
-    ) {
-        TaskDialogTextField(
-            value = descriptionValue,
-            onValueChanged = onDescriptionChanged,
-            placeholder = "태스크에 대한 자세한 설명을 입력하세요.",
-            modifier = Modifier.height(116.dp),
-        )
-    }
-}
-
-@Composable
 private fun TitleField(
     titleValue: String,
     onTitleChanged: (String) -> Unit,
@@ -114,7 +104,7 @@ private fun TitleField(
     modifier: Modifier = Modifier,
 ) {
     TaskLabelLayout(
-        label = "제목",
+        label = stringResource(Res.string.label_dialog_title),
         isRequired = true,
         modifier = modifier,
     ) {
@@ -122,13 +112,13 @@ private fun TitleField(
             value = titleValue,
             onValueChanged = onTitleChanged,
             isError = isTitleError,
-            placeholder = "태스크 제목을 입력하세요.",
+            placeholder = stringResource(Res.string.hint_dialog_title),
             maxLines = 1,
         )
 
         if (isTitleError) {
             Text(
-                text = "제목을 입력해 주세요.",
+                text = stringResource(Res.string.error_dialog_title),
                 fontSize = 12.sp,
                 color = Color.Red,
                 modifier = Modifier
@@ -141,6 +131,25 @@ private fun TitleField(
 }
 
 @Composable
+private fun DescriptionField(
+    descriptionValue: String,
+    onDescriptionChanged: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    TaskLabelLayout(
+        label = stringResource(Res.string.label_dialog_description),
+        modifier = modifier,
+    ) {
+        TaskDialogTextField(
+            value = descriptionValue,
+            onValueChanged = onDescriptionChanged,
+            placeholder = stringResource(Res.string.hint_dialog_description),
+            modifier = Modifier.height(116.dp),
+        )
+    }
+}
+
+@Composable
 private fun TagField(
     tagValue: String,
     onTagChanged: (String) -> Unit,
@@ -149,13 +158,13 @@ private fun TagField(
     modifier: Modifier = Modifier,
 ) {
     TaskLabelLayout(
-        label = "태그",
+        label = stringResource(Res.string.label_dialog_tag),
         modifier = modifier,
     ) {
         TaskDialogTextField(
             value = tagValue,
             onValueChanged = onTagChanged,
-            placeholder = "태그를 쉼표로 구분하여 입력하세요 (예: 버그, 긴급)",
+            placeholder = stringResource(Res.string.hint_dialog_tag),
             isError = isTagError,
             modifier = Modifier.padding(bottom = 4.dp),
             maxLines = 1,
@@ -178,7 +187,7 @@ private fun StatusSegmentedButtons(
     modifier: Modifier = Modifier,
 ) {
     TaskLabelLayout(
-        label = "상태",
+        label = stringResource(Res.string.label_dialog_status),
         isRequired = true,
         modifier = modifier,
     ) {
@@ -205,7 +214,7 @@ private fun AssigneesSegmentedButtons(
     modifier: Modifier = Modifier,
 ) {
     TaskLabelLayout(
-        label = "담당자",
+        label = stringResource(Res.string.label_dialog_assignee),
         isRequired = true,
         modifier = modifier,
     ) {
