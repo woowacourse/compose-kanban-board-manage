@@ -218,8 +218,8 @@ private fun KanbanBoardContent(
             taskToEdit?.let { task ->
                 EditTaskDialog(
                     clickedTask = task,
-                    onEditClick = {
-                        onEditClick(task, it)
+                    onEditClick = { editedTask ->
+                        onEditClick(task, editedTask)
                         taskToEdit = null
                     },
                     onDeleteClick = {

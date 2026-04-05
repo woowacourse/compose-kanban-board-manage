@@ -49,10 +49,7 @@ class KanbanBoardState(
     }
 
     fun editTask(originalTask: KanbanTask, editedTask: KanbanTask) {
-        val project = projects.getOrNull(selectedProjectIndex) ?: return
         kanbanBoard.editTask(originalTask, editedTask)
-        project.deleteTaskId(originalTask.id)
-        project.addTaskId(editedTask.id)
         updateTasks()
     }
 

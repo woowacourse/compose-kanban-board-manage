@@ -26,7 +26,9 @@ class KanbanBoard(tasks: List<KanbanTask> = emptyList()) {
     }
 
     fun editTask(originalTask: KanbanTask, editedTask: KanbanTask) {
-        tasks.remove(originalTask)
-        tasks.add(editedTask)
+        val index = tasks.indexOfFirst { it.id == originalTask.id }
+        if (index == -1) return
+
+        tasks[index] = editedTask.copy(id = originalTask.id)
     }
 }
