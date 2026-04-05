@@ -1,11 +1,21 @@
 package woowacourse.kanban.board.ui.screen.board
 
-enum class SnackbarMessage(val text: String) {
-    TASK_CREATED("새로운 태스크가 추가되었습니다."),
-    TASK_MOVED("태스크가 이동되었습니다."),
-    TASK_EDITED("태스크가 수정되었습니다."),
-    TASK_DELETED("태스크가 삭제되었습니다."),
-    TASK_DELETE_NOT_ALLOWED("해당 상태에서는 태스크 삭제가 불가능합니다."),
-    TASK_MOVE_NOT_ALLOWED("해당 상태로 옮길 수 없습니다."),
-    TASK_ASSIGNEE_REQUIRED("담당자를 지정해야 상태를 옮길 수 있습니다.")
+import kanbanboard.composeapp.generated.resources.Res
+import kanbanboard.composeapp.generated.resources.snackbar_board_task_assignee_required
+import kanbanboard.composeapp.generated.resources.snackbar_board_task_created
+import kanbanboard.composeapp.generated.resources.snackbar_board_task_delete_not_allowed
+import kanbanboard.composeapp.generated.resources.snackbar_board_task_deleted
+import kanbanboard.composeapp.generated.resources.snackbar_board_task_edited
+import kanbanboard.composeapp.generated.resources.snackbar_board_task_move_not_allowed
+import kanbanboard.composeapp.generated.resources.snackbar_board_task_moved
+import org.jetbrains.compose.resources.StringResource
+
+enum class SnackbarMessage(val textRes: StringResource) {
+    TASK_CREATED(Res.string.snackbar_board_task_created),
+    TASK_MOVED(Res.string.snackbar_board_task_moved),
+    TASK_EDITED(Res.string.snackbar_board_task_edited),
+    TASK_DELETED(Res.string.snackbar_board_task_deleted),
+    TASK_DELETE_NOT_ALLOWED(Res.string.snackbar_board_task_delete_not_allowed),
+    TASK_MOVE_NOT_ALLOWED(Res.string.snackbar_board_task_move_not_allowed),
+    TASK_ASSIGNEE_REQUIRED(Res.string.snackbar_board_task_assignee_required)
 }

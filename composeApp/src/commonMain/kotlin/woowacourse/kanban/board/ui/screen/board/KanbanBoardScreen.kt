@@ -50,21 +50,22 @@ fun KanbanBoardScreen(
         )
     }
     val snackBarHostState = remember { SnackbarHostState() }
-    var snackbarMessage by remember { mutableStateOf<SnackbarMessage?>(null) }
+    var snackbarMessageType by remember { mutableStateOf<SnackbarMessage?>(null) }
+    val snackbarMessage = snackbarMessageType?.let { stringResource(it.textRes) } ?: ""
 
     val totalCount = state.getTotalCount()
     val completeCount = state.getCompleteCount()
     val progress = if (totalCount == 0) 0f else completeCount.toFloat() / totalCount.toFloat()
     val progressPercent = (progress * 100).toInt()
 
-    LaunchedEffect(key1 = snackbarMessage) {
-        snackbarMessage?.let { message ->
+    LaunchedEffect(key1 = snackbarMessageType) {
+        snackbarMessageType?.let {
             snackBarHostState.showSnackbar(
-                message = message.text,
+                message = snackbarMessage,
                 withDismissAction = true,
                 duration = SnackbarDuration.Short,
             )
-            snackbarMessage = null
+            snackbarMessageType = null
         }
     }
 
@@ -88,29 +89,29 @@ fun KanbanBoardScreen(
         onCreateClick = {
             state.addTask(it)
             state.hideCreateTaskDialog()
-            snackbarMessage = SnackbarMessage.TASK_CREATED
+            snackbarMessageType = SnackbarMessage.TASK_CREATED
         },
         onEditClick = { originalTask, editedTask ->
             state.editTask(originalTask, editedTask)
-            snackbarMessage = SnackbarMessage.TASK_EDITED
+            snackbarMessageType = SnackbarMessage.TASK_EDITED
         },
         onDeleteClick = {
             if (it.status.isDeletable) {
                 state.deleteTask(it)
-                snackbarMessage = SnackbarMessage.TASK_DELETED
+                snackbarMessageType = SnackbarMessage.TASK_DELETED
             } else {
-                snackbarMessage = SnackbarMessage.TASK_DELETE_NOT_ALLOWED
+                snackbarMessageType = SnackbarMessage.TASK_DELETE_NOT_ALLOWED
             }
         },
         updateSelectedProjectIndex = { state.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
             if (!task.isValidAssigneeRequirement(targetStatus)) {
-                snackbarMessage = SnackbarMessage.TASK_ASSIGNEE_REQUIRED
+                snackbarMessageType = SnackbarMessage.TASK_ASSIGNEE_REQUIRED
             } else if (!task.isValidStatusTransition(targetStatus)) {
-                snackbarMessage = SnackbarMessage.TASK_MOVE_NOT_ALLOWED
+                snackbarMessageType = SnackbarMessage.TASK_MOVE_NOT_ALLOWED
             } else {
                 state.moveTask(task, targetStatus)
-                snackbarMessage = SnackbarMessage.TASK_MOVED
+                snackbarMessageType = SnackbarMessage.TASK_MOVED
             }
         },
     )

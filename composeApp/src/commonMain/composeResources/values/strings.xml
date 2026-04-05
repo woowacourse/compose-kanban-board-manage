@@ -15,11 +15,6 @@
     <string name = "edit_task">기존 태스크 수정</string>
     <string name = "assignee_null">없음</string>
 
-    // kanban board header
-    <string name = "kanban_board_title">프로젝트</string>
-    <string name = "kanban_board_subtitle">4주차 미션 보드</string>
-    <string name = "completion_rate">완료율:  %1$d% (%2$d/%3$d)</string>
-
     // task dialog
     <string name = "label_dialog_title">제목</string>
     <string name = "hint_dialog_title">태스크 제목을 입력하세요.</string>
@@ -30,4 +25,18 @@
     <string name = "hint_dialog_tag">태그를 쉼표로 구분하여 입력하세요 (예: 버그, 긴급)</string>
     <string name = "label_dialog_status">상태</string>
     <string name = "label_dialog_assignee">담당자</string>
+
+    // kanban board - snackbar message
+    <string name = "snackbar_board_task_created">새로운 태스크가 추가되었습니다.</string>
+    <string name = "snackbar_board_task_moved">태스크가 이동되었습니다.</string>
+    <string name = "snackbar_board_task_edited">태스크가 수정되었습니다.</string>
+    <string name = "snackbar_board_task_deleted">태스크가 삭제되었습니다.</string>
+    <string name = "snackbar_board_task_delete_not_allowed">해당 상태에서는 태스크 삭제가 불가능합니다.</string>
+    <string name = "snackbar_board_task_move_not_allowed">해당 상태로 옮길 수 없습니다.</string>
+    <string name = "snackbar_board_task_assignee_required">담당자를 지정해야 상태를 옮길 수 있습니다.</string>
+
+    // kanban board header
+    <string name = "kanban_board_title">프로젝트</string>
+    <string name = "kanban_board_subtitle">4주차 미션 보드</string>
+    <string name = "completion_rate">완료율:  %1$d% (%2$d/%3$d)</string>
 </resources>

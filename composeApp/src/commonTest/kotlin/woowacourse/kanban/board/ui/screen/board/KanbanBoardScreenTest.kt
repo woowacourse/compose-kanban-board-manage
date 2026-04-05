@@ -14,6 +14,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
+import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.fixture.createKanbanTask
@@ -69,29 +70,33 @@ class KanbanBoardScreenTest {
 
     @Test
     fun `태스크를 생성했을 때 스낵바가 정상적으로 표시된다`() = runComposeUiTest {
+        var expectedMessage = ""
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
                     projects = listOf(KanbanProject("안녕")),
                 )
             }
+            expectedMessage = stringResource(SnackbarMessage.TASK_CREATED.textRes)
         }
 
         onNodeWithText("새 태스크 생성").performClick()
         onNodeWithText("태스크 제목을 입력하세요.").performTextInput("안녕하세요")
         onNodeWithText("생성").performClick()
-        onNodeWithText(SnackbarMessage.TASK_CREATED.text).assertIsDisplayed()
+        onNodeWithText(expectedMessage).assertIsDisplayed()
     }
 
     @Test
     fun `태스크를 이동했을 때 스낵바가 정상적으로 표시된다`() = runComposeUiTest {
         // Given
+        var expectedMessage = ""
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
                     projects = listOf(KanbanProject("안녕")),
                 )
             }
+            expectedMessage = stringResource(SnackbarMessage.TASK_MOVED.textRes)
         }
         onNodeWithText("새 태스크 생성").performClick()
         onNodeWithText("태스크 제목을 입력하세요.").performTextInput("안녕하세요")
@@ -121,18 +126,20 @@ class KanbanBoardScreenTest {
         }
 
         // Then
-        onNodeWithText(SnackbarMessage.TASK_MOVED.text).assertIsDisplayed()
+        onNodeWithText(expectedMessage).assertIsDisplayed()
     }
 
     @Test
     fun `태스크를 같은 상태로 이동했을 때 스낵바가 표시되지 않는다`() = runComposeUiTest {
         // Given
+        var expectedMessage = ""
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
                     projects = listOf(KanbanProject("안녕")),
                 )
             }
+            expectedMessage = stringResource(SnackbarMessage.TASK_MOVED.textRes)
         }
         onNodeWithText("새 태스크 생성").performClick()
         onNodeWithText("태스크 제목을 입력하세요.").performTextInput("안녕하세요")
@@ -161,7 +168,7 @@ class KanbanBoardScreenTest {
         }
 
         // Then
-        onNodeWithText(SnackbarMessage.TASK_MOVED.text).assertDoesNotExist()
+        onNodeWithText(expectedMessage).assertDoesNotExist()
     }
 
     @Test
@@ -201,12 +208,14 @@ class KanbanBoardScreenTest {
     @Test
     fun `태스크를 삭제했을 때 스낵바가 정상적으로 표시된다`() = runComposeUiTest {
         // Given: 태스크 한 개를 생성한다.
+        var expectedMessage = ""
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
                     projects = listOf(KanbanProject("안녕")),
                 )
             }
+            expectedMessage = stringResource(SnackbarMessage.TASK_DELETED.textRes)
         }
         onNodeWithText("새 태스크 생성").performClick()
         onNodeWithText("태스크 제목을 입력하세요.").performTextInput("삭제할 태스크")
@@ -218,18 +227,20 @@ class KanbanBoardScreenTest {
 
         // Then: 삭제할 태스크 라는 이름을 가진 태스크가 사라지고, 스낵바가 표시된다.
         onNodeWithText("삭제할 태스크").assertDoesNotExist()
-        onNodeWithText(SnackbarMessage.TASK_DELETED.text).assertIsDisplayed()
+        onNodeWithText(expectedMessage).assertIsDisplayed()
     }
 
     @Test
     fun `태스크를 수정했을 때 스낵바가 정상적으로 표시된다`() = runComposeUiTest {
         // Given: 태스크 한 개를 생성한다.
+        var expectedMessage = ""
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
                     projects = listOf(KanbanProject("안녕")),
                 )
             }
+            expectedMessage = stringResource(SnackbarMessage.TASK_EDITED.textRes)
         }
         onNodeWithText("새 태스크 생성").performClick()
         onNodeWithText("태스크 제목을 입력하세요.").performTextInput("수정할 태스크")
@@ -241,18 +252,20 @@ class KanbanBoardScreenTest {
 
         // Then: 수정할 태스크 라는 이름을 가진 태스크가 여전히 존재하고, 스낵바가 표시된다.
         onNodeWithText("수정할 태스크").assertExists()
-        onNodeWithText(SnackbarMessage.TASK_EDITED.text).assertIsDisplayed()
+        onNodeWithText(expectedMessage).assertIsDisplayed()
     }
 
     @Test
     fun `불가능한 상태 전이를 시도할 때 스낵바가 정상적으로 표시된다`() = runComposeUiTest {
         // Given: To Do 상태의 태스크 한 개를 생성한다.
+        var expectedMessage = ""
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
                     projects = listOf(KanbanProject("안녕")),
                 )
             }
+            expectedMessage = stringResource(SnackbarMessage.TASK_MOVE_NOT_ALLOWED.textRes)
         }
         onNodeWithText("새 태스크 생성").performClick()
         onNodeWithText("태스크 제목을 입력하세요.").performTextInput("안녕하세요")
@@ -282,23 +295,27 @@ class KanbanBoardScreenTest {
         }
 
         // Then: 이동 불가능 안내 메시지가 출력된다.
-        onNodeWithText(SnackbarMessage.TASK_MOVE_NOT_ALLOWED.text).assertIsDisplayed()
+        onNodeWithText(expectedMessage).assertIsDisplayed()
     }
 
     @Test
     fun `담당자를 지정하지 않고 이동을 시도할 때 스낵바가 정상적으로 표시된다`() = runComposeUiTest {
         // Given: 담당자를 지정하지 않은 태스크 한 개를 생성한다.
+        var createdMessage = ""
+        var expectedMessage = ""
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
                     projects = listOf(KanbanProject("안녕")),
                 )
             }
+            createdMessage = stringResource(SnackbarMessage.TASK_CREATED.textRes)
+            expectedMessage = stringResource(SnackbarMessage.TASK_ASSIGNEE_REQUIRED.textRes)
         }
         onNodeWithText("새 태스크 생성").performClick()
         onNodeWithText("태스크 제목을 입력하세요.").performTextInput("안녕하세요")
         onNodeWithText("생성").performClick()
-        onNodeWithText(SnackbarMessage.TASK_CREATED.text).assertIsDisplayed()
+        onNodeWithText(createdMessage).assertIsDisplayed()
         onNodeWithContentDescription("닫기").performClick()
 
         // When
@@ -322,18 +339,20 @@ class KanbanBoardScreenTest {
         }
 
         // Then: 담당자 지정 안내 메시지가 출력된다.
-        onNodeWithText(SnackbarMessage.TASK_ASSIGNEE_REQUIRED.text).assertIsDisplayed()
+        onNodeWithText(expectedMessage).assertIsDisplayed()
     }
 
     @Test
     fun `삭제 불가능한 태스크의 삭제 버튼을 눌렀을 때 스낵바가 정상적으로 표시된다`() = runComposeUiTest {
         // Given: Done 상태의 태스크 한 개를 생성한다.
+        var expectedMessage = ""
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
                     projects = listOf(KanbanProject("안녕")),
                 )
             }
+            expectedMessage = stringResource(SnackbarMessage.TASK_DELETE_NOT_ALLOWED.textRes)
         }
         onNodeWithText("새 태스크 생성").performClick()
         onNodeWithText("태스크 제목을 입력하세요.").performTextInput("삭제할 태스크")
@@ -347,7 +366,7 @@ class KanbanBoardScreenTest {
 
         // Then: 삭제할 태스크 라는 이름을 가진 태스크가 여전히 존재하고, 스낵바가 표시된다.
         onNodeWithText("삭제할 태스크").assertExists()
-        onNodeWithText(SnackbarMessage.TASK_DELETE_NOT_ALLOWED.text).assertIsDisplayed()
+        onNodeWithText(expectedMessage).assertIsDisplayed()
     }
 
     @Test
