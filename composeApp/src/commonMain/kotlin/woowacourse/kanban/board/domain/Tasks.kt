@@ -20,12 +20,8 @@ data class Tasks(private val tasks: List<Task> = emptyList()) {
     fun addTask(task: Task): Tasks = copy(tasks = tasks + task)
 
     fun deleteTask(task: Task): Tasks {
-        checkDeleteAvailable(task)
         if (tasks.contains(task).not()) return copy(tasks = tasks)
+        if (task.isDeletable.not()) throw TasksException(TasksError.INVALID_DELETE)
         return copy(tasks = tasks - task)
-    }
-
-    private fun checkDeleteAvailable(task: Task) {
-        if (task.taskState == TaskState.Review || task.taskState == TaskState.Done) throw TasksException(TasksError.INVALID_DELETE)
     }
 }

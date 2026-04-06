@@ -1,5 +1,7 @@
 package woowacourse.kanban.board.domain
 
+import woowacourse.kanban.board.exception.TasksError
+import woowacourse.kanban.board.exception.TasksException
 import java.util.UUID
 
 data class Task(
@@ -13,12 +15,13 @@ data class Task(
     val isDeletable: Boolean
         get() = taskState.isDeletable
     val isEditable: Boolean
-        get() = ((taskState != TaskState.ToDo) && author.isBlank()).not()
+        get() = checkEditable(taskState, author)
 
     fun transState(state: TaskState): Task = copy(taskState = taskState.transferTo(state))
     fun editTask(
         updatedTask: Task,
     ): Task {
+        if(checkNeedProfile(updatedTask.taskState) && updatedTask.author.isBlank()) throw TasksException(TasksError.INVALID_AUTHOR)
         return if (isEditable) copy(
             title = updatedTask.title,
             content = updatedTask.content,
@@ -27,5 +30,10 @@ data class Task(
             taskState = updatedTask.taskState
         )
         else this
+    }
+
+    companion object {
+        fun checkEditable(taskState: TaskState, author: String) = ((taskState != TaskState.ToDo) && author.isBlank()).not()
+        fun checkNeedProfile(taskState: TaskState) = taskState.isNeedProfile
     }
 }

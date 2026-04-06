@@ -6,10 +6,13 @@ import woowacourse.kanban.board.exception.TransStateException
 
 sealed class TaskState {
     abstract val isDeletable: Boolean
+    abstract val isNeedProfile: Boolean
     abstract fun transferTo(state: TaskState): TaskState
 
     object ToDo : TaskState() {
         override val isDeletable: Boolean = true
+        override val isNeedProfile: Boolean = false
+
         override fun transferTo(state: TaskState): TaskState = when(state) {
             ToDo -> ToDo
             InProgress -> InProgress
@@ -20,6 +23,8 @@ sealed class TaskState {
 
     object InProgress : TaskState() {
         override val isDeletable: Boolean = true
+        override val isNeedProfile: Boolean = true
+
         override fun transferTo(state: TaskState): TaskState = when (state) {
             ToDo -> ToDo
             InProgress -> InProgress
@@ -30,6 +35,8 @@ sealed class TaskState {
 
     object Review : TaskState() {
         override val isDeletable: Boolean = false
+        override val isNeedProfile: Boolean = true
+
         override fun transferTo(state: TaskState): TaskState = when (state) {
             ToDo -> throw TransStateException(TransStateError.CANT_TRANSFER)
             InProgress -> InProgress
@@ -40,6 +47,8 @@ sealed class TaskState {
 
     object Done : TaskState() {
         override val isDeletable: Boolean = false
+        override val isNeedProfile: Boolean = false
+
         override fun transferTo(state: TaskState): TaskState = when(state) {
             ToDo -> ToDo
             InProgress -> throw TransStateException(TransStateError.CANT_TRANSFER)

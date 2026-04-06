@@ -1,5 +1,7 @@
 package woowacourse.kanban.board.ui.taskcard.state
 
+import woowacourse.kanban.board.domain.Task.Companion.checkEditable
+import woowacourse.kanban.board.domain.Task.Companion.checkNeedProfile
 import woowacourse.kanban.board.domain.TaskState
 import woowacourse.kanban.board.exception.TagError
 import woowacourse.kanban.board.exception.TitleError
@@ -16,14 +18,11 @@ data class TaskInputState(
     val init: Boolean
         get() = title.isEmpty() && content.isEmpty() && tags.isEmpty()
     val isNewTaskEnabled: Boolean
-        get() = titleError == TitleError.NONE && tagError == TagError.NONE && needProfileForNotTodo
+        get() = titleError == TitleError.NONE && tagError == TagError.NONE && checkEditable(selectedState, selectedAuthor)
     val isUpdateTaskEnabled: Boolean
-        get() = isNewTaskEnabled && needProfileForNotTodo
+        get() = isNewTaskEnabled && checkEditable(selectedState, selectedAuthor)
     val isDeleteEnabled: Boolean
-        get() = selectedState == TaskState.ToDo || selectedState == TaskState.InProgress
+        get() = selectedState.isDeletable
     val needProfile: Boolean
-        get() = selectedState != TaskState.ToDo
-
-    private val needProfileForNotTodo: Boolean
-        get() = if(selectedState == TaskState.ToDo) true else selectedAuthor.isNotEmpty()
+        get() = checkNeedProfile(selectedState)
 }
