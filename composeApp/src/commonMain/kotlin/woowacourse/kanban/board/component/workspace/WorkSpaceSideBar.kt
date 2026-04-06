@@ -34,7 +34,7 @@ import woowacourse.kanban.board.component.sample.ProjectPreviewData
 import woowacourse.kanban.board.model.project.Project
 
 @Composable
-fun SideBar(
+fun WorkSpaceSideBar(
     projects: ImmutableList<Project>,
     selectedProject: Project,
     onChangeProject: (Project) -> Unit,
@@ -148,5 +148,3 @@ private fun SideBarContentsPreview() {
         onChangeProject = {},
     )
 }
-
-

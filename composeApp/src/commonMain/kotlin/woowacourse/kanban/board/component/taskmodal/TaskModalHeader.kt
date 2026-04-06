@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.component.modal
+package woowacourse.kanban.board.component.taskmodal
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,8 @@ import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.component.ComponentText
 
 @Composable
-fun Header(
+fun TaskModalHeader(
+    title: @Composable () -> Unit,
     onClickClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -31,12 +32,7 @@ fun Header(
             .padding(horizontal = 24.dp)
             .fillMaxWidth(),
     ) {
-        Text(
-            text = ComponentText.HEADER_LABEL,
-            fontSize = 20.sp,
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
-        )
+        title()
         Icon(
             modifier = Modifier
                 .clickable { onClickClose() },
@@ -48,8 +44,16 @@ fun Header(
 
 @Preview(showBackground = true)
 @Composable
-private fun HeaderPreview() {
-    Header(
+private fun TaskModalHeaderPreview() {
+    TaskModalHeader(
+        title = {
+            Text(
+                text = ComponentText.CREATE_MODAL_HEADER_LABEL,
+                fontSize = 20.sp,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+            )
+        },
         onClickClose = {},
     )
 }

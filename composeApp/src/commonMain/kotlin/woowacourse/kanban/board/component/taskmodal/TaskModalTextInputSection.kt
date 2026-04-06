@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.component.modal
+package woowacourse.kanban.board.component.taskmodal
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,14 +14,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import woowacourse.kanban.board.model.taskmodal.TextInputState
+import woowacourse.kanban.board.model.taskmodal.TextInputValue
 import woowacourse.kanban.board.model.taskcard.TaskTag
 import woowacourse.kanban.board.model.taskcard.TaskTags
-import woowacourse.kanban.board.model.modal.TextInputState
-import woowacourse.kanban.board.model.modal.TextInputValue
 import woowacourse.kanban.board.model.taskcard.TaskTitle
 
 @Composable
-fun TextInputSection(
+fun TaskModalTextInputSection(
     titleInputState: TextInputState,
     descriptionInputState: TextInputState,
     tagsInputState: TextInputState,
@@ -33,21 +33,21 @@ fun TextInputSection(
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TITLE,
             value = titleInputState.value,
             modifier = Modifier.height(100.dp),
             onTextChange = titleInputState.onChange,
             isError = titleInputState.isError,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.DESCRIPTION,
             value = descriptionInputState.value,
             singleLine = false,
             modifier = Modifier.height(200.dp),
             onTextChange = descriptionInputState.onChange,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TAGS,
             value = tagsInputState.value,
             modifier = Modifier.height(100.dp),
@@ -59,7 +59,7 @@ fun TextInputSection(
 
 @Preview(showBackground = true)
 @Composable
-private fun TextInputSectionInvalidTitlePreview() {
+private fun TaskModalTextInputSectionInvalidTitlePreview() {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var tags by remember { mutableStateOf("") }
@@ -94,21 +94,21 @@ private fun TextInputSectionInvalidTitlePreview() {
     )
 
     Column {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TITLE,
             value = titleInputState.value,
             modifier = Modifier.height(100.dp),
             onTextChange = titleInputState.onChange,
             isError = titleInputState.isError,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.DESCRIPTION,
             value = descriptionInputState.value,
             singleLine = false,
             modifier = Modifier.height(200.dp),
             onTextChange = descriptionInputState.onChange,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TAGS,
             value = tagsInputState.value,
             onTextChange = tagsInputState.onChange,
@@ -120,7 +120,7 @@ private fun TextInputSectionInvalidTitlePreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun TextInputSectionValidTitlePreview() {
+private fun TaskModalTextInputSectionValidTitlePreview() {
     var title by remember { mutableStateOf("제목") }
     var description by remember { mutableStateOf("") }
     var tags by remember { mutableStateOf("") }
@@ -155,21 +155,21 @@ private fun TextInputSectionValidTitlePreview() {
     )
 
     Column {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TITLE,
             value = titleInputState.value,
             modifier = Modifier.height(100.dp),
             onTextChange = titleInputState.onChange,
             isError = titleInputState.isError,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.DESCRIPTION,
             value = descriptionInputState.value,
             singleLine = false,
             modifier = Modifier.height(200.dp),
             onTextChange = descriptionInputState.onChange,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TAGS,
             value = tagsInputState.value,
             onTextChange = tagsInputState.onChange,
@@ -181,7 +181,7 @@ private fun TextInputSectionValidTitlePreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun TextInputSectionInvalidTagPreview() {
+private fun TaskModalTextInputSectionInvalidTagPreview() {
     var title by remember { mutableStateOf("제목") }
     var description by remember { mutableStateOf("") }
     var tags by remember { mutableStateOf("태그,,") }
@@ -215,21 +215,21 @@ private fun TextInputSectionInvalidTagPreview() {
     )
 
     Column {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TITLE,
             value = titleInputState.value,
             modifier = Modifier.height(100.dp),
             onTextChange = titleInputState.onChange,
             isError = titleInputState.isError,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.DESCRIPTION,
             value = descriptionInputState.value,
             singleLine = false,
             modifier = Modifier.height(200.dp),
             onTextChange = descriptionInputState.onChange,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TAGS,
             value = tagsInputState.value,
             onTextChange = tagsInputState.onChange,
@@ -241,7 +241,7 @@ private fun TextInputSectionInvalidTagPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun TextInputSectionValidTagPreview() {
+private fun TaskModalTextInputSectionValidTagPreview() {
     var title by remember { mutableStateOf("제목") }
     var description by remember { mutableStateOf("") }
     var tags by remember { mutableStateOf("태그1,태그2,태그3") }
@@ -276,21 +276,21 @@ private fun TextInputSectionValidTagPreview() {
     )
 
     Column {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TITLE,
             value = titleInputState.value,
             modifier = Modifier.height(100.dp),
             onTextChange = titleInputState.onChange,
             isError = titleInputState.isError,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.DESCRIPTION,
             value = descriptionInputState.value,
             singleLine = false,
             modifier = Modifier.height(200.dp),
             onTextChange = descriptionInputState.onChange,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TAGS,
             value = tagsInputState.value,
             onTextChange = tagsInputState.onChange,
@@ -302,7 +302,7 @@ private fun TextInputSectionValidTagPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun TextInputSectionAllValueInputPreview() {
+private fun TaskModalTextInputSectionAllValueInputPreview() {
     var title by remember { mutableStateOf("제목") }
     var description by remember { mutableStateOf("설명이에요") }
     var tags by remember { mutableStateOf("태그") }
@@ -337,21 +337,21 @@ private fun TextInputSectionAllValueInputPreview() {
     )
 
     Column {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TITLE,
             value = titleInputState.value,
             modifier = Modifier.height(100.dp),
             onTextChange = titleInputState.onChange,
             isError = titleInputState.isError,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.DESCRIPTION,
             value = descriptionInputState.value,
             singleLine = false,
             modifier = Modifier.height(200.dp),
             onTextChange = descriptionInputState.onChange,
         )
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TAGS,
             value = tagsInputState.value,
             onTextChange = tagsInputState.onChange,

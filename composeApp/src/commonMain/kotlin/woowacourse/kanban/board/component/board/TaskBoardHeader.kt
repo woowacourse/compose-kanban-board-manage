@@ -30,14 +30,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.math.roundToInt
 import woowacourse.kanban.board.Gray10
 import woowacourse.kanban.board.Gray30
 import woowacourse.kanban.board.component.ComponentText
 import woowacourse.kanban.board.component.sample.ProjectPreviewData
+import kotlin.math.roundToInt
 
 @Composable
-fun BoardHeader(
+fun TaskBoardHeader(
     title: String,
     doneRate: Float,
     doneTasks: Int,
@@ -158,10 +158,10 @@ private fun TaskCreateButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun BoardHeaderPreview() {
+private fun TaskBoardHeaderPreview() {
     val project = ProjectPreviewData().values.toMutableList()[0]
     MaterialTheme {
-        BoardHeader(
+        TaskBoardHeader(
             title = project.title,
             doneRate = project.calculateDoneRate(),
             doneTasks = project.doneTasks.size,

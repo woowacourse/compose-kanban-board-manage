@@ -9,45 +9,71 @@ import androidx.compose.runtime.setValue
 import kotlinx.collections.immutable.ImmutableList
 import woowacourse.kanban.board.model.project.Project
 import woowacourse.kanban.board.model.taskcard.TaskCardData
+import woowacourse.kanban.board.model.workspace.SnackbarType
 
 class WorkSpaceState(
     val projects: ImmutableList<Project>,
 ) {
     val snackbarHostState = SnackbarHostState()
     var selectedProject by mutableStateOf(projects.firstOrNull())
-    var shouldShowAddSnackbar by mutableStateOf(false)
-    var shouldShowMoveSnackbar by mutableStateOf(false)
-    var isShowModal by mutableStateOf(false)
+    var shouldShowSnackbar by mutableStateOf<SnackbarType?>(null)
+    var isShowCreateModal by mutableStateOf(false)
+    var isShowEditModal by mutableStateOf(false)
+    var currentEditTask by mutableStateOf<TaskCardData?>(null)
 
-    fun showAddSnackBar() {
-        shouldShowAddSnackbar = true
+    fun addTask(modalState: ModalState) {
+        val data = modalState.toTaskCardData()
+        selectedProject?.addTask(data)
+        closeCreateModal()
+        showSnackBar(SnackbarType.ADD)
     }
 
-    fun hideAddSnackBar() {
-        shouldShowAddSnackbar = false
+    fun deleteTask() {
+        val taskId = currentEditTask?.id
+        val isDeleteSuccess = selectedProject?.deleteTaskById(taskId) ?: false
+        closeEditModal()
+        if (isDeleteSuccess) showSnackBar(SnackbarType.DELETE_SUCCESS)
+        else showSnackBar(SnackbarType.DELETE_FAILED)
     }
 
-    fun showMoveSnackBar() {
-        shouldShowMoveSnackbar = true
+    fun editTask(modalState: ModalState) {
+        val taskId = currentEditTask?.id
+        val data = modalState.toTaskCardData()
+        if (taskId != null && modalState.isFormValid) {
+            val updateResult = selectedProject?.tryUpdateTaskData(
+                id = taskId,
+                updateTaskCardData = data,
+            )
+            if (updateResult == true) {
+                showSnackBar(SnackbarType.EDIT)
+                closeEditModal()
+            }
+        }
     }
 
-    fun hideMoveSnackBar() {
-        shouldShowMoveSnackbar = false
+    fun showSnackBar(snackbarType: SnackbarType) {
+        shouldShowSnackbar = snackbarType
     }
 
-    fun showModal() {
-        isShowModal = true
+    fun hideSnackbar() {
+        shouldShowSnackbar = null
     }
 
-    fun closeModal() {
-        isShowModal = false
+    fun showCreateModal() {
+        isShowCreateModal = true
     }
 
-    fun onTaskAdded(task: TaskCardData) {
-        val project = selectedProject ?: return
-        project.addCard(task)
-        showAddSnackBar()
-        closeModal()
+    fun showEditModal(taskCardData: TaskCardData) {
+        currentEditTask = taskCardData
+        isShowEditModal = true
+    }
+
+    fun closeCreateModal() {
+        isShowCreateModal = false
+    }
+
+    fun closeEditModal() {
+        isShowEditModal = false
     }
 }
 

@@ -4,15 +4,15 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.profile
 import kotlinx.collections.immutable.toImmutableList
-import woowacourse.kanban.board.model.taskcard.TaskDescription
 import woowacourse.kanban.board.model.taskcard.Assignee
 import woowacourse.kanban.board.model.taskcard.Status
+import woowacourse.kanban.board.model.taskcard.TaskCardData
+import woowacourse.kanban.board.model.taskcard.TaskDescription
 import woowacourse.kanban.board.model.taskcard.TaskTag
 import woowacourse.kanban.board.model.taskcard.TaskTags
-import woowacourse.kanban.board.model.taskcard.TaskCardData
 import woowacourse.kanban.board.model.taskcard.TaskTitle
 
-class TaskCardPreviewData: PreviewParameterProvider<TaskCardData> {
+class TaskCardPreviewData : PreviewParameterProvider<TaskCardData> {
     override val values: Sequence<TaskCardData> = sequenceOf(
         TaskCardData(
             taskTitle = TaskTitle("LazyColumn 컴포넌트 구현"),

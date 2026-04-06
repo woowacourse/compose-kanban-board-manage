@@ -18,7 +18,6 @@ fun App() {
             Project("Compose3너무너무긴문장은말줄임표로표시합니다", listOf<TaskCardData>().toImmutableList()),
         ).toImmutableList()
 
-
     val assignees = listOf(
         Assignee("다이노", Res.drawable.profile),
         Assignee("페임스", Res.drawable.profile),

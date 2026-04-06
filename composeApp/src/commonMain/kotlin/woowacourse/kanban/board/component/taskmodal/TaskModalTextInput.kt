@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.component.modal
+package woowacourse.kanban.board.component.taskmodal
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -30,13 +30,13 @@ import woowacourse.kanban.board.component.extension.toErrorText
 import woowacourse.kanban.board.component.extension.toLabel
 import woowacourse.kanban.board.component.extension.toPlaceholder
 import woowacourse.kanban.board.component.extension.toSupportingText
+import woowacourse.kanban.board.model.taskmodal.TextInputValue
 import woowacourse.kanban.board.model.taskcard.TaskTag
 import woowacourse.kanban.board.model.taskcard.TaskTags
-import woowacourse.kanban.board.model.modal.TextInputValue
 import woowacourse.kanban.board.model.taskcard.TaskTitle
 
 @Composable
-fun TextInput(
+fun TaskModalTextInput(
     textInputValue: TextInputValue,
     value: String,
     onTextChange: (String) -> Unit,
@@ -109,7 +109,7 @@ fun TextInput(
 
 @Preview(showBackground = true, heightDp = 100)
 @Composable
-private fun TitleInputEmptyPreview() {
+private fun TitleInputEmptyPreviewTaskModal() {
     var title by remember { mutableStateOf("") }
 
     val isTaskTitleValid by remember {
@@ -119,7 +119,7 @@ private fun TitleInputEmptyPreview() {
     }
 
     Column {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TITLE,
             value = title,
             onTextChange = { title = it },
@@ -130,7 +130,7 @@ private fun TitleInputEmptyPreview() {
 
 @Preview(showBackground = true, heightDp = 100)
 @Composable
-private fun TitleInputPreview() {
+private fun TitleInputPreviewTaskModal() {
     var title by remember { mutableStateOf("제목") }
 
     val isTaskTitleValid by remember {
@@ -140,7 +140,7 @@ private fun TitleInputPreview() {
     }
 
     Column {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TITLE,
             value = title,
             onTextChange = { title = it },
@@ -151,11 +151,11 @@ private fun TitleInputPreview() {
 
 @Preview(showBackground = true, heightDp = 100)
 @Composable
-private fun DescriptionInputEmptyPreview() {
+private fun DescriptionInputEmptyPreviewTaskModal() {
     var description by remember { mutableStateOf("") }
 
     Column {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.DESCRIPTION,
             value = description,
             onTextChange = { description = it },
@@ -166,11 +166,11 @@ private fun DescriptionInputEmptyPreview() {
 
 @Preview(showBackground = true, heightDp = 100)
 @Composable
-private fun TagsInputEmptyPreview() {
+private fun TagsInputEmptyPreviewTaskModal() {
     var tags by remember { mutableStateOf("") }
 
     Column {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TAGS,
             value = tags,
             onTextChange = { tags = it },
@@ -181,7 +181,7 @@ private fun TagsInputEmptyPreview() {
 
 @Preview(showBackground = true, heightDp = 100)
 @Composable
-private fun InvalidTagsInputPreview() {
+private fun InvalidTagsInputPreviewTaskModal() {
     var tags by remember { mutableStateOf("태그") }
 
     val isTagValid by remember {
@@ -192,7 +192,7 @@ private fun InvalidTagsInputPreview() {
     }
 
     Column {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TAGS,
             value = tags,
             onTextChange = { tags = it },
@@ -203,7 +203,7 @@ private fun InvalidTagsInputPreview() {
 
 @Preview(showBackground = true, heightDp = 100)
 @Composable
-private fun ValidTagsInputPreview() {
+private fun ValidTagsInputPreviewTaskModal() {
 
     var tags by remember { mutableStateOf("태그1") }
 
@@ -215,7 +215,7 @@ private fun ValidTagsInputPreview() {
     }
 
     Column {
-        TextInput(
+        TaskModalTextInput(
             textInputValue = TextInputValue.TAGS,
             value = tags,
             onTextChange = { tags = it },

@@ -2,6 +2,7 @@ package woowacourse.kanban.board.component.board
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,19 +46,23 @@ import woowacourse.kanban.board.component.extension.toHeaderColor
 import woowacourse.kanban.board.component.extension.toText
 import woowacourse.kanban.board.component.sample.ProjectPreviewData
 import woowacourse.kanban.board.component.taskcard.TaskCard
+import woowacourse.kanban.board.model.project.MoveResult
 import woowacourse.kanban.board.model.project.Project
 import woowacourse.kanban.board.model.taskcard.Assignee
-import woowacourse.kanban.board.model.taskcard.TaskDescription
 import woowacourse.kanban.board.model.taskcard.Status
+import woowacourse.kanban.board.model.taskcard.TaskCardData
+import woowacourse.kanban.board.model.taskcard.TaskDescription
 import woowacourse.kanban.board.model.taskcard.TaskTag
 import woowacourse.kanban.board.model.taskcard.TaskTags
-import woowacourse.kanban.board.model.taskcard.TaskCardData
 import woowacourse.kanban.board.model.taskcard.TaskTitle
 
 @Composable
 fun TaskColumnSection(
     project: Project,
-    onMoveSnackBar: () -> Unit,
+    onMoveSuccessSnackBar: () -> Unit,
+    onMoveFailedSnackBar: () -> Unit,
+    onMoveNoAssigneeSnackBar: () -> Unit,
+    onShowEditTaskModal: (TaskCardData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
@@ -66,7 +72,8 @@ fun TaskColumnSection(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(24.dp),
+            .padding(24.dp)
+            .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Status.entries.forEach { status ->
@@ -84,18 +91,21 @@ fun TaskColumnSection(
                     val dropPosition = currentDragPosition ?: return@TaskColumn
                     val targetStatus = columnBounds.entries
                         .firstOrNull { (_, rect) -> rect.contains(dropPosition) }?.key
-
                     draggedTaskId?.let { id ->
                         val task = project.findTaskById(id)
                         if (task != null && targetStatus != null && task.status != targetStatus) {
-                            project.updateTaskStatus(id, targetStatus)
-                            onMoveSnackBar()
+                            val updateResult = project.tryMoveTaskStatus(id, targetStatus)
+                            when (updateResult) {
+                                MoveResult.SUCCESS -> onMoveSuccessSnackBar()
+                                MoveResult.INVALID_MOVE -> onMoveFailedSnackBar()
+                                MoveResult.NO_ASSIGNEE -> onMoveNoAssigneeSnackBar()
+                            }
                         }
                     }
-
                     currentDragPosition = null
                     draggedTaskId = null
                 },
+                onShowEditTaskModal = onShowEditTaskModal,
                 onTaskDragCancel = {
                     currentDragPosition = null
                     draggedTaskId = null
@@ -112,6 +122,7 @@ fun TaskColumnSection(
 private fun TaskColumn(
     status: Status,
     tasks: ImmutableList<TaskCardData>,
+    onShowEditTaskModal: (TaskCardData) -> Unit,
     modifier: Modifier = Modifier,
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = {},
@@ -161,6 +172,7 @@ private fun TaskColumn(
                         onDragChange = onTaskDragChange,
                         onDragEnd = onTaskDragEnd,
                         onDragCancel = onTaskDragCancel,
+                        onShowEditTaskModal = onShowEditTaskModal
                     )
                 }
             }
@@ -246,6 +258,7 @@ private fun TaskColumnTodoPreview() {
     TaskColumn(
         tasks = tasks,
         status = Status.TODO,
+        onShowEditTaskModal = {}
     )
 }
 
@@ -264,6 +277,7 @@ private fun TaskColumnProgressPreview() {
     TaskColumn(
         tasks = tasks,
         status = Status.PROGRESS,
+        onShowEditTaskModal = {}
     )
 }
 
@@ -282,6 +296,7 @@ private fun TaskColumnDonePreview() {
     TaskColumn(
         tasks = tasks,
         status = Status.DONE,
+        onShowEditTaskModal = {}
     )
 }
 
@@ -293,7 +308,10 @@ private fun TaskColumnSectionPreview() {
         MaterialTheme {
             TaskColumnSection(
                 project = project,
-                onMoveSnackBar = {},
+                onMoveSuccessSnackBar = {},
+                onShowEditTaskModal = {},
+                onMoveFailedSnackBar = {},
+                onMoveNoAssigneeSnackBar = {},
             )
         }
     }

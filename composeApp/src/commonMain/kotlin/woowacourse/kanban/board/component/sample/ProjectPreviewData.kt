@@ -4,7 +4,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import kotlinx.collections.immutable.toImmutableList
 import woowacourse.kanban.board.model.project.Project
 
-class ProjectPreviewData: PreviewParameterProvider<Project> {
+class ProjectPreviewData : PreviewParameterProvider<Project> {
     val taskCards = TaskCardPreviewData().values.toImmutableList()
     override val values: Sequence<Project> = sequenceOf(
         Project(

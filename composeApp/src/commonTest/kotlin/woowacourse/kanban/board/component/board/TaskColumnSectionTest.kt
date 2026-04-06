@@ -4,11 +4,11 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.runComposeUiTest
+import kotlin.test.Test
 import kotlinx.collections.immutable.toImmutableList
 import woowacourse.kanban.board.fixture.TaskCardDataFixture
 import woowacourse.kanban.board.model.project.Project
 import woowacourse.kanban.board.model.taskcard.Status
-import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class TaskColumnSectionTest {
@@ -26,7 +26,10 @@ class TaskColumnSectionTest {
         setContent {
             TaskColumnSection(
                 project = project,
-                onMoveSnackBar = {}
+                onMoveSuccessSnackBar = {},
+                onShowEditTaskModal = {},
+                onMoveNoAssigneeSnackBar = {},
+                onMoveFailedSnackBar = {},
             )
         }
 
@@ -49,7 +52,10 @@ class TaskColumnSectionTest {
         setContent {
             TaskColumnSection(
                 project = project,
-                onMoveSnackBar = {}
+                onMoveSuccessSnackBar = {},
+                onShowEditTaskModal = {},
+                onMoveNoAssigneeSnackBar = {},
+                onMoveFailedSnackBar = {},
             )
         }
 
@@ -71,7 +77,10 @@ class TaskColumnSectionTest {
         setContent {
             TaskColumnSection(
                 project = project,
-                onMoveSnackBar = {}
+                onMoveSuccessSnackBar = {},
+                onShowEditTaskModal = {},
+                onMoveNoAssigneeSnackBar = {},
+                onMoveFailedSnackBar = {},
             )
         }
 

@@ -20,13 +20,14 @@ object TaskCardDataFixture {
         taskDescription: String = "설명",
         tags: ImmutableList<TaskTag> = listOf(TaskTag("컴포넌트")).toImmutableList(),
         status: Status = Status.TODO,
-        assigneeName: String = "다이노",
+        assigneeName: String? = "다이노",
     ) = TaskCardData(
         id = id,
         taskTitle = TaskTitle(value = title),
         taskDescription = TaskDescription(taskDescription),
         taskTags = TaskTags(tags),
         status = status,
-        assignee = Assignee(assigneeName, Res.drawable.profile)
+        assignee = if (assigneeName == null) null
+        else Assignee(assigneeName, Res.drawable.profile),
     )
 }

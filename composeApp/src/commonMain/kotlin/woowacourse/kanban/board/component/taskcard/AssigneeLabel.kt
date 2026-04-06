@@ -18,34 +18,46 @@ import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.profile
 import org.jetbrains.compose.resources.painterResource
 import woowacourse.kanban.board.Gray20
+import woowacourse.kanban.board.component.ComponentText
 import woowacourse.kanban.board.model.taskcard.Assignee
 
 @Composable
 fun AssigneeLabel(
-    assignee: Assignee,
+    assignee: Assignee?,
     modifier: Modifier = Modifier,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Image(
-            painter = painterResource(assignee.icon),
-            contentDescription = "프로필 이미지",
-            modifier = modifier.size(24.dp),
-        )
-        Spacer(modifier = modifier.width(8.dp))
-        Text(
-            text = assignee.nickname,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            color = Gray20,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        if (assignee != null) {
+            Image(
+                painter = painterResource(assignee.icon),
+                contentDescription = "프로필 이미지",
+                modifier = modifier.size(24.dp),
+            )
+            Spacer(modifier = modifier.width(8.dp))
+            Text(
+                text = assignee.nickname,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = Gray20,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        } else {
+            Text(
+                text = ComponentText.NO_ASSIGNEE_LABEL,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = Gray20,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun AssigneeLabelPreview() {
-    val assignee = Assignee("다이노",Res.drawable.profile)
+    val assignee = Assignee("다이노", Res.drawable.profile)
     AssigneeLabel(assignee = assignee)
 }

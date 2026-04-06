@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.component.modal
+package woowacourse.kanban.board.component.taskmodal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,20 +24,17 @@ import woowacourse.kanban.board.component.extension.toText
 import woowacourse.kanban.board.model.taskcard.Status
 
 @Composable
-fun StatusButton(
+fun TaskStatusButton(
     currentStatus: Status,
     myStatus: Status,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     val backgroundColor = if (currentStatus == myStatus) Blue80 else Color.Transparent
     val borderColor = if (currentStatus == myStatus) Blue50 else Gray70
     val textColor = if (currentStatus == myStatus) Blue50 else Gray20
-
     Box(
         modifier = modifier
-            .width(200.dp)
             .clip(RoundedCornerShape(10.dp))
             .border(
                 1.dp,
@@ -47,8 +43,7 @@ fun StatusButton(
             )
             .background(color = backgroundColor)
             .clickable { onClick() }
-            .padding(horizontal = 50.dp, vertical = 14.dp),
-
+            .padding(horizontal = 30.dp, vertical = 14.dp),
     ) {
         Text(
             text = myStatus.toText(),

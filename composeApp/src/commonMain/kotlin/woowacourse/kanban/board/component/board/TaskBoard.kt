@@ -9,41 +9,51 @@ import androidx.compose.ui.tooling.preview.Preview
 import woowacourse.kanban.board.Gray80
 import woowacourse.kanban.board.component.sample.ProjectPreviewData
 import woowacourse.kanban.board.model.project.Project
+import woowacourse.kanban.board.model.taskcard.TaskCardData
 
 @Composable
-fun Board(
+fun TaskBoard(
     project: Project,
-    onShowMoveSnackBar: () -> Unit,
+    onShowMoveSuccessSnackBar: () -> Unit,
+    onShowMoveFailedSnackbar: () -> Unit,
+    onShowNoAssigneeSnackbar: () -> Unit,
     onShowCreateTaskModal: () -> Unit,
+    onShowEditTaskModal: (TaskCardData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .background(Gray80),
     ) {
-        BoardHeader(
+        TaskBoardHeader(
             title = project.title,
             doneRate = project.calculateDoneRate(),
             doneTasks = project.doneTasks.size,
             totalTasks = project.allTasksCount,
-            onClickCreateTask = { onShowCreateTaskModal() },
+            onClickCreateTask = onShowCreateTaskModal,
         )
         TaskColumnSection(
             project = project,
-            onMoveSnackBar = { onShowMoveSnackBar() },
+            onMoveSuccessSnackBar = onShowMoveSuccessSnackBar,
+            onShowEditTaskModal = onShowEditTaskModal,
+            onMoveFailedSnackBar = onShowMoveFailedSnackbar,
+            onMoveNoAssigneeSnackBar = onShowNoAssigneeSnackbar,
         )
     }
 }
 
 @Preview(showBackground = true, widthDp = 1000)
 @Composable
-private fun BoardPreview() {
+private fun TaskBoardPreview() {
     val project = ProjectPreviewData().values.toMutableList()[0]
     MaterialTheme {
-        Board(
+        TaskBoard(
             project = project,
-            onShowMoveSnackBar = { },
+            onShowMoveSuccessSnackBar = { },
             onShowCreateTaskModal = { },
+            onShowEditTaskModal = { },
+            onShowMoveFailedSnackbar = {},
+            onShowNoAssigneeSnackbar = {},
         )
     }
 }

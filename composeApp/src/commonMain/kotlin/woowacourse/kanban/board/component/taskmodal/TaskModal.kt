@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.component.modal
+package woowacourse.kanban.board.component.taskmodal
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +9,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,22 +18,26 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import woowacourse.kanban.board.component.sample.ProfilePreviewData
-import woowacourse.kanban.board.model.modal.TextInputState
+import woowacourse.kanban.board.component.workspace.ModalState
+import woowacourse.kanban.board.component.workspace.rememberModalState
+import woowacourse.kanban.board.model.taskmodal.TextInputState
 import woowacourse.kanban.board.model.taskcard.Assignee
 import woowacourse.kanban.board.model.taskcard.TaskCardData
-import woowacourse.kanban.board.model.taskcard.TaskDescription
-import woowacourse.kanban.board.model.taskcard.TaskTag
-import woowacourse.kanban.board.model.taskcard.TaskTags
-import woowacourse.kanban.board.model.taskcard.TaskTitle
 
 @Composable
-fun Modal(
+fun TaskModal(
     assignees: ImmutableList<Assignee>,
     onClickClose: () -> Unit,
-    onClickTaskCreate: (TaskCardData) -> Unit,
+    title: @Composable () -> Unit,
+    footerButtonSection: @Composable () -> Unit,
+    modalState: ModalState,
     modifier: Modifier = Modifier,
+    data: TaskCardData? = null,
 ) {
-    val modalState = rememberModalState(assignees)
+    LaunchedEffect(data) {
+        if (data != null) modalState.loadData(data)
+        else modalState.clear()
+    }
     val titleInputState = TextInputState(
         value = modalState.title,
         onChange = { modalState.title = it },
@@ -63,47 +68,50 @@ fun Modal(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            Header(
+            TaskModalHeader(
+                title = title,
                 onClickClose = onClickClose,
             )
             HorizontalDivider()
-            TextInputSection(
+            TaskModalTextInputSection(
                 titleInputState = titleInputState,
                 descriptionInputState = descriptionInputState,
                 tagsInputState = tagsInputState,
             )
-            ButtonSection(
-                state = modalState.status,
-                currentAssignee = modalState.assignees,
+            TaskModalButtonSection(
                 assignees = assignees,
-                onStateClick = { modalState.status = it },
-                onProfileClick = { modalState.assignees = it },
+                modalState = modalState
             )
-            Footer(
+            TaskModalFooter(
                 onClickClose = onClickClose,
-                onClickTaskCreate = {
-                    val data = TaskCardData(
-                        taskTitle = TaskTitle(value = modalState.title),
-                        taskDescription = TaskDescription(value = modalState.description),
-                        taskTags = TaskTags(TaskTag.extractedTags(modalState.tags).toImmutableList()),
-                        status = modalState.status,
-                        assignee = modalState.assignees,
-                    )
-                    onClickTaskCreate(data)
-                },
-                isButtonEnabled = modalState.isTaskTitleValid && modalState.isTaskTagsValid,
+                footerButtonSection = footerButtonSection,
             )
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 1000, heightDp = 1000)
 @Composable
-private fun ModalPreview() {
+private fun CreateTaskModalPreview() {
     val profiles = ProfilePreviewData().values.toImmutableList()
-    Modal(
+    TaskModal(
         assignees = profiles,
         onClickClose = {},
-        onClickTaskCreate = {},
+        title = {},
+        footerButtonSection = {},
+        modalState = rememberModalState(profiles)
+    )
+}
+
+@Preview(showBackground = true, widthDp = 1000, heightDp = 1000)
+@Composable
+private fun EditTaskModalPreview() {
+    val profiles = ProfilePreviewData().values.toImmutableList()
+    TaskModal(
+        assignees = profiles,
+        title = {},
+        footerButtonSection = {},
+        onClickClose = {},
+        modalState = rememberModalState(profiles)
     )
 }

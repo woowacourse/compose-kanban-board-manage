@@ -5,8 +5,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.runComposeUiTest
-import kotlinx.collections.immutable.toImmutableList
 import kotlin.test.Test
+import kotlinx.collections.immutable.toImmutableList
 import woowacourse.kanban.board.model.taskcard.TaskTag
 import woowacourse.kanban.board.model.taskcard.TaskTags
 
