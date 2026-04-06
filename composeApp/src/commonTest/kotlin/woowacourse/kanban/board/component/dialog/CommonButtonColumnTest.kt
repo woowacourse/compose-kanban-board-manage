@@ -6,6 +6,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
+import woowacourse.kanban.board.component.dialog.selection.CoachButton
+import woowacourse.kanban.board.component.dialog.selection.CommonButtonColumn
+import woowacourse.kanban.board.component.dialog.selection.StatusButton
 import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.state.DialogState
 

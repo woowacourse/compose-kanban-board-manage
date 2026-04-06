@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.component.dialog
+package woowacourse.kanban.board.component.dialog.selection
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

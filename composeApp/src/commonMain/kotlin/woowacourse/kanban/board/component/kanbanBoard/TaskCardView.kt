@@ -22,6 +22,7 @@ fun TaskCardView(
     onDragChange: (Offset) -> Unit = {},
     onDragEnd: () -> Unit = {},
     onDragCancel: () -> Unit = {},
+    onClick: (Task) -> Unit,
 ) {
     var cardWindowPosition by remember { mutableStateOf(Offset.Zero) }
 
@@ -42,5 +43,6 @@ fun TaskCardView(
                 )
             },
         task = task,
+        onClick = { onClick(task) },
     )
 }

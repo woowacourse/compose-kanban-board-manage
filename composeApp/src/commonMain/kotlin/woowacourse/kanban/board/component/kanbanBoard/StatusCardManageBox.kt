@@ -30,7 +30,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,6 +54,7 @@ fun StatusCardManageBox(
     onTaskDragChange: (Offset) -> Unit = {},
     onTaskDragEnd: () -> Unit = {},
     onTaskDragCancel: () -> Unit = {},
+    onTaskClick: (Task) -> Unit = {},
 ) {
 
     val isDropTarget by remember { derivedStateOf { getIsDropTarget() } }
@@ -129,6 +129,7 @@ fun StatusCardManageBox(
                             onDragChange = onTaskDragChange,
                             onDragEnd = onTaskDragEnd,
                             onDragCancel = onTaskDragCancel,
+                            onClick = onTaskClick,
                         )
                     }
                     if (index != boardList.lastIndex) Box(modifier = Modifier.height(12.dp))

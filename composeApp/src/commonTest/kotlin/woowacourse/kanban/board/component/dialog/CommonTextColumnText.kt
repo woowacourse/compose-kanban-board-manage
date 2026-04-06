@@ -6,6 +6,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
+import woowacourse.kanban.board.component.dialog.input.CommonTextColumn
 import woowacourse.kanban.board.state.DialogState
 
 @OptIn(ExperimentalTestApi::class)

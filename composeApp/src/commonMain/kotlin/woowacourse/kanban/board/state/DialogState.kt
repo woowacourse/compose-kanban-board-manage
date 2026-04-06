@@ -16,9 +16,12 @@ class DialogState {
 
     var isTitleError by mutableStateOf(false)
     var isTagsError by mutableStateOf(false)
-
     var createdTask by mutableStateOf<Task?>(null)
+    var mode by mutableStateOf(DialogMode.CREATE)
+    var snackbarMessage by mutableStateOf<String?>(null)
 
+    var editTask by mutableStateOf<Task?>(null)
+    var deleteTask by mutableStateOf<Task?>(null)
 
     fun titleOnValueChange(value: String) {
         titleInputValue = value
@@ -31,7 +34,7 @@ class DialogState {
 
     fun tagsOnValueChange(value: String) {
         tagsInputValue = value
-        val tags = if (tagsInputValue.isNotBlank()) tagsInputValue.split(",") else emptyList()
+        val tags = parseTagTexts()
         isTagsError = tags.any { Tag.isTagError(it) } || Task.isTagsError(tags.map { Tag(it) })
     }
 
@@ -51,15 +54,94 @@ class DialogState {
         return nameValue == name
     }
 
-    fun onTaskCreate() {
-        createdTask = Task(
-            title = titleInputValue,
-            description = descriptionInputValue,
-            tags = if (tagsInputValue.isNotBlank()) {
-                tagsInputValue.split(",").map { Tag(it) }
-            } else emptyList(),
-            status = statusValue,
-            nickname = nameValue,
-        )
+    fun selectMode() {
+        when (mode) {
+            DialogMode.CREATE -> onTaskCreate()
+            DialogMode.EDIT -> onTaskEdit()
+        }
     }
+
+    fun onTaskCreate() {
+        runCatching {
+            Task(
+                title = titleInputValue,
+                description = descriptionInputValue,
+                tags = parseTagTexts().map { Tag(it) },
+                status = statusValue,
+                nickname = nameValue,
+            )
+        }.onSuccess {
+            createdTask = it
+        }.onFailure { error ->
+            snackbarMessage = validationMessage(error)
+        }
+    }
+
+    fun onTaskEdit(){
+        val currentTask = editTask ?: return
+        runCatching {
+            currentTask.copy(
+                title = titleInputValue,
+                description = descriptionInputValue,
+                tags = parseTagTexts().map { Tag(it) },
+                status = statusValue,
+                nickname = nameValue,
+            )
+        }.onSuccess {
+            editTask = it
+            createdTask = it
+        }.onFailure { error ->
+            snackbarMessage = validationMessage(error)
+        }
+    }
+
+    private fun validationMessage(error: Throwable): String? {
+        return when (error.message) {
+            Task.TITLE_ERROR_MESSAGE -> null
+            Task.TAGS_ERROR_MESSAGE -> null
+            Task.ASSIGNEE_ERROR_MESSAGE -> "이 상태에서는 담당자를 지정해야 합니다."
+            else -> null
+        }
+    }
+
+    private fun parseTagTexts(): List<String> =
+        if (tagsInputValue.isNotBlank()) tagsInputValue.split(",") else emptyList()
+
+    fun onTaskDelete(){
+        val task = editTask ?: return
+
+        deleteTask = task
+    }
+
+    fun loadTaskData(task: Task){
+        titleInputValue = task.title
+        descriptionInputValue = task.description
+        tagsInputValue = task.tags.joinToString(", ") { it.text }
+        statusValue = task.status
+        nameValue = task.nickname
+        editTask = task
+    }
+
+    fun resetDialog() {
+        titleInputValue = ""
+        descriptionInputValue = ""
+        tagsInputValue = ""
+        statusValue = Status.TODO
+        nameValue = "다이노"
+        isTitleError = false
+        isTagsError = false
+        createdTask = null
+        editTask = null
+        deleteTask = null
+        mode = DialogMode.CREATE
+        snackbarMessage = null
+    }
+
+    fun resetSnackbarMessage() {
+        snackbarMessage = null
+    }
+}
+
+enum class DialogMode {
+    CREATE, EDIT
 }

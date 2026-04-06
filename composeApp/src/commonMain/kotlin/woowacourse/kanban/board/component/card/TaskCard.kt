@@ -2,6 +2,7 @@ package woowacourse.kanban.board.component.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -23,10 +24,12 @@ import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.domain.Tag
 
 @Composable
-fun TaskCard(task: Task, modifier: Modifier = Modifier) {
+fun TaskCard(task: Task, modifier: Modifier = Modifier,
+             onClick: () -> Unit = {}) {
     Box(
         modifier = modifier
             .clip(shape = RoundedCornerShape(15.dp))
+            .clickable(onClick = onClick)
             .background(color = Color.White)
             .border(
                 width = 1.dp,

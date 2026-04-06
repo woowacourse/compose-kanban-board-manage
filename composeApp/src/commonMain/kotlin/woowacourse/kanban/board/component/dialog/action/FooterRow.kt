@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.component.dialog
+package woowacourse.kanban.board.component.dialog.action
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,29 +18,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import woowacourse.kanban.board.theme.CREATE_BG
-import woowacourse.kanban.board.theme.CREATE_BG_ERROR
-import woowacourse.kanban.board.theme.PRIMARY_TEXT
 
 @Composable
-fun FooterRow(onCancel: () -> Unit, onCreate: () -> Unit, isCreateError: Boolean, modifier: Modifier = Modifier) {
-    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        FooterButton(
-            modifier = Modifier,
-            text = "취소",
-            backgroundColor = Color.White,
-            textColor = Color(PRIMARY_TEXT),
-            onClick = onCancel,
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        FooterButton(
-            modifier = Modifier,
-            text = "생성",
-            textColor = Color.White,
-            backgroundColor = if (!isCreateError) Color(CREATE_BG) else Color(CREATE_BG_ERROR),
-            onClick = onCreate,
-            enabled = !isCreateError,
-        )
+fun FooterRow(actions: List<FooterAction>, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End,
+    ) {
+        actions.forEachIndexed { index, action ->
+            FooterButton(
+                text = action.text,
+                backgroundColor = action.backgroundColor,
+                textColor = action.textColor,
+                onClick = action.onClick,
+                enabled = action.enabled,
+            )
+
+            if (index != actions.lastIndex) {
+                Spacer(modifier = Modifier.width(12.dp))
+            }
+        }
     }
 }
 
@@ -70,9 +67,11 @@ private fun FooterButton(
 @Preview(showBackground = true)
 @Composable
 private fun CreateEnableFooterRowPreview() {
+    val isCreateError = false
     FooterRow(
-        onCancel = {},
-        onCreate = {},
-        isCreateError = false,
+        actions = listOf(
+            cancelFooterAction(onClick = {}),
+            createFooterAction(onClick = {}, isEnabled = !isCreateError),
+        ),
     )
 }

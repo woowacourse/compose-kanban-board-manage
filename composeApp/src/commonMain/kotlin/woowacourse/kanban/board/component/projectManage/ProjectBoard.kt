@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.DialogState
 import woowacourse.kanban.board.component.kanbanBoard.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.state.ProjectBoardState
@@ -25,12 +26,10 @@ fun ProjectBoard() {
         VerticalDivider()
         KanbanBoard(
             state.selectedKanbanBoardTask,
-            onAddTask = { task ->
-                state.updateSelectedBoard { it.addTask(task) }
-            },
-            onMoveTaskStatus = { taskId, targetStatus ->
-                state.updateSelectedBoard { it.moveTaskStatus(taskId, targetStatus) }
-            },
+            onAddTask = { task -> state.addTask(task) },
+            onEditTask = { task -> state.editTask(task) },
+            onDeleteTask = { task -> state.deleteTask(task) },
+            onMoveTaskStatus = { taskId, targetStatus -> state.moveTaskStatus(taskId, targetStatus) },
         )
     }
 }

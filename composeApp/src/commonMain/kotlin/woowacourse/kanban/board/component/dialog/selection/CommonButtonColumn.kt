@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.component.dialog
+package woowacourse.kanban.board.component.dialog.selection
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import woowacourse.kanban.board.component.dialog.input.HeaderText
 import woowacourse.kanban.board.domain.Status
 
 @Composable
@@ -24,7 +25,7 @@ fun <T> CommonButtonColumn(
     Column(modifier) {
         HeaderText(title = header)
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            columns = GridCells.Fixed(4),
             modifier = Modifier.fillMaxWidth().heightIn(max = 100.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             userScrollEnabled = false,
