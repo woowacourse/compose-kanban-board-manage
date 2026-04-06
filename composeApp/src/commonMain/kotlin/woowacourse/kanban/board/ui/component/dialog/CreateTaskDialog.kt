@@ -108,7 +108,7 @@ fun CreateTaskDialog(
                     modifier = modifier,
                     titleValue = state.titleValue,
                     isTitleError = isTitleError,
-                    onTitleChanged = { state.changeTitle(it) },
+                    onTitleChanged = state::changeTitle,
                     descriptionValue = state.descriptionValue,
                     onDescriptionChanged = { state.descriptionValue = it },
                     tagValue = state.tagValue,
@@ -117,10 +117,10 @@ fun CreateTaskDialog(
                     onTagChanged = { state.tagValue = it },
                     statuses = Status.entries,
                     selectedStatus = state.selectedStatus,
-                    onStatusChanged = { state.changeStatus(it) },
+                    onStatusChanged = state::changeStatus,
                     assignees = state.assignees,
                     assignee = state.assignee,
-                    onAssigneeChanged = { state.changeAssignee(it) },
+                    onAssigneeChanged = state::changeAssignee,
                 )
             },
         )
