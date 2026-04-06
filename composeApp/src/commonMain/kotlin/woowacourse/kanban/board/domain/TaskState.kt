@@ -1,18 +1,53 @@
 package woowacourse.kanban.board.domain
 
-enum class TaskState {
-    TO_DO,
-    IN_PROGRESS,
-    REVIEW,
-    DONE,
-    ;
+import woowacourse.kanban.board.exception.TransStateError
+import woowacourse.kanban.board.exception.TransStateException
 
-    companion object {
-        fun isCorrectStateChange(fromState: TaskState, toState: TaskState): Boolean = when (fromState) {
-            TO_DO -> toState == IN_PROGRESS || toState == TO_DO
-            IN_PROGRESS -> toState == TO_DO || toState == REVIEW || toState == IN_PROGRESS
-            REVIEW -> toState == IN_PROGRESS || toState == REVIEW || toState == DONE
-            DONE -> toState == TO_DO || toState == DONE
+
+sealed class TaskState {
+    abstract val isDeletable: Boolean
+    abstract fun transferTo(state: TaskState): TaskState
+
+    object ToDo : TaskState() {
+        override val isDeletable: Boolean = true
+        override fun transferTo(state: TaskState): TaskState = when(state) {
+            ToDo -> ToDo
+            InProgress -> InProgress
+            Review -> throw TransStateException(TransStateError.CANT_TRANSFER)
+            Done -> throw TransStateException(TransStateError.CANT_TRANSFER)
         }
+    }
+
+    object InProgress : TaskState() {
+        override val isDeletable: Boolean = true
+        override fun transferTo(state: TaskState): TaskState = when (state) {
+            ToDo -> ToDo
+            InProgress -> InProgress
+            Review -> Review
+            Done -> throw TransStateException(TransStateError.CANT_TRANSFER)
+        }
+    }
+
+    object Review : TaskState() {
+        override val isDeletable: Boolean = false
+        override fun transferTo(state: TaskState): TaskState = when (state) {
+            ToDo -> throw TransStateException(TransStateError.CANT_TRANSFER)
+            InProgress -> InProgress
+            Review -> Review
+            Done -> Done
+        }
+    }
+
+    object Done : TaskState() {
+        override val isDeletable: Boolean = false
+        override fun transferTo(state: TaskState): TaskState = when(state) {
+            ToDo -> ToDo
+            InProgress -> throw TransStateException(TransStateError.CANT_TRANSFER)
+            Review -> throw TransStateException(TransStateError.CANT_TRANSFER)
+            Done -> Done
+        }
+    }
+    companion object {
+        val entries: List<TaskState> by lazy { listOf(ToDo, InProgress, Review, Done) }
     }
 }

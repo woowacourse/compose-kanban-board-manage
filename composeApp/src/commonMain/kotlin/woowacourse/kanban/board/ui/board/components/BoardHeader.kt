@@ -47,7 +47,7 @@ fun BoardHeader(projectName: String, tasks: Tasks, onClick: () -> Unit, modifier
                 Spacer(modifier = Modifier.height(6.dp))
                 TaskCompletedRate(
                     tasks.completedRate(),
-                    tasks.countByState(TaskState.DONE),
+                    tasks.countByState(TaskState.Done),
                     tasks.totalCount,
                 )
             }
@@ -55,7 +55,7 @@ fun BoardHeader(projectName: String, tasks: Tasks, onClick: () -> Unit, modifier
         }
         Spacer(modifier = Modifier.height(16.dp))
         ProjectProgress(
-            doneCount = tasks.countByState(TaskState.DONE),
+            doneCount = tasks.countByState(TaskState.Done),
             totalCount = tasks.totalCount,
         )
     }
@@ -129,10 +129,10 @@ private fun BoardHeaderPreview() {
         projectName = "Compose Desktop 칸반 보드",
         tasks = Tasks(
             listOf(
-                Task(title = "title1", taskState = TaskState.DONE),
-                Task(title = "title2", taskState = TaskState.DONE),
-                Task(title = "title3", taskState = TaskState.TO_DO),
-                Task(title = "title4", taskState = TaskState.IN_PROGRESS),
+                Task(title = "title1", taskState = TaskState.Done),
+                Task(title = "title2", taskState = TaskState.Done),
+                Task(title = "title3", taskState = TaskState.ToDo),
+                Task(title = "title4", taskState = TaskState.InProgress),
             ),
         ),
         onClick = {},

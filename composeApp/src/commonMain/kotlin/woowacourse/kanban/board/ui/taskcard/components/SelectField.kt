@@ -168,7 +168,7 @@ private fun CustomButton(
 @Composable
 private fun TaskStateSelectFieldPreview() {
     TaskStateSelectField(
-        selectedState = TaskState.TO_DO,
+        selectedState = TaskState.ToDo,
         onStateChanged = { },
     )
 }

@@ -97,7 +97,7 @@ fun KanbanBoardContent(
                     currentDragPosition = null
                     draggedTask = null
                 },
-                modifier = Modifier.testTag(taskState.name),
+                modifier = Modifier.testTag(taskState.toText()),
             )
         }
     }
@@ -189,29 +189,29 @@ private fun StateTasksTitle(titleColor: Color, taskState: TaskState, tasks: Task
 }
 
 fun TaskState.toText(): String = when (this) {
-    TaskState.TO_DO -> "To Do"
-    TaskState.IN_PROGRESS -> "In Progress"
-    TaskState.REVIEW -> "Review"
-    TaskState.DONE -> "Done"
+    TaskState.ToDo -> "To Do"
+    TaskState.InProgress -> "In Progress"
+    TaskState.Review -> "Review"
+    TaskState.Done -> "Done"
 }
 
 private fun TaskState.titleColor(): Color = when (this) {
-    TaskState.TO_DO -> ToDoTitle
-    TaskState.IN_PROGRESS -> InProgressTitle
-    TaskState.REVIEW -> ReviewTitle
-    TaskState.DONE -> DoneTitle
+    TaskState.ToDo -> ToDoTitle
+    TaskState.InProgress -> InProgressTitle
+    TaskState.Review -> ReviewTitle
+    TaskState.Done -> DoneTitle
 }
 
 private fun TaskState.contentColor(): Color = when (this) {
-    TaskState.TO_DO -> ToDoContent
-    TaskState.IN_PROGRESS -> InProgressContent
-    TaskState.REVIEW -> ReviewContent
-    TaskState.DONE -> DoneContent
+    TaskState.ToDo -> ToDoContent
+    TaskState.InProgress -> InProgressContent
+    TaskState.Review -> ReviewContent
+    TaskState.Done -> DoneContent
 }
 
 private fun TaskState.borderColor(): Color = when (this) {
-    TaskState.TO_DO -> ToDoBorder
-    TaskState.IN_PROGRESS -> InProgressBorder
-    TaskState.REVIEW -> ReviewBorder
-    TaskState.DONE -> DoneBorder
+    TaskState.ToDo -> ToDoBorder
+    TaskState.InProgress -> InProgressBorder
+    TaskState.Review -> ReviewBorder
+    TaskState.Done -> DoneBorder
 }

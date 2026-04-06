@@ -20,6 +20,7 @@ import woowacourse.kanban.board.domain.Project
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
 import woowacourse.kanban.board.domain.Tasks
+import woowacourse.kanban.board.ui.board.components.toText
 
 @OptIn(ExperimentalTestApi::class)
 class BoardTest {
@@ -172,7 +173,7 @@ class BoardTest {
                 mutableStateOf(
                     Tasks(
                         listOf(
-                            Task(title = "title", taskState = TaskState.TO_DO),
+                            Task(title = "title", taskState = TaskState.ToDo),
                         ),
                     ),
                 )
@@ -196,7 +197,7 @@ class BoardTest {
             )
         }
 
-        val targetColumnBounds = onNodeWithTag(TaskState.IN_PROGRESS.name).fetchSemanticsNode().boundsInRoot
+        val targetColumnBounds = onNodeWithTag(TaskState.InProgress.toText()).fetchSemanticsNode().boundsInRoot
 
         // when
         onNodeWithText("title").performTouchInput {
@@ -218,7 +219,7 @@ class BoardTest {
                 initialProjects = listOf(
                     Project(
                         "Compose Desktop 칸반 보드",
-                        Tasks(listOf(Task(title = "title", taskState = TaskState.TO_DO, author = "페임스"))),
+                        Tasks(listOf(Task(title = "title", taskState = TaskState.ToDo, author = "페임스"))),
                     ),
                 ),
             )

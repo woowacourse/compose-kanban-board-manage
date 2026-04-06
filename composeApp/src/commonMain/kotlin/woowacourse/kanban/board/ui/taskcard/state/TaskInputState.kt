@@ -10,7 +10,7 @@ data class TaskInputState(
     val content: String = "",
     val tags: String = "",
     val tagError: TagError = TagError.NONE,
-    val selectedState: TaskState = TaskState.TO_DO,
+    val selectedState: TaskState = TaskState.ToDo,
     val selectedAuthor: String = "",
 ) {
     val init: Boolean
@@ -20,10 +20,10 @@ data class TaskInputState(
     val isUpdateTaskEnabled: Boolean
         get() = isNewTaskEnabled && needProfileForNotTodo
     val isDeleteEnabled: Boolean
-        get() = selectedState == TaskState.TO_DO || selectedState == TaskState.IN_PROGRESS
+        get() = selectedState == TaskState.ToDo || selectedState == TaskState.InProgress
     val needProfile: Boolean
-        get() = selectedState != TaskState.TO_DO
+        get() = selectedState != TaskState.ToDo
 
     private val needProfileForNotTodo: Boolean
-        get() = if(selectedState == TaskState.TO_DO) true else selectedAuthor.isNotEmpty()
+        get() = if(selectedState == TaskState.ToDo) true else selectedAuthor.isNotEmpty()
 }

@@ -171,7 +171,7 @@ class UpdateTaskCardModalTest {
                     TaskInputState(
                         title = "제목",
                         tags = "태그1, 태그2, 태그3",
-                        selectedState = TaskState.REVIEW,
+                        selectedState = TaskState.Review,
                         selectedAuthor = authors.first(),
                     ),
                 )
@@ -197,7 +197,7 @@ class UpdateTaskCardModalTest {
                     TaskInputState(
                         title = "제목",
                         tags = "태그1, 태그2, 태그3",
-                        selectedState = TaskState.TO_DO,
+                        selectedState = TaskState.ToDo,
                         selectedAuthor = authors.first(),
                     ),
                 )
@@ -223,7 +223,7 @@ class UpdateTaskCardModalTest {
                     TaskInputState(
                         title = "제목",
                         tags = "태그1, 태그2, 태그3",
-                        selectedState = TaskState.IN_PROGRESS,
+                        selectedState = TaskState.InProgress,
                         selectedAuthor = authors.first(),
                     ),
                 )

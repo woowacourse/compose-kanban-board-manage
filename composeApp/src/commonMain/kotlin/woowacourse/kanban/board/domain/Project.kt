@@ -10,7 +10,7 @@ data class Project(val name: String, val tasks: Tasks) {
 
     fun changeTaskState(taskId: UUID, fixedTaskState: TaskState): Project {
         val task = tasks.items.firstOrNull { it.id == taskId } ?: return this
-        val updatedTask = task.copy(taskState = fixedTaskState)
+        val updatedTask = task.transState(fixedTaskState)
         return copy(tasks = tasks.updateTask(updatedTask))
     }
 }

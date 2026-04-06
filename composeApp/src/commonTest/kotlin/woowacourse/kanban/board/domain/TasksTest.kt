@@ -13,18 +13,18 @@ class TasksTest {
         // given
         val tasks = Tasks(
             listOf(
-                Task(title = "title1", taskState = TaskState.TO_DO),
-                Task(title = "title2", taskState = TaskState.TO_DO),
-                Task(title = "title3", taskState = TaskState.IN_PROGRESS),
-                Task(title = "title4", taskState = TaskState.DONE),
-                Task(title = "title5", taskState = TaskState.DONE),
+                Task(title = "title1", taskState = TaskState.ToDo),
+                Task(title = "title2", taskState = TaskState.ToDo),
+                Task(title = "title3", taskState = TaskState.InProgress),
+                Task(title = "title4", taskState = TaskState.Done),
+                Task(title = "title5", taskState = TaskState.Done),
             ),
         )
 
         // when
-        val toDoCount = tasks.countByState(TaskState.TO_DO)
-        val inProgressCount = tasks.countByState(TaskState.IN_PROGRESS)
-        val doneCount = tasks.countByState(TaskState.DONE)
+        val toDoCount = tasks.countByState(TaskState.ToDo)
+        val inProgressCount = tasks.countByState(TaskState.InProgress)
+        val doneCount = tasks.countByState(TaskState.Done)
 
         // then
         assertThat(toDoCount).isEqualTo(2)
@@ -38,7 +38,7 @@ class TasksTest {
         val tasks = Tasks(emptyList())
 
         // when
-        val toDoCount = tasks.countByState(TaskState.TO_DO)
+        val toDoCount = tasks.countByState(TaskState.ToDo)
 
         // then
         assertThat(toDoCount).isEqualTo(0)
@@ -49,10 +49,10 @@ class TasksTest {
         // given
         val tasks = Tasks(
             listOf(
-                Task(title = "title1", taskState = TaskState.TO_DO),
-                Task(title = "title2", taskState = TaskState.TO_DO),
-                Task(title = "title4", taskState = TaskState.DONE),
-                Task(title = "title5", taskState = TaskState.DONE),
+                Task(title = "title1", taskState = TaskState.ToDo),
+                Task(title = "title2", taskState = TaskState.ToDo),
+                Task(title = "title4", taskState = TaskState.Done),
+                Task(title = "title5", taskState = TaskState.Done),
             ),
         )
 
@@ -80,15 +80,15 @@ class TasksTest {
         // given
         val tasks = Tasks(
             listOf(
-                Task(title = "title1", taskState = TaskState.TO_DO),
-                Task(title = "title2", taskState = TaskState.TO_DO),
-                Task(title = "title4", taskState = TaskState.DONE),
-                Task(title = "title5", taskState = TaskState.DONE),
+                Task(title = "title1", taskState = TaskState.ToDo),
+                Task(title = "title2", taskState = TaskState.ToDo),
+                Task(title = "title4", taskState = TaskState.Done),
+                Task(title = "title5", taskState = TaskState.Done),
             ),
         )
 
         // when
-        val toDoTasks = tasks.getTasksByState(TaskState.TO_DO)
+        val toDoTasks = tasks.getTasksByState(TaskState.ToDo)
 
         // then
         assertThat(toDoTasks.size).isEqualTo(2)
@@ -101,7 +101,7 @@ class TasksTest {
         val tasks = Tasks(emptyList())
 
         // when
-        val toDoTasks = tasks.getTasksByState(TaskState.TO_DO)
+        val toDoTasks = tasks.getTasksByState(TaskState.ToDo)
 
         // then
         assertThat(toDoTasks.size).isEqualTo(0)
@@ -111,7 +111,7 @@ class TasksTest {
     fun `Task를 추가하면 Tasks의 개수가 늘어나고 해당 Task를 포함한다`() {
         // given
         val tasks = Tasks(emptyList())
-        val newTask = Task(title = "새로운 할 일", taskState = TaskState.TO_DO)
+        val newTask = Task(title = "새로운 할 일", taskState = TaskState.ToDo)
 
         // when
         val updatedTasks = tasks.addTask(newTask)
@@ -124,23 +124,23 @@ class TasksTest {
     @Test
     fun `Task의 상태를 수정하면 해당 ID를 가진 Task만 업데이트된다`() {
         // given
-        val task1 = Task(title = "할 일 1", taskState = TaskState.TO_DO)
-        val task2 = Task(title = "할 일 2", taskState = TaskState.TO_DO)
+        val task1 = Task(title = "할 일 1", taskState = TaskState.ToDo)
+        val task2 = Task(title = "할 일 2", taskState = TaskState.ToDo)
         val tasks = Tasks(listOf(task1, task2))
-        val updatedTask1 = task1.copy(taskState = TaskState.IN_PROGRESS)
+        val updatedTask1 = task1.copy(taskState = TaskState.InProgress)
 
         // when
         val resultTasks = tasks.updateTask(updatedTask1)
 
         // then
-        assertThat(resultTasks.getTasksByState(TaskState.IN_PROGRESS)).containsExactly(updatedTask1)
-        assertThat(resultTasks.getTasksByState(TaskState.TO_DO)).containsExactly(task2)
+        assertThat(resultTasks.getTasksByState(TaskState.InProgress)).containsExactly(updatedTask1)
+        assertThat(resultTasks.getTasksByState(TaskState.ToDo)).containsExactly(task2)
     }
 
     @Test
     fun `Task를 삭제하면 해당 ID를 가진 Task가 삭제된다`() {
         // given
-        val task1 = Task(title = "할 일 1", taskState = TaskState.TO_DO)
+        val task1 = Task(title = "할 일 1", taskState = TaskState.ToDo)
         val tasks = Tasks(listOf(task1))
 
         // when
@@ -153,8 +153,8 @@ class TasksTest {
     @Test
     fun `Task를 삭제할 때 주어진 Task가 없다면 그대로 반환한다`() {
         // given
-        val task1 = Task(title = "할 일 1", taskState = TaskState.TO_DO)
-        val task2 = Task(title = "할 일 2", taskState = TaskState.TO_DO)
+        val task1 = Task(title = "할 일 1", taskState = TaskState.ToDo)
+        val task2 = Task(title = "할 일 2", taskState = TaskState.ToDo)
 
         val tasks = Tasks(listOf(task2))
         val tasks2 = Tasks()
@@ -166,8 +166,8 @@ class TasksTest {
     @Test
     fun `수정할 시 수정된 태스크가 포함된 Tasks를 반환한다`() {
         // given
-        val task1 = Task(title = "할 일 1", taskState = TaskState.IN_PROGRESS)
-        val updatedTask = task1.copy(title = "수정된 할 일", taskState = TaskState.REVIEW)
+        val task1 = Task(title = "할 일 1", taskState = TaskState.InProgress)
+        val updatedTask = task1.copy(title = "수정된 할 일", taskState = TaskState.Review)
 
         // when
         val tasks = Tasks(listOf(task1))
@@ -180,8 +180,8 @@ class TasksTest {
     @Test
     fun `일치 하지 않는 태스크를 수정하려 할 경우 Tasks를 그대로 반환한다`() {
         // given
-        val task1 = Task(title = "할 일 1", taskState = TaskState.TO_DO)
-        val task2 = Task(title = "할 일 2", taskState = TaskState.TO_DO)
+        val task1 = Task(title = "할 일 1", taskState = TaskState.ToDo)
+        val task2 = Task(title = "할 일 2", taskState = TaskState.ToDo)
 
         // when
         val tasks = Tasks(listOf(task1))
@@ -191,8 +191,8 @@ class TasksTest {
 
     @Test
     fun `Review, Done 상태의 삭제를 할 시 예외가 발생한다`() {
-        val tasks = Tasks(listOf(Task(title = "test1", taskState = TaskState.REVIEW)))
-        val tasks2 = Tasks(listOf(Task(title = "test2", taskState = TaskState.DONE)))
+        val tasks = Tasks(listOf(Task(title = "test1", taskState = TaskState.Review)))
+        val tasks2 = Tasks(listOf(Task(title = "test2", taskState = TaskState.Done)))
 
         assertThatThrownBy { tasks.deleteTask(tasks.items[0]) }
             .isInstanceOf(TasksException::class.java)
