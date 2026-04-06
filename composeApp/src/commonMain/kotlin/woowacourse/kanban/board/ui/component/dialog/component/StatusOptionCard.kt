@@ -26,8 +26,6 @@ fun StatusOptionCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val text = status.toTitle()
-
     TaskOptionCard(
         isSelected = isSelected,
         onClick = onClick,
@@ -35,7 +33,7 @@ fun StatusOptionCard(
         width = 147,
     ) {
         Text(
-            text = text,
+            text = status.toTitle(),
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(vertical = 14.dp),
