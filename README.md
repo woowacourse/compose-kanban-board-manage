@@ -30,3 +30,10 @@
 
 
 ## 이전 단계 리뷰 반영 사항
+- [ ] TaskState에 대해 상태패턴 구현
+- [ ] 도메인에서의 에러 캐칭으로 변경
+- [ ] 삭제 가능 여부 확인 로직을 하나의 원천에서 나오도록 수정
+  - [ ] Task에서 삭제 여부 확인
+  - [ ] Tasks에 확인 로직 제거
+  - [ ] TaskInputState에서는 호출
+- [ ] UI에서 `CreateTaskCardModal`를 `UpdateTaskCardModal`에서 재사용해보기
