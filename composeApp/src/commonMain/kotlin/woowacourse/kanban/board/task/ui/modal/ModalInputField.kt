@@ -25,22 +25,24 @@ fun ModalInputField(
     placeHolder: String,
     maxLines: Int,
     isValid: Boolean,
-    supportingText: String,
     modifier: Modifier = Modifier,
+    supportingMessage: String? = null,
+    errorMessage: String? = null,
 ) {
-    // 내용 색
     val valueColor = if (isValid) Color.Black else Red700
-    // hint message와 supporting message 색
     val placeHolderColor = if (isValid) Gray950.copy(alpha = 0.5f) else Red700
-    Column(
-        modifier = modifier,
-    ) {
-        // 텍스트 필드 영역
+    val text = errorMessage ?: supportingMessage.orEmpty()
+
+    Column(modifier = modifier) {
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White, RoundedCornerShape(10.dp))
-                .border(width = 1.dp, color = valueColor, shape = RoundedCornerShape(10.dp)),
+                .border(
+                    width = 1.dp,
+                    color = valueColor,
+                    shape = RoundedCornerShape(10.dp),
+                ),
             value = value,
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
@@ -60,12 +62,13 @@ fun ModalInputField(
             maxLines = maxLines,
         )
 
-        // supporting message
         Text(
             modifier = Modifier.padding(
-                top = 4.dp, start = 16.dp, end = 16.dp,
+                top = 4.dp,
+                start = 16.dp,
+                end = 16.dp,
             ),
-            text = supportingText,
+            text = text,
             fontSize = 12.sp,
             color = placeHolderColor,
         )
@@ -82,7 +85,7 @@ private fun ModalInputFieldPreview() {
             placeHolder = "태그를 쉼표로 구분하여 입력하세요 (예: 버그,긴급)",
             maxLines = 1,
             isValid = true,
-            supportingText = "",
+            supportingMessage = "",
             modifier = Modifier.background(Color.White),
         )
         ModalInputField(
@@ -91,7 +94,7 @@ private fun ModalInputFieldPreview() {
             placeHolder = "이건,,,,올바르지 않은 형식입니다,,,,,,,,,",
             maxLines = 1,
             isValid = false,
-            supportingText = "",
+            errorMessage = "에러 메시지",
             modifier = Modifier.background(Color.White),
         )
     }

@@ -16,23 +16,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ModalOptionAssignee(modifier: Modifier = Modifier, name: String) {
+fun ModalOptionAssignee(modifier: Modifier = Modifier, name: String, isExist: Boolean) {
     Row(
         modifier = modifier.fillMaxWidth()
             .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            modifier = Modifier.size(24.dp),
-            imageVector = Icons.Default.AccountCircle,
-            contentDescription = "담당자 아이콘",
-            tint = Color.Gray,
-        )
+        if (isExist) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "담당자 아이콘",
+                tint = Color.Gray,
+            )
+        }
 
         Text(
             text = name,
@@ -42,11 +46,29 @@ fun ModalOptionAssignee(modifier: Modifier = Modifier, name: String) {
     }
 }
 
+private data class ModalOptionAssigneePreviewCase(val name: String, val isExist: Boolean)
+
+private class ModalOptionAssigneePreviewProvider : PreviewParameterProvider<ModalOptionAssigneePreviewCase> {
+    override val values = sequenceOf(
+        ModalOptionAssigneePreviewCase(
+            name = "없음",
+            isExist = false,
+        ),
+        ModalOptionAssigneePreviewCase(
+            name = "다이노,",
+            isExist = true,
+        ),
+    )
+}
+
 @Preview
 @Composable
-private fun ModalOptionAssigneePreview() {
+private fun ModalOptionAssigneePreview(
+    @PreviewParameter(ModalOptionAssigneePreviewProvider::class) previewCase: ModalOptionAssigneePreviewCase,
+) {
     ModalOptionAssignee(
         modifier = Modifier.background(Color.White),
-        name = "다이노",
+        name = previewCase.name,
+        isExist = previewCase.isExist,
     )
 }

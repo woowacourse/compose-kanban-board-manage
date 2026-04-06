@@ -1,5 +1,6 @@
 <resources>
     <string name="modal_title_new_task">새 태스크 생성</string>
+    <string name="modal_title_edit_task">기존 태스크 수정</string>
     <string name="board_title">Compose Desktop 칸반 보드 </string>
     <string name="project_title">프로젝트</string>
 
@@ -7,7 +8,8 @@
     <string name="label_description">설명</string>
     <string name="label_tags">태그</string>
     <string name="label_status">상태 *</string>
-    <string name="label_assignee">담당자 *</string>
+    <string name="label_assignee_with_essential">담당자 *</string>
+    <string name="label_assignee_without_essential">담당자 </string>
 
     <string name="place_holder_input_title">태스크 제목을 입력하세요</string>
     <string name="place_holder_input_description">태스크에 대한 자세한 설명을 입력하세요</string>
@@ -20,11 +22,14 @@
 
     <string name="progress_text">완료율: %1$d% (%2$d/%3$d)</string>
 
-    <string name="status_to_do">To Do</string>
+    <string name="status_To_Do">To Do</string>
     <string name="status_In_Progress">In Progress</string>
+    <string name="status_review">Review</string>
     <string name="status_Done">Done</string>
 
     <string name="button_task_create">새 태스크 생성</string>
     <string name="button_create">생성</string>
+    <string name="button_delete">삭제</string>
     <string name="button_cancel">취소</string>
+    <string name="button_edit">수정</string>
 </resources>

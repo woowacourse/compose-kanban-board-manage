@@ -9,15 +9,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.status_Done
 import kanbanboard.composeapp.generated.resources.status_In_Progress
-import kanbanboard.composeapp.generated.resources.status_to_do
+import kanbanboard.composeapp.generated.resources.status_To_Do
+import kanbanboard.composeapp.generated.resources.status_review
 import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.task.domain.KanbanStatus
 
 @Composable
 fun ModalOptionStatus(modifier: Modifier = Modifier, kanbanStatus: KanbanStatus) {
     val status = when (kanbanStatus) {
-        KanbanStatus.TO_DO -> stringResource(Res.string.status_to_do)
+        KanbanStatus.TO_DO -> stringResource(Res.string.status_To_Do)
         KanbanStatus.IN_PROGRESS -> stringResource(Res.string.status_In_Progress)
+        KanbanStatus.REVIEW -> stringResource(Res.string.status_review)
         KanbanStatus.DONE -> stringResource(Res.string.status_Done)
     }
     Text(

@@ -23,10 +23,12 @@ val Indigo500 = Color(0xFF615FFF)
 
 val Orange600 = Color(0xFFE17100)
 
+val Red500 = Color(0xFFDB6365)
 val Red700 = Color(0xFFB3261E)
-
+val Violet100 = Color(0xFFEDE9FE)
+val Violet200 = Color(0xFFD2C7EA)
+val Violet500 = Color(0xFF8B5CF6)
 val Violet600 = Color(0xFF4F39F6)
 val Violet700 = Color(0xFF432DD7)
-
 val Yellow50 = Color(0xFFFFFBEB)
 val Yellow300 = Color(0xFFFEE685)

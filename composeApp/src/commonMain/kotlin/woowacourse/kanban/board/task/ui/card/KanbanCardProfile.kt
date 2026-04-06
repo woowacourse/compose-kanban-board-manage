@@ -1,6 +1,7 @@
 package woowacourse.kanban.board.task.ui.card
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,7 +21,10 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun KanbanCardProfile(crewName: String, modifier: Modifier = Modifier) {
-    val imageModifier = Modifier.size(24.dp).clip(CircleShape)
+
+    val imageModifier = Modifier
+        .size(24.dp)
+        .clip(CircleShape)
 
     Row(
         modifier = modifier.padding(
@@ -48,5 +52,7 @@ fun KanbanCardProfile(crewName: String, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun KanbanCardProfilePreview() {
-    KanbanCardProfile(crewName = "바드")
+    Column {
+        KanbanCardProfile(crewName = "바드")
+    }
 }

@@ -1,55 +1,109 @@
 package woowacourse.kanban.board.task.domain
 
-import kotlin.collections.listOf
+import kotlin.test.assertFailsWith
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class KanbanBoardTest {
     @Test
-    fun `칸반 상태에 따라 카드를 분류한다`() {
-        val card = listOf(
-            createKanbanCard(status = KanbanStatus.IN_PROGRESS),
-            createKanbanCard(status = KanbanStatus.TO_DO),
-            createKanbanCard(status = KanbanStatus.TO_DO),
-            createKanbanCard(status = KanbanStatus.DONE),
-        )
-
-        val board = KanbanBoard(title = "보드1", cards = card)
-
-        assertThat(board.getCardByStatus(KanbanStatus.IN_PROGRESS).size).isEqualTo(1)
-        assertThat(board.getCardByStatus(KanbanStatus.TO_DO).size).isEqualTo(2)
-        assertThat(board.getCardByStatus(KanbanStatus.DONE).size).isEqualTo(1)
+    fun `boardId가 음수이면 KanbanBoard를 생성할 수 없다`() {
+        assertFailsWith<IllegalArgumentException> {
+            KanbanBoard(
+                boardId = -1,
+                title = "보드",
+            )
+        }
     }
 
     @Test
-    fun `DONE 카드가 하나 포함된 보드의 totalCount와 doneCount를 계산한다`() {
-        val cards = listOf(
-            createKanbanCard(status = KanbanStatus.IN_PROGRESS),
-            createKanbanCard(status = KanbanStatus.IN_PROGRESS),
-            createKanbanCard(status = KanbanStatus.TO_DO),
-            createKanbanCard(status = KanbanStatus.DONE),
+    fun `칸반 카드를 추가하면 새로운 보드를 반환한다`() {
+        val board = KanbanBoard(
+            boardId = 1,
+            title = "보드",
         )
-        val board = KanbanBoard(title = "보드1", cards = cards)
+        val card = createKanbanCard(KanbanStatus.TO_DO)
 
-        assertThat(board.totalCount).isEqualTo(4)
+        val newBoard = board.addCard(card)
+
+        assertThat(newBoard.cards).hasSize(1)
+        assertThat(newBoard.cards.first().title).isEqualTo("제목")
+        assertThat(board.cards).isEmpty()
+    }
+
+    @Test
+    fun `칸반 보드의 전체 카드 수와 Done 카드 수를 반환한다`() {
+        val board = createKanbanBoard(
+            cards = listOf(
+                createKanbanCard(KanbanStatus.TO_DO),
+                createKanbanCard(KanbanStatus.IN_PROGRESS),
+                createKanbanCard(KanbanStatus.DONE),
+            ),
+        )
+
+        assertThat(board.totalCount).isEqualTo(3)
         assertThat(board.doneCount).isEqualTo(1)
     }
 
     @Test
-    fun `카드가 없다면 완료율은 0이다`() {
-        val cards = emptyList<KanbanCard>()
+    fun `칸반 상태에 따라 카드 리스트를 반환한다`() {
+        val board = createKanbanBoard(
+            cards = listOf(
+                createKanbanCard(KanbanStatus.TO_DO),
+                createKanbanCard(KanbanStatus.TO_DO),
+                createKanbanCard(KanbanStatus.IN_PROGRESS),
+                createKanbanCard(KanbanStatus.DONE),
+                createKanbanCard(KanbanStatus.DONE),
+            ),
+        )
 
-        val board = KanbanBoard(title = "보드1", cards = cards)
-
-        val progress = if (board.totalCount == 0) 0 else board.doneCount * 100 / board.totalCount
-        assertThat(progress).isEqualTo(0)
+        assertThat(board.getCardByStatus(KanbanStatus.TO_DO)).hasSize(2)
+        assertThat(board.getCardByStatus(KanbanStatus.IN_PROGRESS)).hasSize(1)
+        assertThat(board.getCardByStatus(KanbanStatus.DONE)).hasSize(2)
     }
 
-    private fun createKanbanCard(id: Long = 0, status: KanbanStatus) = KanbanCard(
+    @Test
+    fun `칸반 카드를 업데이트하면 변경된 보드를 반환한다`() {
+        val todoCard = createKanbanCard(
+            status = KanbanStatus.TO_DO,
+            id = "1",
+        )
+        val board = createKanbanBoard(cards = listOf(todoCard))
+
+        val updatedBoard = board.updateCardStatus(
+            cardId = todoCard.id,
+            status = KanbanStatus.IN_PROGRESS,
+        )
+
+        assertThat(updatedBoard?.getCardByStatus(KanbanStatus.TO_DO)).isEmpty()
+        assertThat(updatedBoard?.getCardByStatus(KanbanStatus.IN_PROGRESS)).hasSize(1)
+        assertThat(updatedBoard?.getCardByStatus(KanbanStatus.IN_PROGRESS)?.first()?.status).isEqualTo(KanbanStatus.IN_PROGRESS)
+    }
+
+    @Test
+    fun `잘못된 cardId를 조회시 null을 반환한다`() {
+        val card = KanbanCard(
+            id = "1",
+            title = "제목",
+            assigneeName = "담당자",
+            status = KanbanStatus.TO_DO,
+        )
+        val board = createKanbanBoard(listOf(card))
+
+        val searchCard = board.getCard("2")
+
+        assertThat(searchCard).isNull()
+    }
+
+    private fun createKanbanCard(status: KanbanStatus, id: String = "1") = KanbanCard(
         id = id,
-        boardId = 0,
         title = "제목",
         assigneeName = "담당자",
         status = status,
+    )
+
+    private fun createKanbanBoard(cards: List<KanbanCard>) = KanbanBoard(
+        boardId = 1,
+        title = "보드",
+        cards = cards,
     )
 }

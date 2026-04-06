@@ -11,21 +11,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import woowacourse.kanban.board.task.domain.KanbanCardForm
+import woowacourse.kanban.board.task.domain.KanbanCard
 import woowacourse.kanban.board.task.domain.KanbanStatus
 import woowacourse.kanban.board.task.domain.TaskMockData
+import woowacourse.kanban.board.task.ui.board.TaskModalMode
 
 @Composable
-fun ModalCreateForm(
+fun ModalForm(
+    editingCard: KanbanCard? = null,
+    modalMode: TaskModalMode,
     modifier: Modifier = Modifier,
     assignee: List<String>,
     onDismissRequest: () -> Unit,
-    onCreate: (KanbanCardForm, KanbanStatus) -> Unit,
+    onCreate: (
+        title: String,
+        content: String,
+        assigneeName: String?,
+        tags: List<String>,
+        status: KanbanStatus,
+    ) -> Unit = { _, _, _, _, _ -> },
+    onEdit: (
+        title: String,
+        content: String,
+        assigneeName: String?,
+        tags: List<String>,
+        status: KanbanStatus,
+    ) -> Unit = { _, _, _, _, _ -> },
+    onDelete: () -> Unit = {},
 ) {
-    // 모달의 내용과 상태
-    val state = remember { ModalCreateFormState() }
+    val state = remember(editingCard?.id) {
+        editingCard?.let { ModalFormState.from(it) } ?: ModalFormState()
+    }
 
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -40,20 +60,32 @@ fun ModalCreateForm(
                     RoundedCornerShape(10.dp),
                 ),
         ) {
-            // 모달 헤더
-            ModalHeader(onDismissRequest = onDismissRequest)
+            ModalHeader(
+                modalMode = modalMode,
+                onDismissRequest = onDismissRequest,
+            )
 
             HorizontalDivider(color = Color.LightGray)
-            // 모달 바디
+
             ModalBody(
+                modifier = Modifier,
+                modalMode = modalMode,
                 state = state,
                 assignee = assignee,
-                modifier = Modifier,
                 onDismissRequest = onDismissRequest,
                 onCreate = onCreate,
+                onEdit = onEdit,
+                onDelete = onDelete,
             )
         }
     }
+}
+
+private class ModalFormPreviewParameterProvider : PreviewParameterProvider<TaskModalMode> {
+    override val values = sequenceOf(
+        TaskModalMode.CREATE,
+        TaskModalMode.EDIT,
+    )
 }
 
 @Preview(
@@ -61,10 +93,13 @@ fun ModalCreateForm(
     heightDp = 1000,
 )
 @Composable
-private fun ModalCreateFormPreview() {
-    ModalCreateForm(
+private fun ModalFormPreview(
+    @PreviewParameter(ModalFormPreviewParameterProvider::class)
+    taskModalMode: TaskModalMode,
+) {
+    ModalForm(
+        modalMode = taskModalMode,
         assignee = TaskMockData.assignees,
         onDismissRequest = {},
-        onCreate = { _, _ -> },
     )
 }
