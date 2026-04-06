@@ -110,6 +110,7 @@ private fun StateTasks(
     titleColor: Color,
     contentColor: Color,
     borderColor: Color,
+    modifier: Modifier = Modifier,
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = {},
     onTaskDragStart: (Task) -> Unit = {},
@@ -117,7 +118,6 @@ private fun StateTasks(
     onTaskDragChange: (Offset) -> Unit = {},
     onTaskDragEnd: () -> Unit = {},
     onTaskDragCancel: () -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     val isDropTarget by remember { derivedStateOf { getIsDropTarget() } }
     val lastBoundsHolder = remember { mutableStateOf<Rect?>(null) }
@@ -125,7 +125,6 @@ private fun StateTasks(
     OutlinedCard(
         colors = CardDefaults.cardColors(
             containerColor = contentColor,
-
         ),
         border = BorderStroke(0.5.dp, borderColor),
         modifier = modifier
