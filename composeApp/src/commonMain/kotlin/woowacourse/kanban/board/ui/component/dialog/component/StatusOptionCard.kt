@@ -14,14 +14,11 @@ import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.ui.KanbanTypography
-import woowacourse.kanban.board.ui.toTitle
 
 @Composable
 fun StatusOptionCard(
-    status: Status,
+    statusTitle: String,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -33,7 +30,7 @@ fun StatusOptionCard(
         width = 147,
     ) {
         Text(
-            text = status.toTitle(),
+            text = statusTitle,
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(vertical = 14.dp),
@@ -51,7 +48,7 @@ private fun StatusOptionCardPreview() {
     var isSelected by remember { mutableStateOf(false) }
 
     StatusOptionCard(
-        status = Status.TO_DO,
+        statusTitle = "To Do",
         isSelected = isSelected,
         onClick = { isSelected = !isSelected },
     )

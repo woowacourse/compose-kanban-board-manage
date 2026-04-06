@@ -33,6 +33,7 @@ import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.data.AssigneePool
 import woowacourse.kanban.board.domain.Assignee
 import woowacourse.kanban.board.domain.Status
+import woowacourse.kanban.board.ui.toTitle
 
 @Composable
 fun TaskDialogContent(
@@ -197,7 +198,7 @@ private fun StatusSegmentedButtons(
         ) {
             statuses.forEach {
                 StatusOptionCard(
-                    status = it,
+                    statusTitle = it.toTitle(),
                     isSelected = selectedStatus == it,
                     onClick = { onStatusChanged(it) },
                 )
