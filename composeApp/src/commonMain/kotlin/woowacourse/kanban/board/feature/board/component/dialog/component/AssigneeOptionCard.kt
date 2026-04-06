@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Icon
@@ -25,7 +26,7 @@ fun AssigneeOptionCard(name: String, isSelected: Boolean, onClick: () -> Unit, m
     TaskOptionCard(
         isSelected = isSelected,
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.width(200.dp),
         paddingValues = PaddingValues(vertical = 20.dp, horizontal = 16.dp),
     ) {
         Row(

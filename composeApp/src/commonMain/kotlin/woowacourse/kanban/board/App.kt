@@ -26,6 +26,7 @@ fun App() {
             KanbanBoardScreen(
                 onShowSnackbar = { message ->
                     scope.launch {
+                        snackbarHostState.currentSnackbarData?.dismiss()
                         snackbarHostState.showSnackbar(message)
                     }
                 },

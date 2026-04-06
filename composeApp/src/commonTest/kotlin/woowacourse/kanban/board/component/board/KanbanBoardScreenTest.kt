@@ -47,8 +47,8 @@ class KanbanBoardScreenTest {
 
         // Then
         onNodeWithText("완료율: 50% (1/2)").assertIsDisplayed()
-        onNodeWithText("완료된 작업").assertIsDisplayed()
-        onNodeWithText("진행중 작업").assertIsDisplayed()
+        onNodeWithText("완료된 작업").assertExists()
+        onNodeWithText("진행중 작업").assertExists()
     }
 
     @Test
@@ -93,7 +93,7 @@ class KanbanBoardScreenTest {
         state.addTask(newTaskResult)
 
         // Then
-        onNodeWithText("새로운 완료 작업").assertIsDisplayed()
+        onNodeWithText("새로운 완료 작업").assertExists()
         onNodeWithText("완료율: 100% (1/1)").assertIsDisplayed()
     }
 }

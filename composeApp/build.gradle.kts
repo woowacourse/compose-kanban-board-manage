@@ -38,6 +38,7 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.assertj.core)
+            implementation(libs.kotlinx.coroutinesTest)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
         }

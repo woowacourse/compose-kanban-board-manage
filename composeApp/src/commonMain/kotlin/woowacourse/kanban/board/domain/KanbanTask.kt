@@ -8,7 +8,7 @@ data class KanbanTask(
     val description: String? = null,
     val tags: List<Tag> = emptyList(),
     val status: TaskStatus,
-    val crewName: String,
+    val crewName: String?,
 ) {
     init {
         require(isTitleValid(title)) { "제목은 비어 있거나 공백만 있을 수 없습니다." }

@@ -1,5 +1,6 @@
 package woowacourse.kanban.board.feature.board.component.dialog.component
 
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
@@ -19,6 +21,7 @@ fun StatusOptionCard(text: String, isSelected: Boolean, onClick: () -> Unit, mod
     TaskOptionCard(
         isSelected = isSelected,
         onClick = onClick,
+        modifier = modifier.width(147.dp),
     ) {
         Text(
             text = text,

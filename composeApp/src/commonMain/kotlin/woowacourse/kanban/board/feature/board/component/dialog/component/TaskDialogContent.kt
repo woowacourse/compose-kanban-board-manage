@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,9 +25,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.domain.TaskStatus
+import woowacourse.kanban.board.feature.board.component.displayName
 
 @Composable
 fun TaskDialogContent(
+    title: String,
+    confirmButtonText: String,
     titleValue: String,
     isTitleError: Boolean,
     onTitleChanged: (String) -> Unit,
@@ -37,15 +41,17 @@ fun TaskDialogContent(
     isTagFormatError: Boolean,
     onTagChanged: (String) -> Unit,
     statuses: List<TaskStatus>,
-    selectedStatusIndex: Int,
-    onStatusChanged: (Int) -> Unit,
+    selectedStatus: TaskStatus,
+    onStatusChanged: (TaskStatus) -> Unit,
     assignees: List<String>,
-    selectedAssigneeIndex: Int,
-    onAssigneeChanged: (Int) -> Unit,
+    selectedAssignee: String?,
+    onAssigneeChanged: (String?) -> Unit,
+    isAssigneeRequired: Boolean,
     enabled: Boolean,
     onDismissClick: () -> Unit,
-    onCreateClick: () -> Unit,
+    onConfirmClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onDeleteClick: (() -> Unit)? = null,
 ) {
     val isTagError = isTagCountError || isTagFormatError
     val tagErrorMessage = when {
@@ -63,7 +69,7 @@ fun TaskDialogContent(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         TaskDialogTopAppBar(
-            title = "새 태스크 생성",
+            title = title,
             onClick = onDismissClick,
             modifier = Modifier.padding(bottom = 4.dp),
         )
@@ -132,16 +138,11 @@ fun TaskDialogContent(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                statuses.forEachIndexed { index, status ->
-                    val statusText = when (status) {
-                        TaskStatus.TODO -> "To Do"
-                        TaskStatus.IN_PROGRESS -> "In Progress"
-                        TaskStatus.DONE -> "Done"
-                    }
+                statuses.forEach { status ->
                     StatusOptionCard(
-                        text = statusText,
-                        isSelected = selectedStatusIndex == index,
-                        onClick = { onStatusChanged(index) },
+                        text = status.displayName,
+                        isSelected = selectedStatus == status,
+                        onClick = { onStatusChanged(status) },
                     )
                 }
             }
@@ -149,17 +150,27 @@ fun TaskDialogContent(
 
         TaskLabelLayout(
             label = "담당자",
-            isRequired = true,
+            isRequired = isAssigneeRequired,
         ) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                assignees.forEachIndexed { index, string ->
+                TaskOptionCard(
+                    isSelected = selectedAssignee == null,
+                    onClick = { onAssigneeChanged(null) },
+                    paddingValues = PaddingValues(20.dp),
+                ) {
+                    Text(
+                        text = "없음",
+                        fontSize = 14.sp,
+                    )
+                }
+                assignees.forEach { name ->
                     AssigneeOptionCard(
-                        name = string,
-                        isSelected = selectedAssigneeIndex == index,
-                        onClick = { onAssigneeChanged(index) },
+                        name = name,
+                        isSelected = selectedAssignee == name,
+                        onClick = { onAssigneeChanged(name) },
                     )
                 }
             }
@@ -179,10 +190,19 @@ fun TaskDialogContent(
                 text = "취소",
                 onClick = onDismissClick,
             )
+            if (onDeleteClick != null) {
+                Spacer(Modifier.width(12.dp))
+                TaskDialogButton(
+                    text = "삭제",
+                    onClick = onDeleteClick,
+                    containerColor = Color.Red,
+                    contentColor = Color.White,
+                )
+            }
             Spacer(Modifier.width(12.dp))
             TaskDialogButton(
-                text = "생성",
-                onClick = onCreateClick,
+                text = confirmButtonText,
+                onClick = onConfirmClick,
                 enabled = enabled,
                 contentColor = Color.White,
                 containerColor = Color.Blue,
@@ -216,6 +236,8 @@ private fun TaskLabelLayout(
 @Composable
 private fun TaskDialogContentPreview() {
     TaskDialogContent(
+        title = "새 태스크 생성",
+        confirmButtonText = "생성",
         titleValue = "",
         isTitleError = false,
         onTitleChanged = {},
@@ -226,13 +248,15 @@ private fun TaskDialogContentPreview() {
         isTagFormatError = false,
         onTagChanged = {},
         statuses = TaskStatus.entries,
-        selectedStatusIndex = 0,
+        selectedStatus = TaskStatus.TODO,
         onStatusChanged = {},
         assignees = listOf("다이노", "페임스"),
-        selectedAssigneeIndex = 0,
+        selectedAssignee = null,
+        onDeleteClick = {},
         onAssigneeChanged = {},
+        isAssigneeRequired = false,
         enabled = false,
         onDismissClick = {},
-        onCreateClick = {},
+        onConfirmClick = {},
     )
 }

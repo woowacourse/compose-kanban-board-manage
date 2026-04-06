@@ -29,6 +29,7 @@ import woowacourse.kanban.board.domain.TaskStatus
 fun KanbanBoardContent(
     kanbanBoard: KanbanBoard,
     onTaskCreateClick: () -> Unit,
+    onTaskClick: (KanbanTask) -> Unit,
     onMoveTask: (KanbanTask, TaskStatus) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -58,6 +59,7 @@ fun KanbanBoardContent(
                 KanbanColumn(
                     status = status,
                     tasks = kanbanBoard.getTasksByStatus(status),
+                    onTaskClick = onTaskClick,
                     getIsDropTarget = {
                         currentDragPosition?.let { columnBounds[status]?.contains(it) } ?: false
                     },
@@ -93,6 +95,7 @@ private fun KanbanBoardScreenPreview() {
     KanbanBoardContent(
         kanbanBoard = KanbanBoard(emptyList()),
         onTaskCreateClick = {},
+        onTaskClick = {},
         onMoveTask = { _, _ -> },
     )
 }

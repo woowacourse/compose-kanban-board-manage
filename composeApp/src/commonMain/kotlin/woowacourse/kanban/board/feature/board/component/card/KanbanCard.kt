@@ -2,6 +2,7 @@ package woowacourse.kanban.board.feature.board.component.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,11 +40,12 @@ import woowacourse.kanban.board.domain.TaskStatus
 @Composable
 fun KanbanCard(
     title: String,
-    crewName: String,
+    crewName: String?,
     modifier: Modifier = Modifier,
     tags: List<Tag> = emptyList(),
     description: String? = null,
     crewImage: DrawableResource? = null,
+    onClick: () -> Unit = {},
     onDragStart: () -> Unit = {},
     onDragChange: (Offset) -> Unit = {},
     onDragEnd: () -> Unit = {},
@@ -55,6 +57,7 @@ fun KanbanCard(
         modifier = modifier
             .width(286.dp)
             .onGloballyPositioned { cardWindowPosition = it.positionInWindow() }
+            .clickable(onClick = onClick)
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { onDragStart() },
@@ -97,12 +100,12 @@ fun KanbanCard(
 
         if (crewImage != null) {
             KanbanCardProfile(
-                crewName = crewName,
+                crewName = crewName ?: "없음",
                 crewImage = crewImage,
             )
         } else {
             KanbanCardProfile(
-                crewName = crewName,
+                crewName = crewName ?: "없음",
             )
         }
     }

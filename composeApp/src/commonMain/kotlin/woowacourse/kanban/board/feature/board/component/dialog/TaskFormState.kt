@@ -7,12 +7,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.Tag
+import woowacourse.kanban.board.domain.TaskStatus
 
-class TaskFormState {
-    var title by mutableStateOf("")
-    var isTitleDirty by mutableStateOf(false)
-    var description by mutableStateOf("")
-    var tagValue by mutableStateOf("")
+class TaskFormState(task: KanbanTask? = null) {
+    var title by mutableStateOf(task?.title ?: "")
+    var isTitleDirty by mutableStateOf(task != null)
+    var description by mutableStateOf(task?.description ?: "")
+    var tagValue by mutableStateOf(task?.tags?.joinToString(", ") { it.value } ?: "")
+    var selectedStatus by mutableStateOf(task?.status ?: TaskStatus.TODO)
+    var selectedAssignee by mutableStateOf<String?>(task?.crewName)
 
     val isTitleError: Boolean
         get() = isTitleDirty && !KanbanTask.isTitleValid(title)
@@ -38,9 +41,15 @@ class TaskFormState {
     val isTagFormatError: Boolean
         get() = tagValue.isNotBlank() && !rawTags.all { Tag.isValid(it) }
 
-    val isCreateButtonEnabled: Boolean
-        get() = KanbanTask.isTitleValid(title) && !isTagCountError && !isTagFormatError
+    val isAssigneeRequired: Boolean
+        get() = selectedStatus.isAssigneeRequired
+
+    val isAssigneeError: Boolean
+        get() = isAssigneeRequired && selectedAssignee == null
+
+    val isConfirmButtonEnabled: Boolean
+        get() = KanbanTask.isTitleValid(title) && !isTagCountError && !isTagFormatError && (!isAssigneeRequired || selectedAssignee != null)
 }
 
 @Composable
-fun rememberTaskFormState(): TaskFormState = remember { TaskFormState() }
+fun rememberTaskFormState(task: KanbanTask? = null): TaskFormState = remember(task) { TaskFormState(task) }

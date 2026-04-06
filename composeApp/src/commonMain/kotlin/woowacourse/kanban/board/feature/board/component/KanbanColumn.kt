@@ -19,6 +19,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,8 +36,10 @@ import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.core.designsystem.theme.KanbanDeepGreen
 import woowacourse.kanban.board.core.designsystem.theme.KanbanLightBlue
 import woowacourse.kanban.board.core.designsystem.theme.KanbanLightGreen
+import woowacourse.kanban.board.core.designsystem.theme.KanbanLightViolet
 import woowacourse.kanban.board.core.designsystem.theme.KanbanLightYellow
 import woowacourse.kanban.board.core.designsystem.theme.KanbanOrange
+import woowacourse.kanban.board.core.designsystem.theme.KanbanViolet
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.Tag
 import woowacourse.kanban.board.domain.TaskStatus
@@ -49,6 +52,7 @@ fun KanbanColumn(
     modifier: Modifier = Modifier,
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = {},
+    onTaskClick: (KanbanTask) -> Unit = {},
     onTaskDragStart: (KanbanTask) -> Unit = {},
     onTaskDragChange: (Offset) -> Unit = {},
     onTaskDragEnd: () -> Unit = {},
@@ -113,12 +117,14 @@ fun KanbanColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(items = tasks, key = { it.id }) { item ->
+                val currentItem by rememberUpdatedState(item)
                 KanbanCard(
                     title = item.title,
                     crewName = item.crewName,
                     tags = item.tags,
                     description = item.description,
-                    onDragStart = { onTaskDragStart(item) },
+                    onClick = { onTaskClick(currentItem) },
+                    onDragStart = { onTaskDragStart(currentItem) },
                     onDragChange = onTaskDragChange,
                     onDragEnd = onTaskDragEnd,
                     onDragCancel = onTaskDragCancel,
@@ -128,17 +134,11 @@ fun KanbanColumn(
     }
 }
 
-private val TaskStatus.displayName: String
-    get() = when (this) {
-        TaskStatus.TODO -> "To Do"
-        TaskStatus.IN_PROGRESS -> "In Progress"
-        TaskStatus.DONE -> "Done"
-    }
-
 private val TaskStatus.colors: Pair<Color, Color>
     get() = when (this) {
         TaskStatus.TODO -> Color.Blue to Color.KanbanLightBlue
         TaskStatus.IN_PROGRESS -> Color.KanbanOrange to Color.KanbanLightYellow
+        TaskStatus.REVIEW -> Color.KanbanViolet to Color.KanbanLightViolet
         TaskStatus.DONE -> Color.KanbanDeepGreen to Color.KanbanLightGreen
     }
 
