@@ -5,6 +5,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,27 +19,42 @@ enum class ActionButtonType(
     val containerColor: Color,
     val elevation: Dp,
 ) {
-    PRIMARY(
+    CREATE(
         buttonText = "생성",
         contentColor = Color.White,
         containerColor = Color(0xFF4F39F6),
         elevation = 3.dp,
     ),
-    SECONDARY(
+    CANCEL(
         buttonText = "취소",
         contentColor = Color(0xFF364153),
         containerColor = Color.White,
         elevation = 0.dp,
     ),
+    DELETE(
+        buttonText = "삭제",
+        contentColor = Color.White,
+        containerColor = Color(0xFFDB6365),
+        elevation = 0.dp,
+    ),
+
+    EDIT(
+      buttonText = "수정",
+        contentColor = Color.White,
+        containerColor = Color(0xFF4F39F6),
+        elevation = 3.dp,
+    )
 }
 
 @Composable
 fun ActionButton(
     buttonType: ActionButtonType,
     enabled: Boolean,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
     Button(
+        modifier = modifier,
         onClick = onClick,
         enabled = enabled,
         elevation = ButtonDefaults.buttonElevation(
@@ -49,7 +65,7 @@ fun ActionButton(
             containerColor = buttonType.containerColor,
             contentColor = buttonType.contentColor,
         ),
-        shape = RoundedCornerShape(20),
+        shape = RoundedCornerShape(20.dp),
     ) {
         Text(
             text = buttonType.buttonText,
@@ -66,7 +82,7 @@ fun ActionButton(
 @Composable
 private fun EnabledActionButtonPreview() {
     ActionButton(
-        buttonType = ActionButtonType.PRIMARY,
+        buttonType = ActionButtonType.CREATE,
         enabled = true,
     )
 }
@@ -75,7 +91,7 @@ private fun EnabledActionButtonPreview() {
 @Composable
 private fun DisabledActionButtonPreview() {
     ActionButton(
-        buttonType = ActionButtonType.PRIMARY,
+        buttonType = ActionButtonType.CREATE,
         enabled = false,
     )
 }

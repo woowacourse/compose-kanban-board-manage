@@ -1,12 +1,13 @@
 package woowacourse.kanban.ui.board.common
 
 import androidx.compose.runtime.Composable
-import woowacourse.kanban.domain.card.CardManagerState
+import woowacourse.kanban.domain.card.CardManagerStatus
 
 @Composable
-fun CardManagerState.toDisplayText(): String {
+fun CardManagerStatus.toDisplayText(): String {
     return when (this) {
-        CardManagerState.DINO -> "DINO"
-        CardManagerState.FAMES -> "FAMES"
+        CardManagerStatus.DINO -> "DINO"
+        CardManagerStatus.FAMES -> "FAMES"
+        CardManagerStatus.NONE -> "없음"
     }
 }

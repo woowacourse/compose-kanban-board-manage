@@ -13,8 +13,8 @@ class Card private constructor(
     val title: String,
     val content: String,
     val tags: List<String>,
-    val managerState: CardManagerState,
-    val taskState: CardTaskState,
+    val managerState: CardManagerStatus,
+    val taskState: CardTaskStatus,
 ) {
     companion object {
         private const val MAX_TAG_COUNT = 5
@@ -25,7 +25,8 @@ class Card private constructor(
         private const val TAG_INVALID_RULE_MSG = "태그는 5자 이내로 5개까지만 등록할 수 있습니다."
 
         fun isValidText(rawText: String): Boolean {
-            return rawText.trim().isNotBlank()
+            return rawText.trim()
+                .isNotBlank()
         }
 
         fun getTitleInfo(): String {
@@ -33,20 +34,30 @@ class Card private constructor(
         }
 
         fun parseTag(tempTags: String): List<String> {
-            return tempTags.trim().split(",")
+            return tempTags.trim()
+                .split(",")
         }
 
         fun isValidTag(rawText: String): Boolean {
             if (rawText.isBlank()) return true
+            val rawChunks = rawText.split(",")
+            if (rawChunks.any { it.isBlank() }) return false
 
-            val parsedText = parseTag(rawText)
-            return (parsedText.all { isValidText(it) } && parsedText.size <= MAX_TAG_COUNT)
+            val parsedText = parseTag(rawText).map { it.trim() }
+                .filter { it.isNotEmpty() }
+
+            val isCountValid = parsedText.size <= MAX_TAG_COUNT
+            val isLengthValid = parsedText.all { it.length <= MAX_TAG_LENGTH }
+
+            return isCountValid && isLengthValid
         }
 
         fun isValidTagInfo(rawText: String): String {
             val parsedText = parseTag(rawText)
 
-            if (isValidText(rawText) && parsedText.any { isValidText(it) == false }) return TAG_INVALID_FORMAT_MSG
+            if (isValidText(rawText) && parsedText.any { !isValidText(it) }) return TAG_INVALID_FORMAT_MSG
+
+            if (isValidText(rawText) && parsedText.any { it.length !in 1..5 }) return TAG_INVALID_RULE_MSG
 
             if (isValidText(rawText) && parsedText.size > MAX_TAG_COUNT) return TAG_INVALID_RULE_MSG
 
@@ -66,8 +77,8 @@ class Card private constructor(
             title: String,
             content: String,
             tags: List<String>,
-            manager: CardManagerState,
-            state: CardTaskState,
+            manager: CardManagerStatus,
+            state: CardTaskStatus,
         ): Card {
             require(title.isNotBlank()) { "[Card] 제목은 필수 입력 항목입니다." }
 
@@ -79,7 +90,8 @@ class Card private constructor(
             require(normalizedTags.all { it.length <= MAX_TAG_LENGTH }) { "[Card] 태그는 최대 ${MAX_TAG_LENGTH}자까지 가능합니다." }
 
             return Card(
-                id = UUID.randomUUID().toString(),
+                id = UUID.randomUUID()
+                    .toString(),
                 title = title,
                 content = content,
                 tags = normalizedTags,
@@ -89,16 +101,38 @@ class Card private constructor(
         }
     }
 
-    fun withUpdatedTaskState(
-        newState: CardTaskState,
-    ): Card {
-        return Card(
+    fun moveTo(targetStatus: CardTaskStatus): MoveResult {
+        if(taskState.isTargetValid(targetStatus).not())
+            return MoveResult.Failure(MoveFailureReason.INVALID_TRANSITION)
+        if(targetStatus.isAssigneeRequired() && managerState == CardManagerStatus.NONE)
+            return MoveResult.Failure(MoveFailureReason.INVALID_MANAGER)
+
+        val updatedCard = Card(
             id = id,
             title = title,
             content = content,
             tags = tags,
             managerState = managerState,
-            taskState = newState,
+            taskState = targetStatus
+        )
+
+        return MoveResult.Success(updatedCard)
+    }
+
+    fun withCardFormInput(
+        title: String,
+        content: String,
+        tags: List<String>,
+        managerState: CardManagerStatus,
+        taskState: CardTaskStatus,
+    ): Card {
+        return Card(
+            id = this.id,
+            title = title,
+            content = content,
+            tags = tags,
+            managerState = managerState,
+            taskState = taskState,
         )
     }
 

@@ -2,6 +2,7 @@ package woowacourse.kanban.ui.board
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -22,19 +24,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ProgressIndicatorDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,121 +41,61 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
 import woowacourse.kanban.domain.board.Board
 import woowacourse.kanban.domain.card.Card
-import woowacourse.kanban.domain.card.CardManagerState
-import woowacourse.kanban.domain.card.CardTaskState
+import woowacourse.kanban.domain.card.CardTaskStatus
+import woowacourse.kanban.ui.dialog.DialogStateHolder
 import woowacourse.kanban.ui.board.common.toDisplayText
 import woowacourse.kanban.ui.card.CardCreationScreen
+import woowacourse.kanban.ui.card.CardEditScreen
 import woowacourse.kanban.ui.card.CardScreen
 import woowacourse.kanban.ui.theme.BoardColor.DoneContentColor
 import woowacourse.kanban.ui.theme.BoardColor.DoneHeaderColor
 import woowacourse.kanban.ui.theme.BoardColor.InProgressContentColor
 import woowacourse.kanban.ui.theme.BoardColor.InProgressHeaderColor
+import woowacourse.kanban.ui.theme.BoardColor.ReviewContentColor
+import woowacourse.kanban.ui.theme.BoardColor.ReviewHeaderColor
 import woowacourse.kanban.ui.theme.BoardColor.TodoContentColor
 import woowacourse.kanban.ui.theme.BoardColor.TodoHeaderColor
 
+
 @Composable
 fun BoardScreen(
-    board: Board,
-    onAddCard: (Card) -> Unit,
-    onBoardChange: (Board) -> Boolean,
-) {
-    var showCardCreationPanel by remember { mutableStateOf(false) }
-
-    BoardScreen(
-        board = board,
-        showCardCreationPanel = showCardCreationPanel,
-        onAddCard = onAddCard,
-        onShowCardCreationPanelChange = { showCardCreationPanel = it },
-        modifier = Modifier.fillMaxSize(),
-        onBoardChange = onBoardChange,
-    )
-}
-
-/**
- * 보드 화면입니다. 프로젝트 화면의 우측 보드 영역입니다.
- * @param board 보드 데이터입니다.
- * @param showCardCreationPanel 카드 생성 모달을 보여줄지 여부입니다.
- * @param onAddCard 보드에 카드를 추가합니다.
- * @param onShowCardCreationPanelChange 카드 생성창 표시 여부입니다.
- * @param modifier Modifier
- * @param onBoardChange 보드 데이터를 변경합니다.
- */
-@Composable
-fun BoardScreen(
-    board: Board,
-    showCardCreationPanel: Boolean,
-    onAddCard: (Card) -> Unit,
-    onShowCardCreationPanelChange: (Boolean) -> Unit,
-    onBoardChange: (Board) -> Boolean,
+    boardState: BoardStateHolder,
+    dialogState: DialogStateHolder,
     modifier: Modifier = Modifier,
+    onShowCreationDialog: () -> Unit = {},
+    onShowEditDialog: (Card) -> Unit = {},
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
-
-    Scaffold(
-        modifier = modifier,
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
-    ) { innerPadding ->
-        Box(
-            modifier = modifier
-                .padding(innerPadding),
+    Box(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White),
-            ) {
-                BoardHeaderSection(
-                    modifier = Modifier.fillMaxWidth(),
-                    board = board,
-                    onClick = {
-                        onShowCardCreationPanelChange(true)
-                    },
-                )
-                BoardContents(
-                    modifier = Modifier.fillMaxSize(),
-                    board = board,
-                    onChangeContent = {
-                        val isSuccess = onBoardChange(it)
-                        coroutineScope.launch {
-                            if (isSuccess) {
-                                snackbarHostState.showSnackbar("태스크가 이동되었습니다.")
-                            }
-                        }
-                    },
-                )
-            }
-
-            if (showCardCreationPanel) {
-                CardCreationScreen(
-                    onAddItem = { newCard ->
-                        onAddCard(newCard)
-                        onShowCardCreationPanelChange(false)
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("새로운 태스크가 추가되었습니다.")
-                        }
-                    },
-                    onDismiss = {
-                        onShowCardCreationPanelChange(false)
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("새 태스크 추가가 취소되었습니다.")
-                        }
-                    },
-                )
-            }
+            BoardHeaderSection(
+                modifier = Modifier.fillMaxWidth(),
+                board = boardState.currentBoard,
+                onClick = onShowCreationDialog,
+            )
+            BoardContents(
+                modifier = Modifier.fillMaxSize(),
+                state = boardState,
+                onCardClick = onShowEditDialog,
+            )
         }
     }
-}
 
+    if (dialogState.isDialogVisible && dialogState.isEditMode) {
+        CardEditScreen(state = dialogState)
+    } else if (dialogState.isDialogVisible) {
+        CardCreationScreen(state = dialogState)
+    }
+}
 /**
  * 보드 헤더 영역입니다. Board 제목, 진행율, 프로그레스 바가 포함됩니다.
  * @param board 보드 데이터입니다.
@@ -254,112 +189,51 @@ private fun BoardHeaderSection(
     }
 }
 
-/**
- * 보드 컨텐츠 영역입니다. 태스크 작업 상태에 따른 카드 리스트를 표시합니다.
- * @param modifier Modifier
- * @param board 보드 데이터입니다.
- * @param onChangeContent 보드 데이터를 변경합니다.
- */
 @Composable
 private fun BoardContents(
+    state: BoardStateHolder,
+    onCardClick: (Card) -> Unit,
     modifier: Modifier = Modifier,
-    board: Board,
-    onChangeContent: (Board) -> Unit = {},
 ) {
-    var draggedTask by remember { mutableStateOf<Card?>(null) }
-    var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
-    val columnBounds = remember { mutableStateMapOf<CardTaskState, Rect>() }
-
     Row(
         modifier = modifier
             .background(Color(0xFFF9FAFB))
-            .padding(24.dp),
+            .padding(24.dp)
+            .horizontalScroll(state = rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        val currentBoard by rememberUpdatedState(board)
-        fun taskEnd() {
-            val dropPosition = currentDragPosition
-            val targetStatus = columnBounds.entries
-                .firstOrNull { (_, rect) -> dropPosition?.let { rect.contains(it) } == true }?.key
-
-            draggedTask?.let { task ->
-                if (targetStatus != null && task.taskState != targetStatus) {
-                    onChangeContent(currentBoard.withUpdatedTaskState(task.id, targetStatus))
-                }
-            }
-            currentDragPosition = null
-            draggedTask = null
+        CardTaskStatus.entries.forEach { status ->
+            BoardCardColumn(
+                modifier = Modifier
+                    .width(320.dp)
+                    .height(748.dp),
+                filteredCards = state.currentBoard.cardsByState(status),
+                mode = status,
+                getIsDropTarget = { state.isDropTarget(status) },
+                onBoundsChanged = { rect ->
+                    state.updateColumnBounds(
+                        status,
+                        rect,
+                    )
+                },
+                onTaskDragStart = { card -> state.onDragStart(card) },
+                onTaskDragChange = { offset -> state.onDragChange(offset) },
+                onTaskDragEnd = { state.onDragEnd() },
+                onTaskDragCancel = { state.clearDrag() },
+                onCardClick = {
+                    card -> state.onClick(card)
+                    onCardClick(card)
+                },
+            )
         }
-
-        fun taskDragCancel() {
-            currentDragPosition = null
-            draggedTask = null
-        }
-
-        BoardCardColumn(
-            modifier = Modifier
-                .width(320.dp)
-                .height(748.dp),
-            filteredCards = board.cardsByState(CardTaskState.TODO),
-            mode = CardTaskState.TODO,
-            getIsDropTarget = {
-                currentDragPosition?.let { columnBounds[CardTaskState.TODO]?.contains(it) } ?: false
-            },
-            onBoundsChanged = { rect -> columnBounds[CardTaskState.TODO] = rect },
-            onTaskDragStart = { task -> draggedTask = task },
-            onTaskDragChange = { pos -> currentDragPosition = pos },
-            onTaskDragEnd = ::taskEnd,
-            onTaskDragCancel = ::taskDragCancel,
-        )
-        BoardCardColumn(
-            modifier = Modifier
-                .width(320.dp)
-                .height(748.dp),
-            filteredCards = board.cardsByState(CardTaskState.IN_PROGRESS),
-            mode = CardTaskState.IN_PROGRESS,
-            getIsDropTarget = {
-                currentDragPosition?.let { columnBounds[CardTaskState.IN_PROGRESS]?.contains(it) } ?: false
-            },
-            onBoundsChanged = { rect -> columnBounds[CardTaskState.IN_PROGRESS] = rect },
-            onTaskDragStart = { task -> draggedTask = task },
-            onTaskDragChange = { pos -> currentDragPosition = pos },
-            onTaskDragEnd = ::taskEnd,
-            onTaskDragCancel = ::taskDragCancel,
-        )
-        BoardCardColumn(
-            modifier = Modifier
-                .width(320.dp)
-                .height(748.dp),
-            filteredCards = board.cardsByState(CardTaskState.DONE),
-            mode = CardTaskState.DONE,
-            getIsDropTarget = {
-                currentDragPosition?.let { columnBounds[CardTaskState.DONE]?.contains(it) } ?: false
-            },
-            onBoundsChanged = { rect -> columnBounds[CardTaskState.DONE] = rect },
-            onTaskDragStart = { task -> draggedTask = task },
-            onTaskDragChange = { pos -> currentDragPosition = pos },
-            onTaskDragEnd = ::taskEnd,
-            onTaskDragCancel = ::taskDragCancel,
-        )
     }
 }
 
-/**
- * 보드 카드 컬럼입니다. 작업 상태에 따른 태스크 리스트 Column입니다.
- * @param filteredCards 필터링된 카드 리스트입니다.
- * @param mode 카드 상태입니다.
- * @param modifier Modifier
- * @param getIsDropTarget 드래그 타겟 여부를 리턴합니다.
- * @param onBoundsChanged 드래그 영역을 변경합니다.
- * @param onTaskDragStart 카드를 드래그 합니다.
- * @param onTaskDragChange 드래그 위치를 변경합니다.
- * @param onTaskDragEnd 드래그가 끝났을 때
- * @param onTaskDragCancel 드래그가 취소되었을 때
- */
+
 @Composable
 private fun BoardCardColumn(
     filteredCards: List<Card>,
-    mode: CardTaskState,
+    mode: CardTaskStatus,
     modifier: Modifier = Modifier,
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = {},
@@ -367,26 +241,30 @@ private fun BoardCardColumn(
     onTaskDragChange: (Offset) -> Unit = {},
     onTaskDragEnd: () -> Unit = {},
     onTaskDragCancel: () -> Unit = {},
+    onCardClick: (Card) -> Unit = {},
 
     ) {
     val isDropTarget by remember { derivedStateOf { getIsDropTarget() } }
     val lastBoundsHolder = remember { mutableStateOf<Rect?>(null) }
     val headerColor = when (mode) {
-        CardTaskState.TODO -> TodoHeaderColor
-        CardTaskState.IN_PROGRESS -> InProgressHeaderColor
-        CardTaskState.DONE -> DoneHeaderColor
+        CardTaskStatus.TODO -> TodoHeaderColor
+        CardTaskStatus.IN_PROGRESS -> InProgressHeaderColor
+        CardTaskStatus.REVIEW -> ReviewHeaderColor
+        CardTaskStatus.DONE -> DoneHeaderColor
     }
     val contentColor = when (mode) {
-        CardTaskState.TODO -> TodoContentColor
-        CardTaskState.IN_PROGRESS -> InProgressContentColor
-        CardTaskState.DONE -> DoneContentColor
+        CardTaskStatus.TODO -> TodoContentColor
+        CardTaskStatus.IN_PROGRESS -> InProgressContentColor
+        CardTaskStatus.REVIEW -> ReviewContentColor
+        CardTaskStatus.DONE -> DoneContentColor
     }
+    val defaultBoardColumnShape = RoundedCornerShape(16.dp)
 
     Column(
         modifier = modifier
             .testTag(mode.name)
-            .border(1.dp, headerColor, RoundedCornerShape(16.dp))
-            .clip(RoundedCornerShape(16.dp))
+            .border(1.dp, headerColor, defaultBoardColumnShape)
+            .clip(defaultBoardColumnShape)
             .onGloballyPositioned {
                 val newBounds = it.boundsInWindow()
                 if (newBounds != lastBoundsHolder.value) {
@@ -430,6 +308,8 @@ private fun BoardCardColumn(
         }
         LazyColumn(
             modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
                 .background(contentColor)
                 .padding(horizontal = 17.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -444,6 +324,7 @@ private fun BoardCardColumn(
                     onDragChange = onTaskDragChange,
                     onDragEnd = onTaskDragEnd,
                     onDragCancel = onTaskDragCancel,
+                    onCardClick = { onCardClick(card) },
                 )
             }
         }
@@ -451,85 +332,6 @@ private fun BoardCardColumn(
 }
 
 /* Preview */
-
-data class BoardScreenPreviewState(
-    val board: Board,
-    val showCardCreationPanel: Boolean,
-)
-
-class BoardScreenPreviewProvider : PreviewParameterProvider<BoardScreenPreviewState> {
-    override val values: Sequence<BoardScreenPreviewState>
-        get() = sequenceOf(
-            BoardScreenPreviewState(
-                board = Board(emptyList()),
-                showCardCreationPanel = false,
-            ),
-            BoardScreenPreviewState(
-                board = Board(
-                    listOf(
-                        Card.create(
-                            title = "UI 테스트용 1",
-                            content = "내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용",
-                            tags = listOf("UI", "테스트"),
-                            manager = CardManagerState.DINO,
-                            state = CardTaskState.TODO,
-                        ),
-                        Card.create(
-                            title = "UI 테스트용 2 UI 테스트용 2 UI 테스트용 2",
-                            content = "내용내용내용내용내용내용내용내용",
-                            tags = listOf("UI", "테스트"),
-                            manager = CardManagerState.DINO,
-                            state = CardTaskState.IN_PROGRESS,
-                        ),
-                        Card.create(
-                            title = "UI 테스트용 3 UI 테스트용 3 UI 테스트용 3",
-                            content = "내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용",
-                            tags = listOf("UI", "테스트"),
-                            manager = CardManagerState.FAMES,
-                            state = CardTaskState.DONE,
-                        ),
-                    ),
-                ),
-                showCardCreationPanel = false,
-            ),
-            BoardScreenPreviewState(
-                board = Board(
-                    listOf(
-                        Card.create(
-                            title = "UI 테스트용 1",
-                            content = "내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용",
-                            tags = listOf("UI", "테스트"),
-                            manager = CardManagerState.DINO,
-                            state = CardTaskState.DONE,
-                        ),
-                        Card.create(
-                            title = "UI 테스트용 2 UI 테스트용 2 UI 테스트용 2",
-                            content = "내용내용내용내용내용내용내용내용",
-                            tags = listOf("UI", "테스트"),
-                            manager = CardManagerState.DINO,
-                            state = CardTaskState.DONE,
-                        ),
-                    ),
-                ),
-                showCardCreationPanel = false,
-            ),
-            BoardScreenPreviewState(
-                board = Board(
-                    listOf(
-                        Card.create(
-                            title = "태스크 생성 모달 테스트",
-                            content = "모달이 열린 상태를 확인합니다.",
-                            tags = listOf("모달"),
-                            manager = CardManagerState.DINO,
-                            state = CardTaskState.TODO,
-                        ),
-                    ),
-                ),
-                showCardCreationPanel = true,
-            ),
-        )
-}
-
 @Preview(
     name = "BoardScreen Preview",
     widthDp = 1295,
@@ -537,16 +339,23 @@ class BoardScreenPreviewProvider : PreviewParameterProvider<BoardScreenPreviewSt
     showBackground = true,
 )
 @Composable
-private fun BoardScreenPreview(
-    @PreviewParameter(BoardScreenPreviewProvider::class)
-    state: BoardScreenPreviewState,
-) {
+private fun BoardScreenPreview() {
+    val state = remember {
+        BoardStateHolder(
+            board = { Board() },
+            onBoardChange = {},
+            onShowSnackbar = {},
+            onCardClick = {},
+        )
+    }
+
     BoardScreen(
-        board = state.board,
-        showCardCreationPanel = state.showCardCreationPanel,
-        onAddCard = {},
-        onShowCardCreationPanelChange = {},
-        onBoardChange = { true },
-        modifier = Modifier,
+        boardState = state,
+        dialogState = DialogStateHolder(
+            onCardCreate = {},
+            onCardUpdate = {},
+            onCardDelete = {},
+            onShowSnackbar = {},
+        ),
     )
 }

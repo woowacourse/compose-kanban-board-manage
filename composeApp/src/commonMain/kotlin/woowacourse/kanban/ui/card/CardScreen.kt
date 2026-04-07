@@ -2,6 +2,7 @@ package woowacourse.kanban.ui.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -41,15 +43,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.domain.card.Card
-import woowacourse.kanban.domain.card.CardManagerState
-import woowacourse.kanban.domain.card.CardTaskState
+import woowacourse.kanban.domain.card.CardManagerStatus
+import woowacourse.kanban.domain.card.CardTaskStatus
 import woowacourse.kanban.ui.board.common.toDisplayText
-import woowacourse.kanban.ui.theme.CardScreenShape.DefaultCardShape
 
 @Composable
 fun CardScreen(
     modifier: Modifier = Modifier,
     cardData: Card,
+    onCardClick: () -> Unit = {},
     onDragStart: () -> Unit = {},
     onDragChange: (Offset) -> Unit = {},
     onDragEnd: () -> Unit = {},
@@ -61,6 +63,10 @@ fun CardScreen(
         modifier = modifier
             .testTag("카드_${cardData.id}")
             .onGloballyPositioned { cardWindowPosition = it.positionInWindow() }
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(
+                onClick = { onCardClick() },
+            )
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { onDragStart() },
@@ -87,22 +93,23 @@ fun CardScreen(
     title: String,
     content: String,
     tags: List<String>,
-    managerState: CardManagerState,
-    taskState: CardTaskState,
+    managerState: CardManagerStatus,
+    taskState: CardTaskStatus,
     hasContent: Boolean,
     hasTag: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val defaultCardShape = RoundedCornerShape(16.dp)
     Column(
         modifier = modifier
             .background(
                 color = Color(0xffffffff),
-                shape = DefaultCardShape,
+                shape = defaultCardShape,
             )
             .border(
                 color = Color(0xffE5E7Eb),
                 width = 1.dp,
-                shape = DefaultCardShape,
+                shape = defaultCardShape,
             )
             .padding(all = 17.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -173,13 +180,19 @@ fun CardTitlePreview() {
 }
 
 
+@Preview(backgroundColor = 0xffffffff, showBackground = true)
+@Composable
+fun CardContentPreview() {
+    CardContent(content = "Card Content")
+}
+
 /**
  * 최대 2줄까지 표시되는 Card의 Content입니다.
  * @param modifier Modifier
  * @param content 카드 본문으로, 너무 길면 ...로 표시됩니다.
  */
 @Composable
-private fun CardContent(modifier: Modifier = Modifier, content: String) {
+private fun CardContent(content: String, modifier: Modifier = Modifier) {
     Text(
         text = content,
         fontSize = 14.sp,
@@ -192,18 +205,12 @@ private fun CardContent(modifier: Modifier = Modifier, content: String) {
     )
 }
 
-@Preview(backgroundColor = 0xffffffff, showBackground = true)
-@Composable
-fun CardContentPreview() {
-    CardContent(content = "Card Content")
-}
-
 /**
  * CardTag 섹션입니다. TagChip이 표시됩니다.
  * @param tags 카드 태그로, 최대 5개까지 입력할 수 있습니다.
  */
 @Composable
-private fun CardTagsSection(tags: List<String> = listOf()) {
+private fun CardTagsSection(tags: List<String> = listOf(), modifier: Modifier = Modifier) {
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),

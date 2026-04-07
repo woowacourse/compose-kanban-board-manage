@@ -5,31 +5,51 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
 import woowacourse.kanban.domain.board.Board
 import woowacourse.kanban.domain.card.Card
-import woowacourse.kanban.domain.card.CardManagerState
-import woowacourse.kanban.domain.card.CardTaskState
+import woowacourse.kanban.domain.card.CardManagerStatus
+import woowacourse.kanban.domain.card.CardTaskStatus
+import woowacourse.kanban.ui.dialog.DialogStateHolder
+import woowacourse.kanban.ui.board.common.toDisplayText
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class BoardScreenTest {
 
     @Test
-    fun `보드에 보드 제목, 완료율, 태스크 생성 버튼, 프로그레스 바, ToDo, In Progress, Done Column이 노출된다`() = runComposeUiTest {
+    fun `보드에 보드 제목, 완료율, 태스크 생성 버튼, 프로그레스 바, TaskStatus title을 가진 Column이 노출된다`() = runComposeUiTest {
         // Given
+        val initialBoard = Board(boardTitle = "Compose Desktop 칸반 보드")
+        var taskStatus = listOf<String>()
         setContent {
+            var board by remember { mutableStateOf(initialBoard) }
+            taskStatus = CardTaskStatus
+                .entries
+                .map { status ->
+                status.toDisplayText()
+            }
+
+            val boardState = BoardStateHolder(
+                board = { board },
+                onBoardChange = { board = it },
+                onShowSnackbar = {},
+            )
+            val dialogState = DialogStateHolder(
+                onCardCreate = {},
+                onCardUpdate = {},
+                onCardDelete = {},
+                onShowSnackbar = {},
+            )
             BoardScreen(
-                board = Board(),
-                showCardCreationPanel = false,
-                onAddCard = {},
-                onShowCardCreationPanelChange = {},
-                onBoardChange = { true },
+                boardState = boardState,
+                dialogState = dialogState,
             )
         }
 
@@ -38,104 +58,175 @@ class BoardScreenTest {
         onNodeWithText("완료율: 0% (0/0)").assertExists()
         onNodeWithTag("새 태스크 생성 버튼").assertExists()
         onNodeWithTag("프로그레스 바").assertExists()
-        onNodeWithText("To Do").assertExists()
-        onNodeWithText("In Progress").assertExists()
-        onNodeWithText("Done").assertExists()
+        taskStatus.forEach {
+            onNodeWithText(it).assertExists()
+        }
     }
 
     @Test
     fun `새 태스크 생성 버튼을 누르면 카드 생성 모달이 나타난다`() = runComposeUiTest {
+        // Given
+        val initialBoard = Board(boardTitle = "Compose Desktop 칸반 보드")
         setContent {
-            var board by remember { mutableStateOf(Board()) }
-            var showCardCreationPanel by remember { mutableStateOf(false) }
+            var board by remember { mutableStateOf(initialBoard) }
+            val boardState = BoardStateHolder(
+                board = { board },
+                onBoardChange = { board = it },
+                onShowSnackbar = {},
+            )
+            val dialogState = DialogStateHolder(
+                onCardCreate = {},
+                onCardUpdate = {},
+                onCardDelete = {},
+                onShowSnackbar = {},
+            )
 
             BoardScreen(
-                board = board,
-                showCardCreationPanel = showCardCreationPanel,
-                onAddCard = { newCard -> board += newCard },
-                onShowCardCreationPanelChange = { showCardCreationPanel = it },
-                onBoardChange = { true },
+                boardState = boardState,
+                dialogState = dialogState,
+                onShowCreationDialog = { dialogState.showCreationDialog() },
+                onShowEditDialog = { },
             )
         }
-
         onNodeWithTag("새 태스크 생성 버튼").performClick()
-        onNodeWithTag("생성 모달 열림").assertExists()
+        onNodeWithTag("새 태스크 생성").assertExists()
     }
 
     @Test
     fun `카드 목록이 표시된다`() = runComposeUiTest {
-        val board = Board(
-            listOf(
-                Card.create(
-                    title = "테스트 카드",
-                    content = "테스트 내용",
-                    tags = listOf("태그"),
-                    manager = CardManagerState.DINO,
-                    state = CardTaskState.TODO,
-                ),
-            ),
+        // Given
+        val testCard = Card.create(
+            title = "테스트 카드",
+            content = "테스트 내용",
+            tags = listOf("태그"),
+            manager = CardManagerStatus.DINO,
+            state = CardTaskStatus.TODO,
         )
+        val boardWithCard = Board(cardList = listOf(testCard))
 
         setContent {
+            var board by remember { mutableStateOf(boardWithCard) }
+            val boardState = BoardStateHolder(
+                board = { board },
+                onBoardChange = { board = it },
+                onShowSnackbar = {},
+            )
+            val dialogState = DialogStateHolder(
+                onCardCreate = {},
+                onCardUpdate = {},
+                onCardDelete = {},
+                onShowSnackbar = {},
+            )
+
             BoardScreen(
-                board = board,
-                showCardCreationPanel = false,
-                onAddCard = {},
-                onShowCardCreationPanelChange = {},
-                onBoardChange = { true },
+                boardState = boardState,
+                dialogState = dialogState,
             )
         }
 
+        // Then
         onNodeWithText("테스트 카드").assertExists()
     }
 
     @Test
-    fun `태스크 생성 후 완료율 텍스트가 변경된다`() = runComposeUiTest {
+    fun `태스크를 To Do에서 In Progress 컬럼으로 드래그 앤 드롭하면 카드가 이동한다`() = runComposeUiTest {
+        // Given
+        val testCard = Card.create(
+            title = "드래그 테스트 카드",
+            content = "내용",
+            tags = listOf("태그"),
+            manager = CardManagerStatus.DINO,
+            state = CardTaskStatus.TODO,
+        )
+        val initialBoard = Board(cardList = listOf(testCard))
+
         setContent {
-            var board by remember { mutableStateOf(Board()) }
-            var showCardCreationPanel by remember { mutableStateOf(false) }
+            var board by remember { mutableStateOf(initialBoard) }
+            val boardState = remember {
+                BoardStateHolder(
+                    board = { board },
+                    onBoardChange = { board = it },
+                    onShowSnackbar = {},
+                )
+            }
+            val dialogState = DialogStateHolder(
+                onCardCreate = {},
+                onCardUpdate = {},
+                onCardDelete = {},
+                onShowSnackbar = {},
+            )
 
             BoardScreen(
-                board = board,
-                showCardCreationPanel = showCardCreationPanel,
-                onAddCard = { newCard -> board += newCard },
-                onShowCardCreationPanelChange = { showCardCreationPanel = it },
-                onBoardChange = { true },
+                boardState = boardState,
+                dialogState = dialogState,
             )
         }
 
-        onNodeWithTag("새 태스크 생성 버튼").performClick()
-        onNodeWithTag("titleTextField").performTextInput("완료 카드")
-        onNodeWithTag("descriptionTextField").performTextInput("설명")
-        onNodeWithTag("tagTextField").performTextInput("태그")
+        onNodeWithTag("${CardTaskStatus.TODO.name}_개수").assertTextContains("1")
+        onNodeWithTag("${CardTaskStatus.IN_PROGRESS.name}_개수").assertTextContains("0")
 
-        onNodeWithTag("Done").performClick()
-        onNodeWithText("생성").performClick()
+        // When
+        val cardNode = onNodeWithTag("카드_${testCard.id}")
+        val inProgressColumnNode = onNodeWithTag(CardTaskStatus.IN_PROGRESS.name)
+        val inProgressColumnBounds = inProgressColumnNode.fetchSemanticsNode().boundsInRoot
 
-        onNodeWithTag("완료율").assertTextContains("완료율: 100% (1/1)")
+        cardNode.performTouchInput {
+            down(center)
+            advanceEventTime(viewConfiguration.longPressTimeoutMillis + 100)
+
+            moveTo(inProgressColumnBounds.center)
+            advanceEventTime(100)
+            up()
+        }
+
+        // Then
+        onNodeWithTag("${CardTaskStatus.TODO.name}_개수").assertTextContains("0")
+        onNodeWithTag("${CardTaskStatus.IN_PROGRESS.name}_개수").assertTextContains("1")
     }
 
     @Test
-    fun `태스크 생성 후 Snackbar가 노출된다`() = runComposeUiTest {
+    fun `태스크 카드 클릭 후 다이얼로그에서 삭제 버튼을 눌렀을 때 해당 태스크 카드가 삭제된다`() = runComposeUiTest {
+        // given
+        val testCard = Card.create(
+            title = "삭제 테스트 카드",
+            content = "내용",
+            tags = listOf("태그"),
+            manager = CardManagerStatus.DINO,
+            state = CardTaskStatus.TODO,
+        )
+        val initialBoard = Board(cardList = listOf(testCard))
+
         setContent {
-            var board by remember { mutableStateOf(Board()) }
-            var showCardCreationPanel by remember { mutableStateOf(false) }
+            var board by remember { mutableStateOf(initialBoard) }
+
+            val dialogState = DialogStateHolder(
+                onCardCreate = {},
+                onCardUpdate = {},
+                onCardDelete = {board -= it},
+                onShowSnackbar = {},
+            )
+
+            val boardState = remember {
+                BoardStateHolder(
+                    board = { board },
+                    onBoardChange = { board = it },
+                    onShowSnackbar = {},
+                    onCardClick = { card -> dialogState.setCard(card) },
+                )
+            }
+
 
             BoardScreen(
-                board = board,
-                showCardCreationPanel = showCardCreationPanel,
-                onAddCard = { newCard -> board += newCard },
-                onShowCardCreationPanelChange = { showCardCreationPanel = it },
-                onBoardChange = { true },
+                boardState = boardState,
+                dialogState = dialogState,
+                onShowEditDialog = { dialogState.showEditDialog(it) },
             )
         }
 
-        onNodeWithTag("새 태스크 생성 버튼").performClick()
-        onNodeWithTag("titleTextField").performTextInput("새 카드")
-        onNodeWithTag("descriptionTextField").performTextInput("설명")
-        onNodeWithTag("tagTextField").performTextInput("태그")
-        onNodeWithText("생성").performClick()
-
-        onNodeWithText("새로운 태스크가 추가되었습니다.").assertExists()
+        // when & then
+        onNodeWithTag("카드_${testCard.id}").performClick()
+        onNodeWithTag("태스크 수정").assertIsDisplayed()
+        onNodeWithText("삭제").performClick()
+        onNodeWithTag("카드_${testCard.id}").assertDoesNotExist()
     }
 }
