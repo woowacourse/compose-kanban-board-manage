@@ -20,7 +20,7 @@ class ModalCreateFormTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(density = 0.1f)) {
                 ModalCreateForm(
-                    assignee = TaskMockData.assignees,
+                    state = ModalCreateFormState(TaskMockData.assignees),
                     onDismissRequest = {},
                     onCreate = { _ -> },
                 )
@@ -40,7 +40,7 @@ class ModalCreateFormTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(density = 0.1f)) {
                 ModalCreateForm(
-                    assignee = TaskMockData.assignees,
+                    state = ModalCreateFormState(TaskMockData.assignees),
                     onDismissRequest = {},
                     onCreate = { _ -> },
                 )
@@ -61,7 +61,7 @@ class ModalCreateFormTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(density = 0.1f)) {
                 ModalCreateForm(
-                    assignee = TaskMockData.assignees,
+                    state = ModalCreateFormState(TaskMockData.assignees),
                     onDismissRequest = {},
                     onCreate = { _ -> },
                 )
@@ -82,7 +82,7 @@ class ModalCreateFormTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(density = 0.1f)) {
                 ModalCreateForm(
-                    assignee = TaskMockData.assignees,
+                    state = ModalCreateFormState(TaskMockData.assignees),
                     onDismissRequest = {},
                     onCreate = { _ -> },
                 )

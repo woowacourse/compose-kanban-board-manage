@@ -1,6 +1,7 @@
 package woowacourse.kanban.board.task.domain
 
 import kotlin.test.Test
+import kotlin.test.assertIs
 import org.assertj.core.api.Assertions.assertThat
 
 class KanbanProjectTest {
@@ -65,57 +66,20 @@ class KanbanProjectTest {
             ),
         )
 
-        val newProject = project.addBoardCard(
-            0,
-            KanbanCard(
-                title = "제목",
-                assigneeName = "담당자",
-                status = KanbanStatus.TO_DO,
-            ),
+        val addCard = KanbanCard(
+            title = "제목",
+            assigneeName = "담당자",
+            status = KanbanStatus.TO_DO,
+        )
+        val projectResult = project.addBoardCard(
+            boardId = 0,
+            card = addCard,
         )
 
-        val searchBoard = newProject?.getBoard(0)
-
+        val newProject = assertIs<KanbanProjectResult.Success>(projectResult)
+        val searchBoard = newProject.project.getBoard(0)
         assertThat(newProject).isNotNull()
         assertThat(searchBoard?.cards[0]?.title).isEqualTo("제목")
         assertThat(board1.cards.size).isEqualTo(0)
-    }
-
-    @Test
-    fun `특정 보드에 카드를 업데이트하면 새로운 Project를 반환한다`() {
-        val board1 = KanbanBoard(
-            boardId = 0,
-            title = "보드1",
-        )
-        val board2 = KanbanBoard(
-            boardId = 1,
-            title = "보드2",
-        )
-        val project = KanbanProject(
-            projectTitle = "프로젝트",
-            boards = listOf(
-                board1,
-                board2,
-            ),
-        )
-
-        val addProject = project.addBoardCard(
-            0,
-            KanbanCard(
-                id = "1",
-                title = "제목",
-                assigneeName = "담당자",
-                status = KanbanStatus.TO_DO,
-            ),
-        )
-
-        val updateProject = addProject?.updateCardStatus(
-            boardId = 0,
-            cardId = "1",
-            KanbanStatus.DONE,
-        )
-
-        assertThat(addProject?.getBoard(0)?.getCardByStatus(KanbanStatus.DONE)?.size).isEqualTo(0)
-        assertThat(updateProject?.getBoard(0)?.getCardByStatus(KanbanStatus.DONE)?.size).isEqualTo(1)
     }
 }

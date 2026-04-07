@@ -23,7 +23,7 @@ import kanbanboard.composeapp.generated.resources.modal_title_new_task
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun ModalHeader(onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
+fun ModalHeader(title: String, onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -32,7 +32,7 @@ fun ModalHeader(onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
             .padding(24.dp),
     ) {
         Text(
-            text = stringResource(Res.string.modal_title_new_task),
+            text = title,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
         )
@@ -50,6 +50,6 @@ private fun ModalHeaderPreview() {
     Box(
         modifier = Modifier.padding(5.dp),
     ) {
-        ModalHeader(onDismissRequest = { })
+        ModalHeader(title = stringResource(Res.string.modal_title_new_task), onDismissRequest = { })
     }
 }

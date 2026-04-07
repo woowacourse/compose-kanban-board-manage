@@ -1,22 +1,114 @@
 package woowacourse.kanban.board.task.domain
 
 import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class KanbanCardTest {
 
     @Test
-    fun `KanbanCard의 Status가 변경된다`() {
-        val kanbanCard = KanbanCard(
-            title = "칸반제목 1",
-            assigneeName = "담당자 1",
+    fun `Status가 Todo에서 Inprogress로만 변경할 수 있다`() {
+        val card = KanbanCard(
+            title = "제목",
+            assigneeName = "담당자",
             status = KanbanStatus.TO_DO,
         )
-        val updateKanbanCard = kanbanCard.updateStatus(status = KanbanStatus.IN_PROGRESS)
-        assertThat(updateKanbanCard.status).isEqualTo(KanbanStatus.IN_PROGRESS)
-        assertThat(updateKanbanCard.status).isNotEqualTo(KanbanStatus.TO_DO)
-        assertThat(updateKanbanCard.status).isNotEqualTo(KanbanStatus.DONE)
+        val progressResult = card.updateStatus(KanbanStatus.IN_PROGRESS)
+        val reviewResult = card.updateStatus(KanbanStatus.REVIEW)
+        val doneResult = card.updateStatus(KanbanStatus.DONE)
+
+        val progressCard = assertIs<KanbanCardResult.Success>(progressResult)
+        val reviewCard = assertIs<KanbanCardResult.Failure>(reviewResult)
+        val doneCard = assertIs<KanbanCardResult.Failure>(doneResult)
+
+        assertThat(progressCard.card.status).isEqualTo(KanbanStatus.IN_PROGRESS)
+        assertThat(reviewCard.error).isEqualTo(KanbanError.INVALID_TRANSITION)
+        assertThat(doneCard.error).isEqualTo(KanbanError.INVALID_TRANSITION)
+    }
+
+    @Test
+    fun `Status가 Todo에서 Inprogress로 변경할 때 담당자가 필요하다`() {
+        val card = KanbanCard(
+            title = "제목",
+            assigneeName = null,
+            status = KanbanStatus.TO_DO,
+        )
+
+        val progressResult = card.updateStatus(KanbanStatus.IN_PROGRESS)
+        val reviewResult = card.updateStatus(KanbanStatus.REVIEW)
+        val doneResult = card.updateStatus(KanbanStatus.DONE)
+
+        val progressCard = assertIs<KanbanCardResult.Failure>(progressResult)
+        val reviewCard = assertIs<KanbanCardResult.Failure>(reviewResult)
+        val doneCard = assertIs<KanbanCardResult.Failure>(doneResult)
+
+        assertThat(progressCard.error).isEqualTo(KanbanError.ASSIGNEE_REQUIRED)
+        assertThat(reviewCard.error).isEqualTo(KanbanError.INVALID_TRANSITION)
+        assertThat(doneCard.error).isEqualTo(KanbanError.INVALID_TRANSITION)
+    }
+
+    @Test
+    fun `Status가 Inprogress에서 Todo, Review으로만 변경할 수 있다`() {
+        val card = KanbanCard(
+            title = "제목",
+            assigneeName = "담당자",
+            status = KanbanStatus.IN_PROGRESS,
+        )
+
+        val todoResult = card.updateStatus(KanbanStatus.TO_DO)
+        val reviewResult = card.updateStatus(KanbanStatus.REVIEW)
+        val doneResult = card.updateStatus(KanbanStatus.DONE)
+
+        val todoCard = assertIs<KanbanCardResult.Success>(todoResult)
+        val reviewCard = assertIs<KanbanCardResult.Success>(reviewResult)
+        val doneCard = assertIs<KanbanCardResult.Failure>(doneResult)
+
+        assertThat(todoCard.card.status).isEqualTo(KanbanStatus.TO_DO)
+        assertThat(reviewCard.card.status).isEqualTo(KanbanStatus.REVIEW)
+        assertThat(doneCard.error).isEqualTo(KanbanError.INVALID_TRANSITION)
+    }
+
+    @Test
+    fun `Status가 Review에서 Inprogress, Done으로만 변경할 수 있다`() {
+        val card = KanbanCard(
+            title = "제목",
+            assigneeName = "담당자",
+            status = KanbanStatus.REVIEW,
+        )
+
+        val todoResult = card.updateStatus(KanbanStatus.TO_DO)
+        val progressResult = card.updateStatus(KanbanStatus.IN_PROGRESS)
+        val doneResult = card.updateStatus(KanbanStatus.DONE)
+
+        val todoCard = assertIs<KanbanCardResult.Failure>(todoResult)
+        val progressCard = assertIs<KanbanCardResult.Success>(progressResult)
+        val doneCard = assertIs<KanbanCardResult.Success>(doneResult)
+
+        assertThat(todoCard.error).isEqualTo(KanbanError.INVALID_TRANSITION)
+        assertThat(progressCard.card.status).isEqualTo(KanbanStatus.IN_PROGRESS)
+        assertThat(doneCard.card.status).isEqualTo(KanbanStatus.DONE)
+    }
+
+    @Test
+    fun `Status가 Done에서 Todo로만 변경할 수 있다`() {
+        val card = KanbanCard(
+            title = "제목",
+            assigneeName = "담당자",
+            status = KanbanStatus.DONE,
+        )
+
+        val todoResult = card.updateStatus(KanbanStatus.TO_DO)
+        val progressResult = card.updateStatus(KanbanStatus.IN_PROGRESS)
+        val reviewResult = card.updateStatus(KanbanStatus.REVIEW)
+
+        val todoCard = assertIs<KanbanCardResult.Success>(todoResult)
+        val progressCard = assertIs<KanbanCardResult.Failure>(progressResult)
+        val reviewCard = assertIs<KanbanCardResult.Failure>(reviewResult)
+
+        assertThat(todoCard.card.status).isEqualTo(KanbanStatus.TO_DO)
+        assertThat(progressCard.error).isEqualTo(KanbanError.INVALID_TRANSITION)
+        assertThat(reviewCard.error).isEqualTo(KanbanError.INVALID_TRANSITION)
     }
 
     @Test

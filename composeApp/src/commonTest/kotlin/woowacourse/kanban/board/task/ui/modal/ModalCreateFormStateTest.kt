@@ -4,13 +4,14 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.task.domain.KanbanCardError
+import woowacourse.kanban.board.task.domain.TaskMockData
 
 class ModalCreateFormStateTest {
     private lateinit var state: ModalCreateFormState
 
     @BeforeTest
     fun setUp() {
-        state = ModalCreateFormState()
+        state = ModalCreateFormState(TaskMockData.assignees)
     }
 
     @Test

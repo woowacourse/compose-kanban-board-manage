@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.status_Done
 import kanbanboard.composeapp.generated.resources.status_In_Progress
+import kanbanboard.composeapp.generated.resources.status_review
 import kanbanboard.composeapp.generated.resources.status_to_do
 import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.task.domain.KanbanStatus
@@ -54,7 +54,6 @@ fun ModalOptionButton(
     val borderColor = if (isSelected) selectedBorderColor else BorderButtonDefault
     Box(
         modifier = modifier
-            .width(200.dp)
             .clip(shape = RoundedCornerShape(10.dp))
             .background(containerColor)
             .border(
@@ -77,6 +76,7 @@ fun ModalOptionStatus(kanbanStatus: KanbanStatus, modifier: Modifier = Modifier)
     val status = when (kanbanStatus) {
         KanbanStatus.TO_DO -> stringResource(Res.string.status_to_do)
         KanbanStatus.IN_PROGRESS -> stringResource(Res.string.status_In_Progress)
+        KanbanStatus.REVIEW -> stringResource(Res.string.status_review)
         KanbanStatus.DONE -> stringResource(Res.string.status_Done)
     }
     Text(
@@ -88,7 +88,7 @@ fun ModalOptionStatus(kanbanStatus: KanbanStatus, modifier: Modifier = Modifier)
 @Composable
 fun ModalOptionAssignee(name: String, modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.width(200.dp)
             .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,

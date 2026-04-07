@@ -5,7 +5,7 @@ import java.util.UUID
 data class KanbanCard(
     val id: String = UUID.randomUUID().toString(),
     val title: String,
-    val assigneeName: String,
+    val assigneeName: String?,
     val status: KanbanStatus,
     val content: String = "",
     val tags: List<String> = emptyList(),
@@ -17,13 +17,46 @@ data class KanbanCard(
         require(tagError == null) { "칸반 카드의 태그 형식이 올바르지 않습니다. - 에러 타입: $tagError, tags: $tags" }
     }
 
-    fun updateStatus(status: KanbanStatus): KanbanCard {
-        return copy(status = status)
+    fun updateStatus(toStatus: KanbanStatus): KanbanCardResult {
+        if (!status.isTransitionStatus(toStatus)) {
+            return KanbanCardResult.Failure.InvalidTransition(status, toStatus)
+        }
+        if (!isTranslationStatusWithAssignee(toStatus)) {
+            return KanbanCardResult.Failure.AssigneeRequired(status)
+        }
+        return KanbanCardResult.Success(copy(status = toStatus))
     }
 
+    fun updateCard(
+        title: String,
+        assigneeName: String?,
+        status: KanbanStatus,
+        content: String = "",
+        tags: List<String> = emptyList(),
+    ): KanbanCardResult {
+        if (!this.status.isTransitionStatus(status)) {
+            return KanbanCardResult.Failure.InvalidTransition(this.status, status)
+        }
+        if (status.isAssigneeRequired && assigneeName == null) {
+            return KanbanCardResult.Failure.AssigneeRequired(status)
+        }
+
+        return KanbanCardResult.Success(
+            copy(
+                title = title,
+                assigneeName = assigneeName,
+                status = status,
+                content = content,
+                tags = tags,
+            ),
+        )
+    }
+
+    private fun isTranslationStatusWithAssignee(toStatus: KanbanStatus) = !(toStatus.isAssigneeRequired && assigneeName == null)
+
     companion object {
-        const val MAX_TAG_COUNT = 5
-        const val MAX_TAG_LENGTH = 5
+        private const val MAX_TAG_COUNT = 5
+        private const val MAX_TAG_LENGTH = 5
 
         fun validateTitle(title: String): KanbanCardError? {
             if (title.isBlank()) return KanbanCardError.TITLE_FORMAT
@@ -42,4 +75,11 @@ enum class KanbanCardError {
     TAG_FORMAT,
     TAG_SIZE,
     TITLE_FORMAT,
+}
+
+enum class KanbanError {
+    INVALID_TRANSITION,
+    ASSIGNEE_REQUIRED,
+    DELETION_NOT_ALLOWED,
+    KANBAN_NOT_FOUND,
 }

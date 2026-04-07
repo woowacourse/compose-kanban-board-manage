@@ -24,15 +24,17 @@ import androidx.compose.ui.unit.sp
 import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.button_cancel
 import kanbanboard.composeapp.generated.resources.button_create
+import kanbanboard.composeapp.generated.resources.button_delete
+import kanbanboard.composeapp.generated.resources.button_edit
 import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.theme.CreateButtonBackground
 
 @Composable
-fun ModalAction(
+fun ModalCreateAction(
     isValidTitle: Boolean,
     isValidTag: Boolean,
     onDismissRequest: () -> Unit,
-    onClick: () -> Unit,
+    onCreate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HorizontalDivider(
@@ -45,10 +47,7 @@ fun ModalAction(
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.End,
     ) {
-        Button(
-            modifier = Modifier
-                .height(44.dp)
-                .width(68.dp),
+        ModalButton(
             onClick = onDismissRequest,
             colors = ButtonColors(
                 containerColor = Color.White,
@@ -56,39 +55,98 @@ fun ModalAction(
                 disabledContainerColor = Color.White,
                 disabledContentColor = Color.Black,
             ),
-            contentPadding = PaddingValues(0.dp),
-            shape = RoundedCornerShape(10.dp),
-        ) {
-            Text(
-                text = stringResource(Res.string.button_cancel),
-                fontSize = 16.sp,
-            )
-        }
+            text = stringResource(Res.string.button_cancel),
+        )
 
         Spacer(
             modifier = Modifier.width(12.dp),
         )
 
-        Button(
-            modifier = Modifier
-                .height(44.dp)
-                .width(68.dp),
-            enabled = isValidTitle && isValidTag,
-            onClick = onClick,
+        ModalButton(
+            onClick = onCreate,
             colors = ButtonColors(
                 containerColor = CreateButtonBackground,
                 contentColor = Color.White,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.White,
             ),
-            contentPadding = PaddingValues(0.dp),
-            shape = RoundedCornerShape(10.dp),
-        ) {
-            Text(
-                text = stringResource(Res.string.button_create),
-                fontSize = 16.sp,
-            )
-        }
+            text = stringResource(Res.string.button_create),
+            enabled = isValidTitle && isValidTag,
+        )
+    }
+}
+
+@Composable
+fun ModalEditAction(onDismissRequest: () -> Unit, onDelete: () -> Unit, onEdit: () -> Unit, modifier: Modifier = Modifier) {
+    HorizontalDivider(
+        thickness = Dp.Hairline,
+        color = Color.LightGray,
+    )
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.End,
+    ) {
+        ModalButton(
+            onClick = onDismissRequest,
+            colors = ButtonColors(
+                containerColor = Color.White,
+                contentColor = Color.Black,
+                disabledContainerColor = Color.White,
+                disabledContentColor = Color.Black,
+            ),
+            text = stringResource(Res.string.button_cancel),
+        )
+
+        Spacer(
+            modifier = Modifier.width(12.dp),
+        )
+
+        ModalButton(
+            onClick = onDelete,
+            colors = ButtonColors(
+                containerColor = Color.Red,
+                contentColor = Color.White,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.White,
+            ),
+            text = stringResource(Res.string.button_delete),
+        )
+
+        Spacer(
+            modifier = Modifier.width(12.dp),
+        )
+
+        ModalButton(
+            onClick = onEdit,
+            colors = ButtonColors(
+                containerColor = CreateButtonBackground,
+                contentColor = Color.White,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.White,
+            ),
+            text = stringResource(Res.string.button_edit),
+        )
+    }
+}
+
+@Composable
+private fun ModalButton(onClick: () -> Unit, colors: ButtonColors, text: String, modifier: Modifier = Modifier, enabled: Boolean = true) {
+    Button(
+        modifier = modifier
+            .height(44.dp)
+            .width(68.dp),
+        enabled = enabled,
+        onClick = onClick,
+        colors = colors,
+        contentPadding = PaddingValues(0.dp),
+        shape = RoundedCornerShape(10.dp),
+    ) {
+        Text(
+            text = text,
+            fontSize = 16.sp,
+        )
     }
 }
 
@@ -96,11 +154,23 @@ fun ModalAction(
 @Composable
 private fun ModalActionPreview() {
     Box(modifier = Modifier.padding(10.dp)) {
-        ModalAction(
+        ModalCreateAction(
             isValidTag = true,
             isValidTitle = true,
             onDismissRequest = {},
-            onClick = {},
+            onCreate = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ModalEditActionPreview() {
+    Box(modifier = Modifier.padding(10.dp)) {
+        ModalEditAction(
+            onDismissRequest = {},
+            onDelete = {},
+            onEdit = {},
         )
     }
 }

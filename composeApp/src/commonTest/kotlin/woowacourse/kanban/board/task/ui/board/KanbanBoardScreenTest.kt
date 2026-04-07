@@ -1,5 +1,6 @@
 package woowacourse.kanban.board.task.ui.board
 
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithText
@@ -7,7 +8,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
-import woowacourse.kanban.board.task.domain.KanbanBoard
+import woowacourse.kanban.board.task.domain.KanbanProject
+import woowacourse.kanban.board.task.domain.TaskMockData
+import woowacourse.kanban.board.task.ui.project.RememberKanbanProjectState
 
 @OptIn(ExperimentalTestApi::class)
 class KanbanBoardScreenTest {
@@ -15,13 +18,15 @@ class KanbanBoardScreenTest {
     @Test
     fun `새 태스크 생성 버튼 클릭 시 Dialog가 생성된다`() = runComposeUiTest {
         setContent {
-            KanbanBoardScreen(
-                boardId = 0,
-                kanbanBoard = KanbanBoard(
-                    boardId = 0,
-                    title = "board",
+            val kanbanProjectState = RememberKanbanProjectState(
+                coroutineScope = rememberCoroutineScope(),
+                kanbanProject = KanbanProject(
+                    projectTitle = "4주차 미션 보드",
+                    boards = TaskMockData.boards,
                 ),
-                onAddCard = { _, _ -> },
+            )
+            KanbanBoardScreen(
+                kanbanProjectState = kanbanProjectState,
             )
         }
 
@@ -33,13 +38,15 @@ class KanbanBoardScreenTest {
     @Test
     fun `Dialog를 닫고 다시 열었을 때 이전 입력값이 초기화된다`() = runComposeUiTest {
         setContent {
-            KanbanBoardScreen(
-                boardId = 0,
-                kanbanBoard = KanbanBoard(
-                    boardId = 0,
-                    title = "board",
+            val kanbanProjectState = RememberKanbanProjectState(
+                coroutineScope = rememberCoroutineScope(),
+                kanbanProject = KanbanProject(
+                    projectTitle = "4주차 미션 보드",
+                    boards = TaskMockData.boards,
                 ),
-                onAddCard = { _, _ -> },
+            )
+            KanbanBoardScreen(
+                kanbanProjectState = kanbanProjectState,
             )
         }
 
@@ -55,13 +62,15 @@ class KanbanBoardScreenTest {
     @Test
     fun `카드 추가 성공 시 스낵바가 생성된다`() = runComposeUiTest {
         setContent {
-            KanbanBoardScreen(
-                boardId = 0,
-                kanbanBoard = KanbanBoard(
-                    boardId = 0,
-                    title = "board",
+            val kanbanProjectState = RememberKanbanProjectState(
+                coroutineScope = rememberCoroutineScope(),
+                kanbanProject = KanbanProject(
+                    projectTitle = "4주차 미션 보드",
+                    boards = TaskMockData.boards,
                 ),
-                onAddCard = { _, _ -> },
+            )
+            KanbanBoardScreen(
+                kanbanProjectState = kanbanProjectState,
             )
         }
 
@@ -75,13 +84,15 @@ class KanbanBoardScreenTest {
     @Test
     fun `일정 시간이 경과하면 스낵바가 화면에서 사라진다`() = runComposeUiTest {
         setContent {
-            KanbanBoardScreen(
-                boardId = 0,
-                kanbanBoard = KanbanBoard(
-                    boardId = 0,
-                    title = "board",
+            val kanbanProjectState = RememberKanbanProjectState(
+                coroutineScope = rememberCoroutineScope(),
+                kanbanProject = KanbanProject(
+                    projectTitle = "4주차 미션 보드",
+                    boards = TaskMockData.boards,
                 ),
-                onAddCard = { _, _ -> },
+            )
+            KanbanBoardScreen(
+                kanbanProjectState = kanbanProjectState,
             )
         }
 

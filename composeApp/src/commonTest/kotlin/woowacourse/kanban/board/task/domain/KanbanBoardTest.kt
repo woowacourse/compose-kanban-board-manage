@@ -1,5 +1,6 @@
 package woowacourse.kanban.board.task.domain
 
+import kotlin.test.assertIs
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -12,10 +13,12 @@ class KanbanBoardTest {
         )
         val card = createKanbanCard(KanbanStatus.TO_DO)
 
-        val newBoard = board.addCard(card)
+        val boardResult = board.addCard(card)
 
-        assertThat(newBoard.cards.size).isEqualTo(1)
-        assertThat(newBoard.cards.first().title).isEqualTo("제목")
+        val newBoard = assertIs<KanbanBoardResult.Success>(boardResult)
+
+        assertThat(newBoard.board.cards.size).isEqualTo(1)
+        assertThat(newBoard.board.cards.first().title).isEqualTo("제목")
         assertThat(board.cards.size).isEqualTo(0)
         assertThat(board.cards.isEmpty()).isEqualTo(true)
     }
@@ -60,14 +63,16 @@ class KanbanBoardTest {
 
         val board = createKanbanBoard(cards = listOf(toDoCards))
 
-        val updateBoard = board.updateCardStatus(
+        val boardResult = board.updateCardStatus(
             toDoCards.id,
             KanbanStatus.IN_PROGRESS,
         )
 
-        assertThat(updateBoard?.getCardByStatus(KanbanStatus.TO_DO)?.size).isEqualTo(0)
-        assertThat(updateBoard?.getCardByStatus(KanbanStatus.IN_PROGRESS)?.size).isEqualTo(1)
-        assertThat(updateBoard?.getCardByStatus(KanbanStatus.IN_PROGRESS)?.first()?.status).isEqualTo(KanbanStatus.IN_PROGRESS)
+        val newBoard = assertIs<KanbanBoardResult.Success>(boardResult)
+
+        assertThat(newBoard.board.getCardByStatus(KanbanStatus.TO_DO).size).isEqualTo(0)
+        assertThat(newBoard.board.getCardByStatus(KanbanStatus.IN_PROGRESS).size).isEqualTo(1)
+        assertThat(newBoard.board.getCardByStatus(KanbanStatus.IN_PROGRESS).first().status).isEqualTo(KanbanStatus.IN_PROGRESS)
     }
 
     @Test
