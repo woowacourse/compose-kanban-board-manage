@@ -2,6 +2,7 @@ package woowacourse.kanban.board.ui
 
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -9,16 +10,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.dp
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.launch
+import woowacourse.kanban.board.domain.KanbanProject
+import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.ui.constant.MockData
 import woowacourse.kanban.board.ui.constant.SnackBarText
 import woowacourse.kanban.board.ui.stateholder.BoardState
+import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.BoardData
+import woowacourse.kanban.domain.Nickname
+import woowacourse.kanban.domain.Tags
+import woowacourse.kanban.domain.TaskStatus
+import woowacourse.kanban.domain.Title
 
 @OptIn(ExperimentalTestApi::class)
 class BoardUiTest {
@@ -27,7 +38,11 @@ class BoardUiTest {
     fun `새 태스크 생성 버튼을 누르면 생성 다이얼로그가 열려야 한다`() = runComposeUiTest {
         // given : 새 태스크 버튼이 주어진다
         setContent {
-            val boardState = BoardState(mutableListOf())
+            val boardState = remember {
+                BoardState(
+                    KanbanProject(mutableListOf()),
+                )
+            }
 
             KanbanBoard(
                 assignees = MockData.ASSIGNEES,
@@ -47,11 +62,17 @@ class BoardUiTest {
     fun `생성 다이얼로그에서 정상적인 값들을 입력 후 생성 버튼을 누르면 칸반 보드 리스트에 표시되어야 한다`() = runComposeUiTest {
         // given : 태스크 카드 정상 입력값이 주어진다
         setContent {
-            val boardState = BoardState(mutableListOf())
+            val boardState = remember {
+                BoardState(
+                    KanbanProject(
+                        mutableListOf(),
+                    ),
+                )
+            }
 
             KanbanBoard(
-                assignees = MockData.ASSIGNEES,
                 boardState = boardState,
+                assignees = MockData.ASSIGNEES,
                 projectTitle = "",
                 onTaskCreated = { task ->
                     boardState.addTask(task)
@@ -83,24 +104,24 @@ class BoardUiTest {
             val snackBarHostState = remember { SnackbarHostState() }
 
             Scaffold(
+                modifier = Modifier.size(2400.dp, 2400.dp),
                 snackbarHost = {
                     SnackbarHost(snackBarHostState, modifier = Modifier.offset(y = (-50).dp)) { data ->
                         KanbanSnackBar(data)
                     }
                 },
             ) { innerPadding ->
-
-                val boardState = BoardState(mutableListOf())
+                val project = KanbanProject(mutableListOf())
+                val boardState = BoardState(project)
 
                 KanbanBoard(
                     assignees = MockData.ASSIGNEES,
                     boardState = boardState,
                     projectTitle = "",
                     modifier = Modifier.padding(innerPadding),
-                    onTaskCreated = {
+                    onTaskCreated = { task ->
                         scope.launch {
-                            snackBarHostState.currentSnackbarData?.dismiss()
-                            snackBarHostState.showSnackbar(SnackBarText.CREATE_TASK)
+                            snackBarHostState.showSnackbar(SnackBarText.UPDATE_TASK)
                         }
                     },
                 )
@@ -116,6 +137,110 @@ class BoardUiTest {
         waitForIdle()
 
         // then : 칸반 보드 하단에 스낵바가 출력되어야 한다
-        onNodeWithText("새로운 태스크가 추가되었습니다.").assertExists()
+        waitUntil(timeoutMillis = 5000) {
+            onAllNodesWithText(SnackBarText.UPDATE_TASK)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
+    @Test
+    fun `To Do 상태인 태스크를 눌러서 다이얼로그를 열면 담당자에 '없음' 버튼이 존재한다`() = runComposeUiTest {
+        // given : To Do 상태의 태스크가 설정된 프로젝트와 보드가 주어진다.
+        setContent {
+            val boardState = remember {
+                BoardState(
+                    KanbanProject(
+                        mutableListOf(
+                            KanbanTask(
+                                data = BoardData(
+                                    title = Title("제목"),
+                                    content = "내용",
+                                    tags = Tags(),
+                                    assignee = Assignee(
+                                        nickname = Nickname("아오"),
+                                    ),
+                                    id = 0,
+                                ),
+                                status = TaskStatus.TO_DO,
+                            ),
+                        ),
+                    ),
+                )
+            }
+            KanbanBoard(
+                assignees = MockData.ASSIGNEES,
+                boardState = boardState,
+                projectTitle = "",
+            )
+        }
+
+        // when : 태스크를 눌렀을 때
+        onNodeWithText("아오").performClick()
+        waitForIdle()
+
+        // then : 다이얼로그의 담당자 리스트에서 "없음"이 존재해야 한다.
+        onNodeWithText("없음").assertExists()
+    }
+
+    @Test
+    fun `Review,Done 상태 태스크의 수정 다이얼로그에서 삭제할 수 없다`() = runComposeUiTest {
+        // given : Review, Done 상태의 태스크들이 설정된 프로젝트와 보드가 주어진다.
+        lateinit var boardState: BoardState
+        setContent {
+            boardState = remember {
+                BoardState(
+                    KanbanProject(
+                        mutableListOf(
+                            KanbanTask(
+                                data = BoardData(
+                                    title = Title("리뷰제목"),
+                                    content = "내용",
+                                    tags = Tags(),
+                                    assignee = Assignee(
+                                        nickname = Nickname("아오"),
+                                    ),
+                                    id = 0,
+                                ),
+                                status = TaskStatus.REVIEW,
+                            ),
+                            KanbanTask(
+                                data = BoardData(
+                                    title = Title("완료제목"),
+                                    content = "내용",
+                                    tags = Tags(),
+                                    assignee = Assignee(
+                                        nickname = Nickname("아오"),
+                                    ),
+                                    id = 1,
+                                ),
+                                status = TaskStatus.DONE,
+                            ),
+                        ),
+                    ),
+                )
+            }
+            KanbanBoard(
+                assignees = MockData.ASSIGNEES,
+                boardState = boardState,
+                projectTitle = "",
+            )
+        }
+
+        // when : Review 태스크를 누르고 태스크 관리 다이얼로그에서 삭제 버튼을 누른다.
+        onNodeWithText("리뷰제목").performClick()
+        waitForIdle()
+
+        onNodeWithText("삭제").performClick()
+        waitForIdle()
+
+        // when : Done 태스크를 누르고 태스크 관리 다이얼로그에서 삭제 버튼을 누른다.
+        onNodeWithText("완료제목").performClick()
+        waitForIdle()
+
+        onNodeWithText("삭제").performClick()
+        waitForIdle()
+
+        // then : 태스크의 숫자가 변하지 않아야 한다.
+        assertEquals(2, boardState.totalTaskCount)
     }
 }

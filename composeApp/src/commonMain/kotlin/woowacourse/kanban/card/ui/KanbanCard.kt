@@ -2,6 +2,7 @@ package woowacourse.kanban.card.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -24,21 +25,24 @@ import woowacourse.kanban.card.constant.DEFAULT_TITLE
 import woowacourse.kanban.card.constant.MAX_CONTENT
 import woowacourse.kanban.card.constant.MAX_NAME
 import woowacourse.kanban.card.constant.MAX_TITLE
-import woowacourse.kanban.commonmodel.BoardData
-import woowacourse.kanban.commonmodel.Nickname
-import woowacourse.kanban.commonmodel.Tags
-import woowacourse.kanban.commonmodel.Title
+import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.BoardData
+import woowacourse.kanban.domain.Nickname
+import woowacourse.kanban.domain.Tags
+import woowacourse.kanban.domain.Title
 
 @Composable
 fun KanbanCard(
     board: BoardData,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
             .width(270.dp)
             .clip(shape = RoundedCornerShape(15.dp))
             .background(Color.White)
+            .clickable(onClick = onClick)
             .border(
                 width = 1.dp,
                 color = Colors.PrimaryBorder,
@@ -64,7 +68,9 @@ fun KanbanCard(
             HorizontalDivider(thickness = 2.dp)
 
             // 작성자
-            Profile(nickname = board.nickname, modifier = Modifier.padding(vertical = 8.dp).testTag("프로필"))
+            if (board.assignee != null) {
+                Profile(nickname = board.assignee.nickname, modifier = Modifier.padding(vertical = 8.dp).testTag("프로필"))
+            }
         }
     }
 }
@@ -75,29 +81,29 @@ class BoardPreviewParameterProvider : PreviewParameterProvider<BoardData> {
             title = Title(DEFAULT_TITLE),
             content = DEFAULT_CONTENT,
             tags = Tags(listOf("컴포넌트", "성능")),
-            nickname = Nickname(DEFAULT_NAME),
+            assignee = Assignee(Nickname(DEFAULT_NAME)),
         ),
         BoardData(
             title = Title(DEFAULT_TITLE),
             tags = Tags(listOf("컴포넌트", "성능")),
-            nickname = Nickname(DEFAULT_NAME),
+            assignee = Assignee(Nickname(DEFAULT_NAME)),
         ),
         BoardData(
             title = Title(DEFAULT_TITLE),
             content = DEFAULT_CONTENT,
             tags = Tags(),
-            nickname = Nickname(DEFAULT_NAME),
+            assignee = Assignee(Nickname(DEFAULT_NAME)),
         ),
         BoardData(
             title = Title(DEFAULT_TITLE),
             tags = Tags(),
-            nickname = Nickname(DEFAULT_NAME),
+            assignee = Assignee(Nickname(DEFAULT_NAME)),
         ),
         BoardData(
             title = Title(MAX_TITLE),
             content = MAX_CONTENT,
             tags = Tags(listOf("너무너무", "긴 태그", "최대로", "5자까지", "5개제한임")),
-            nickname = Nickname(MAX_NAME),
+            assignee = Assignee(Nickname(MAX_NAME)),
         ),
     )
 }

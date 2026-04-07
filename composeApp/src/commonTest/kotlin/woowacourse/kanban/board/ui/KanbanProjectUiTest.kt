@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import woowacourse.kanban.board.ui.constant.MockData
 import woowacourse.kanban.board.ui.constant.SnackBarText
 import woowacourse.kanban.board.ui.stateholder.BoardState
-import woowacourse.kanban.commonmodel.TaskStatus
+import woowacourse.kanban.domain.TaskStatus
 
 @OptIn(ExperimentalTestApi::class)
 class KanbanProjectUiTest {
@@ -100,8 +100,9 @@ class KanbanProjectUiTest {
             val snackBarHostState = remember { SnackbarHostState() }
 
             val project = MockData.MOCK_PROJECTS.first()
-            state =
-                BoardState(project.getTasks())
+            state = BoardState(
+                project,
+            )
 
             Scaffold(
                 snackbarHost = {
@@ -115,14 +116,14 @@ class KanbanProjectUiTest {
 
             // when : 상태 변경 함수를 호출했을 때
             state.changeStatus(
+                taskId = 0,
                 status = TaskStatus.DONE,
-                idx = 0,
             )
-            scope.launch { snackBarHostState.showSnackbar(SnackBarText.EDIT_TASK) }
+            scope.launch { snackBarHostState.showSnackbar(SnackBarText.STATUS_EDIT) }
         }
 
         // then : "태스크가 이동되었습니다" 스낵바가 출력되어야 한다.
         awaitIdle()
-        onNodeWithText(SnackBarText.EDIT_TASK).assertExists()
+        onNodeWithText(SnackBarText.STATUS_EDIT).assertExists()
     }
 }

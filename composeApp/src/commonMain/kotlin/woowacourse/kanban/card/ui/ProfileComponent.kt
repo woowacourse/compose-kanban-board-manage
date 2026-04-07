@@ -17,7 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.Colors
-import woowacourse.kanban.commonmodel.Nickname
+import woowacourse.kanban.domain.Nickname
 
 @Composable
 fun Profile(

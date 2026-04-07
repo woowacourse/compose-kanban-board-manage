@@ -1,13 +1,15 @@
 package woowacourse.kanban.board.ui.constant
 
-import woowacourse.kanban.board.model.KanbanProject
-import woowacourse.kanban.commonmodel.Assignee
-import woowacourse.kanban.commonmodel.BoardData
-import woowacourse.kanban.commonmodel.KanbanTask
-import woowacourse.kanban.commonmodel.Nickname
-import woowacourse.kanban.commonmodel.Tags
-import woowacourse.kanban.commonmodel.TaskStatus
-import woowacourse.kanban.commonmodel.Title
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import woowacourse.kanban.board.domain.KanbanProject
+import woowacourse.kanban.board.domain.KanbanTask
+import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.BoardData
+import woowacourse.kanban.domain.Nickname
+import woowacourse.kanban.domain.Tags
+import woowacourse.kanban.domain.TaskStatus
+import woowacourse.kanban.domain.Title
 
 object MockData {
     val ASSIGNEES = listOf(
@@ -15,13 +17,18 @@ object MockData {
             Nickname(
                 "다이노",
             ),
+            icon = Icons.Default.AccountCircle,
         ),
         Assignee(
             Nickname(
                 "페임스",
             ),
+            icon = Icons.Default.AccountCircle,
         ),
     )
+
+    private val DAINO = Assignee(Nickname("다이노"), icon = Icons.Default.AccountCircle)
+    private val FAMES = Assignee(Nickname("페임스"), icon = Icons.Default.AccountCircle)
 
     var MOCK_PROJECTS = mutableListOf(
         KanbanProject(
@@ -32,7 +39,7 @@ object MockData {
                         title = Title("제목"),
                         content = "내용",
                         tags = Tags(),
-                        nickname = Nickname("아오"),
+                        assignee = DAINO,
                         id = 0,
                     ),
                     status = TaskStatus.TO_DO,
@@ -42,7 +49,7 @@ object MockData {
                         title = Title("제목"),
                         content = "내용",
                         tags = Tags(),
-                        nickname = Nickname("아오"),
+                        assignee = FAMES,
                         id = 1,
                     ),
                     status = TaskStatus.TO_DO,
@@ -52,7 +59,7 @@ object MockData {
                         title = Title("제목"),
                         content = "내용",
                         tags = Tags(),
-                        nickname = Nickname("아오"),
+                        assignee = DAINO,
                         id = 2,
                     ),
                     status = TaskStatus.TO_DO,
@@ -67,7 +74,7 @@ object MockData {
                         title = Title("제목"),
                         content = "내용",
                         tags = Tags(),
-                        nickname = Nickname("아오"),
+                        assignee = FAMES,
                         id = 3,
                     ),
                     status = TaskStatus.IN_PROGRESS,
@@ -77,7 +84,7 @@ object MockData {
                         title = Title("제목"),
                         content = "내용",
                         tags = Tags(),
-                        nickname = Nickname("아오"),
+                        assignee = DAINO,
                         id = 4,
                     ),
                     status = TaskStatus.IN_PROGRESS,
@@ -87,7 +94,7 @@ object MockData {
                         title = Title("제목"),
                         content = "내용",
                         tags = Tags(),
-                        nickname = Nickname("아오"),
+                        assignee = FAMES,
                         id = 5,
                     ),
                     status = TaskStatus.IN_PROGRESS,
@@ -102,7 +109,7 @@ object MockData {
                         title = Title("제목"),
                         content = "내용",
                         tags = Tags(),
-                        nickname = Nickname("아오"),
+                        assignee = DAINO,
                         id = 6,
                     ),
                     status = TaskStatus.DONE,
@@ -112,7 +119,7 @@ object MockData {
                         title = Title("제목"),
                         content = "내용",
                         tags = Tags(),
-                        nickname = Nickname("아오"),
+                        assignee = FAMES,
                         id = 7,
                     ),
                     status = TaskStatus.DONE,
@@ -122,7 +129,7 @@ object MockData {
                         title = Title("제목"),
                         content = "내용",
                         tags = Tags(),
-                        nickname = Nickname("아오"),
+                        assignee = DAINO,
                         id = 8,
                     ),
                     status = TaskStatus.DONE,

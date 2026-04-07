@@ -9,10 +9,11 @@ import woowacourse.kanban.card.constant.DEFAULT_CONTENT
 import woowacourse.kanban.card.constant.DEFAULT_NAME
 import woowacourse.kanban.card.constant.DEFAULT_TITLE
 import woowacourse.kanban.card.ui.KanbanCard
-import woowacourse.kanban.commonmodel.BoardData
-import woowacourse.kanban.commonmodel.Nickname
-import woowacourse.kanban.commonmodel.Tags
-import woowacourse.kanban.commonmodel.Title
+import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.BoardData
+import woowacourse.kanban.domain.Nickname
+import woowacourse.kanban.domain.Tags
+import woowacourse.kanban.domain.Title
 
 @OptIn(ExperimentalTestApi::class)
 class BoardTest {
@@ -26,7 +27,7 @@ class BoardTest {
         title = Title(title),
         content = content,
         tags = Tags(tags),
-        nickname = Nickname(nickname),
+        assignee = Assignee(Nickname(nickname)),
     )
 
     @Composable
@@ -45,10 +46,10 @@ class BoardTest {
 
         // when
         // then
-        onNodeWithTag("제목").assertExists()
-        onNodeWithTag("중간내용").assertExists()
-        onNodeWithTag("테그목록").assertExists()
-        onNodeWithTag("프로필").assertExists()
+        onNodeWithTag("제목", useUnmergedTree = true).assertExists()
+        onNodeWithTag("중간내용", useUnmergedTree = true).assertExists()
+        onNodeWithTag("테그목록", useUnmergedTree = true).assertExists()
+        onNodeWithTag("프로필", useUnmergedTree = true).assertExists()
     }
 
     @Test

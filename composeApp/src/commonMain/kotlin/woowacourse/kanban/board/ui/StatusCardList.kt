@@ -32,16 +32,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.Colors
+import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.card.ui.DragWrapper
 import woowacourse.kanban.card.ui.KanbanCard
-import woowacourse.kanban.commonmodel.KanbanTask
-import woowacourse.kanban.commonmodel.TaskStatus
+import woowacourse.kanban.domain.TaskStatus
 
 private val TaskStatus.displayName: String
     get() = when (this) {
         TaskStatus.TO_DO -> "To Do"
         TaskStatus.IN_PROGRESS -> "In Progress"
         TaskStatus.DONE -> "Done"
+        TaskStatus.REVIEW -> "Review"
     }
 
 private val TaskStatus.titleColor: Color
@@ -49,6 +50,7 @@ private val TaskStatus.titleColor: Color
         TaskStatus.TO_DO -> Colors.StatusBgToDo
         TaskStatus.IN_PROGRESS -> Colors.StatusBgInProgress
         TaskStatus.DONE -> Colors.StatusBgDone
+        TaskStatus.REVIEW -> Colors.StatusBgReview
     }
 
 private val TaskStatus.bgColor: Color
@@ -56,6 +58,7 @@ private val TaskStatus.bgColor: Color
         TaskStatus.TO_DO -> Colors.StatusListBgToDo
         TaskStatus.IN_PROGRESS -> Colors.StatusListBgInProgress
         TaskStatus.DONE -> Colors.StatusListBgDone
+        TaskStatus.REVIEW -> Colors.StatusListBgReview
     }
 
 private val TaskStatus.borderColor: Color
@@ -63,6 +66,7 @@ private val TaskStatus.borderColor: Color
         TaskStatus.TO_DO -> Colors.StatusListBorderToDo
         TaskStatus.IN_PROGRESS -> Colors.StatusListBorderInProgress
         TaskStatus.DONE -> Colors.StatusListBorderDone
+        TaskStatus.REVIEW -> Colors.StatusListBorderReview
     }
 
 @Composable
@@ -76,6 +80,7 @@ fun StatusCardList(
     onTaskDragChange: (Offset) -> Unit = {},
     onTaskDragEnd: () -> Unit = {},
     onTaskDragCancel: () -> Unit = {},
+    onCardClick: (KanbanTask) -> Unit = {},
 ) {
     val isDropTarget by remember { derivedStateOf { getIsDropTarget() } }
     val lastBoundsHolder = remember { mutableStateOf<Rect?>(null) }
@@ -154,6 +159,9 @@ fun StatusCardList(
                 ) {
                     KanbanCard(
                         tasks[it].data,
+                        onClick = {
+                            onCardClick(tasks[it])
+                        },
                     )
                 }
             }

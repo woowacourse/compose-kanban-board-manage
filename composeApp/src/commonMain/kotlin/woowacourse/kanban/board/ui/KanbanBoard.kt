@@ -16,12 +16,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import woowacourse.kanban.board.domain.KanbanProject
+import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.ui.constant.MockData
+import woowacourse.kanban.board.ui.dialog.ui.TaskManageDialog
+import woowacourse.kanban.board.ui.dialog.ui.stateholder.TaskFormState
 import woowacourse.kanban.board.ui.stateholder.BoardState
-import woowacourse.kanban.commonmodel.Assignee
-import woowacourse.kanban.commonmodel.KanbanTask
-import woowacourse.kanban.commonmodel.TaskStatus
-import woowacourse.kanban.create.ui.TaskCreateDialog
+import woowacourse.kanban.domain.Assignee
+import woowacourse.kanban.domain.TaskStatus
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -31,7 +33,9 @@ fun KanbanBoard(
     assignees: List<Assignee>,
     modifier: Modifier = Modifier,
     onTaskCreated: (KanbanTask) -> Unit = {},
-    onStatusChanged: (TaskStatus, Int) -> Unit = { _, _ -> },
+    onTaskUpdated: (KanbanTask) -> Unit = {},
+    onTaskDeleted: (Long) -> Unit = {},
+    onStatusChanged: (TaskStatus, Long) -> Unit = { _, _ -> },
     selectedStatuses: List<TaskStatus> = TaskStatus.entries,
 ) {
 
@@ -39,12 +43,16 @@ fun KanbanBoard(
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
     val columnBounds = remember { mutableStateMapOf<TaskStatus, Rect>() }
 
+    val taskFormState = remember {
+        TaskFormState()
+    }
+
     Column(modifier = modifier) {
         KanbanBoardHeader(
             progress = boardState.progress,
-            doneTaskCount = boardState.doneCardList.size,
+            doneTaskCount = boardState.getTasksByStatus(TaskStatus.DONE).size,
             totalTaskCount = boardState.totalTaskCount,
-            onClick = { boardState.showDialog.value = true },
+            onClick = { taskFormState.toggleDialog(true) },
             headerTitle = projectTitle,
         )
         Row(
@@ -73,10 +81,7 @@ fun KanbanBoard(
 
                         draggedTask?.let { task ->
                             if (targetStatus != null && task.status != targetStatus) {
-                                val idx = boardState.getTotalTasks().indexOfFirst { it.data.id == task.data.id }
-                                if (idx != -1) {
-                                    onStatusChanged(targetStatus, idx)
-                                }
+                                onStatusChanged(targetStatus, task.data.id)
                             }
                         }
                         currentDragPosition = null
@@ -86,19 +91,30 @@ fun KanbanBoard(
                         currentDragPosition = null
                         draggedTask = null
                     },
+                    onCardClick = { task ->
+                        taskFormState.toggleDialog(true, task)
+                    },
                 )
             }
         }
     }
 
-    if (boardState.showDialog.value) {
-        TaskCreateDialog(
-            onDismiss = { boardState.showDialog.value = false },
+    if (taskFormState.showDialog) {
+        TaskManageDialog(
+            taskFormState = taskFormState,
+            onDismiss = { taskFormState.toggleDialog(false) },
             onCreateTask = { task ->
                 onTaskCreated(task)
             },
+            onUpdateTask = { task ->
+                onTaskUpdated(task)
+            },
+            onDeleteTask = { id ->
+                onTaskDeleted(id)
+            },
             assignees = assignees,
             modifier = Modifier,
+            currentTask = taskFormState.currentTask,
         )
     }
 }
@@ -107,8 +123,10 @@ fun KanbanBoard(
 @Composable
 fun KanbanBoardPreview() {
     KanbanBoard(
-        BoardState(initTasks = emptyList()),
-        assignees = MockData.ASSIGNEES,
+        BoardState(
+            initProject = KanbanProject(emptyList()),
+        ),
         projectTitle = "",
+        assignees = MockData.ASSIGNEES,
     )
 }

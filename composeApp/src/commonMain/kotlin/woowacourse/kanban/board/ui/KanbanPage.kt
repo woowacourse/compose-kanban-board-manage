@@ -16,10 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import woowacourse.kanban.board.model.KanbanProject
+import woowacourse.kanban.board.domain.DeleteResult
+import woowacourse.kanban.board.domain.KanbanProject
+import woowacourse.kanban.board.domain.StatusChangeResult
 import woowacourse.kanban.board.ui.constant.SnackBarText
 import woowacourse.kanban.board.ui.stateholder.BoardState
-import woowacourse.kanban.commonmodel.Assignee
+import woowacourse.kanban.domain.Assignee
 
 @Composable
 fun KanbanPage(
@@ -31,10 +33,17 @@ fun KanbanPage(
     var selectedProjectIndex by remember { mutableIntStateOf(0) }
 
     val boardStates = remember(projects) {
-        projects.map { BoardState(it.getTasks()) }
+        projects.map { BoardState(it) }
     }
 
     val scope = rememberCoroutineScope()
+    val showSnackBar: (String) -> Unit = { message ->
+
+        scope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(message)
+        }
+    }
 
     Scaffold(
         snackbarHost = {
@@ -57,17 +66,32 @@ fun KanbanPage(
                 projectTitle = projects[selectedProjectIndex].title,
                 onTaskCreated = { task ->
                     boardStates[selectedProjectIndex].addTask(task)
-                    scope.launch {
-                        snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar(SnackBarText.CREATE_TASK)
-                    }
+                    showSnackBar(SnackBarText.CREATE_TASK)
                 },
-                onStatusChanged = { status, idx ->
-                    boardStates[selectedProjectIndex].changeStatus(status = status, idx = idx)
-                    scope.launch {
-                        snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar(SnackBarText.EDIT_TASK)
-                    }
+                onTaskUpdated = { task ->
+                    boardStates[selectedProjectIndex].updateTask(task)
+                    showSnackBar(SnackBarText.UPDATE_TASK)
+                },
+                onTaskDeleted = { id ->
+                    val result = boardStates[selectedProjectIndex].deleteTask(taskId = id)
+                    showSnackBar(
+                        when (result) {
+                            is DeleteResult.Success -> SnackBarText.DELETE_TASK
+                            DeleteResult.NotDeletable -> SnackBarText.ILLEGAL_DELETE
+                            DeleteResult.NotFound -> SnackBarText.TASK_NOT_FOUND
+                        },
+                    )
+                },
+                onStatusChanged = { status, id ->
+                    val result = boardStates[selectedProjectIndex].changeStatus(status = status, taskId = id)
+                    showSnackBar(
+                        when (result) {
+                            is StatusChangeResult.Success -> SnackBarText.STATUS_EDIT
+                            StatusChangeResult.NotChangeable -> SnackBarText.ILLEGAL_STATUS_EDIT
+                            StatusChangeResult.NotAssigned -> SnackBarText.ILLEGAL_STATUS_EDIT_ASSIGNEE
+                            StatusChangeResult.NotFound -> SnackBarText.TASK_NOT_FOUND
+                        },
+                    )
                 },
                 assignees = assignees,
             )

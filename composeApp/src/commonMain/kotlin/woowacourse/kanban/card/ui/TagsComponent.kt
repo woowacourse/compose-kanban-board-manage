@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.Colors
-import woowacourse.kanban.commonmodel.Tags
+import woowacourse.kanban.domain.Tags
 
 @Composable
 fun TagsComponent(
