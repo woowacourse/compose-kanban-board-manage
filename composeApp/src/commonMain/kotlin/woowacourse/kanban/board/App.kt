@@ -14,7 +14,6 @@ fun App() {
     val projectStateHolder = remember {
         ProjectStateHolder(
             initialProjects = listOf(KanbanProject(name = "project1"), KanbanProject(name = "project2")),
-            initialTasks = emptyList(),
         )
     }
     MaterialTheme {

@@ -5,4 +5,5 @@ enum class ValidationError {
     TAG_INVALID_FORMAT,
     TAG_INVALID_LENGTH,
     TAG_COUNT_EXCEEDED,
+    REQUIRED_ASSIGNEE,
 }

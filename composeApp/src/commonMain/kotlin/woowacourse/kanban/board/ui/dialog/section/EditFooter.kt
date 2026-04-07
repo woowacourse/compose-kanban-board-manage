@@ -13,25 +13,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kanbanboard.composeapp.generated.resources.Res
-import kanbanboard.composeapp.generated.resources.button_create
+import kanbanboard.composeapp.generated.resources.button_edit
 import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.ui.component.CancelButton
 import woowacourse.kanban.board.ui.component.ConfirmButton
+import woowacourse.kanban.board.ui.component.DeleteButton
 
 @Composable
-fun Footer(modifier: Modifier = Modifier, onClickCancel: () -> Unit = {}, onClickCreate: () -> Unit = {}, enabled: Boolean = true) {
+fun EditFooter(
+    modifier: Modifier = Modifier,
+    onClickCancel: () -> Unit = {},
+    onClickDelete: () -> Unit = {},
+    onClickEdit: () -> Unit = {},
+    enabled: Boolean = true,
+) {
     Row(
-        modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(24.dp),
-        Arrangement.spacedBy(12.dp, Alignment.End),
+        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End),
     ) {
         CancelButton(onClickCancel = onClickCancel)
+        DeleteButton(onClickDelete = onClickDelete)
         ConfirmButton(
-            onClickConfirm = onClickCreate,
+            onClickConfirm = onClickEdit,
             content = {
                 Text(
-                    text = stringResource(Res.string.button_create),
+                    text = stringResource(Res.string.button_edit),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.W500,
                 )
@@ -43,9 +51,10 @@ fun Footer(modifier: Modifier = Modifier, onClickCancel: () -> Unit = {}, onClic
 
 @Composable
 @Preview(showBackground = true)
-private fun FooterPreview() {
-    Footer(
+private fun EditFooterPreview() {
+    EditFooter(
         onClickCancel = {},
-        onClickCreate = {},
+        onClickDelete = {},
+        onClickEdit = {},
     )
 }

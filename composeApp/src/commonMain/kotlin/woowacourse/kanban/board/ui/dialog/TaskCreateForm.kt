@@ -11,10 +11,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import woowacourse.kanban.board.domain.model.Assignee
 import woowacourse.kanban.board.domain.model.Status
-import woowacourse.kanban.board.domain.model.User
+import woowacourse.kanban.board.domain.model.Task
 import woowacourse.kanban.board.ui.dialog.section.AssigneeSection
 import woowacourse.kanban.board.ui.dialog.section.DescriptionSection
+import woowacourse.kanban.board.ui.dialog.section.EditFooter
 import woowacourse.kanban.board.ui.dialog.section.Footer
 import woowacourse.kanban.board.ui.dialog.section.Header
 import woowacourse.kanban.board.ui.dialog.section.StatusSection
@@ -23,18 +25,22 @@ import woowacourse.kanban.board.ui.dialog.section.TitleSection
 
 @Composable
 fun TaskCreateForm(
-    modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
-    assignees: List<User>,
-    onClickCreate: (title: String, content: String, tags: List<String>, status: Status, assignee: User) -> Unit,
+    assignees: List<Assignee>,
+    onClickCreate: (title: String, content: String, tags: List<String>, status: Status, assignee: Assignee?) -> Unit,
+    onClickDelete: () -> Unit,
+    onClickEdit: (title: String, content: String, tags: List<String>, status: Status, assignee: Assignee?) -> Unit,
+    modifier: Modifier = Modifier,
+    originTask: Task? = null,
 ) {
-    val uiState = remember { TaskCreateFormState(assignees) }
+    val formState = remember { TaskCreateFormState(assignees, originTask) }
 
     Column(
         modifier = modifier,
     ) {
         Header(
             onDismiss = onDismiss,
+            isEditMode = formState.isEditingMode,
         )
         HorizontalDivider()
         Column(
@@ -46,57 +52,77 @@ fun TaskCreateForm(
 
         ) {
             TitleSection(
-                value = uiState.title,
+                value = formState.title,
                 onTitleChange = {
-                    uiState.updateTitle(it)
+                    formState.updateTitle(it)
                 },
-                validation = uiState.titleValidation,
+                validation = formState.titleValidation,
             )
 
             DescriptionSection(
-                value = uiState.content,
+                value = formState.description,
                 onContentChange = {
-                    uiState.updateContent(it)
+                    formState.updateContent(it)
                 },
             )
 
             TagSection(
-                value = uiState.tag,
+                value = formState.tag,
                 onTagChange = {
-                    uiState.updateTag(it)
+                    formState.updateTag(it)
                 },
-                validation = uiState.tagValidation,
+                validation = formState.tagValidation,
             )
 
             StatusSection(
-                selectedStatus = uiState.selectedStatus,
+                selectedStatus = formState.selectedStatus,
                 onStatusChange = {
-                    uiState.updateStatus(it)
+                    formState.updateStatus(it)
                 },
             )
 
             AssigneeSection(
-                managers = uiState.assignees,
-                selectedUser = uiState.selectedAssignee,
+                assignees = formState.assignees,
+                selectedAssignee = formState.selectedAssignee,
+                requiredAssignee = formState.requiredAssignee,
                 onUserChange = {
-                    uiState.updateAssignee(it)
+                    formState.updateAssignee(it)
                 },
             )
         }
         HorizontalDivider()
-        Footer(
-            onClickCancel = onDismiss,
-            onClickConfirm = {
-                onClickCreate(
-                    uiState.title,
-                    uiState.content,
-                    uiState.tag.split(",").filter { it.isNotEmpty() }.map { it.trim() },
-                    uiState.selectedStatus,
-                    uiState.selectedAssignee,
-                )
-            },
-            enabled = uiState.canCreate,
-        )
+        if (formState.isEditingMode) {
+            EditFooter(
+                onClickCancel = onDismiss,
+                onClickDelete = {
+                    onClickDelete()
+                },
+                onClickEdit = {
+                    onClickEdit(
+                        formState.title,
+                        formState.description,
+                        formState.tag.split(",").filter { it.isNotEmpty() }.map { it.trim() },
+                        formState.selectedStatus,
+                        formState.selectedAssignee,
+                    )
+                },
+                enabled = formState.canCreate,
+            )
+        } else {
+            Footer(
+                onClickCancel = onDismiss,
+                onClickCreate = {
+                    onClickCreate(
+                        formState.title,
+                        formState.description,
+                        formState.tag.split(",").filter { it.isNotEmpty() }.map { it.trim() },
+                        formState.selectedStatus,
+                        formState.selectedAssignee,
+                    )
+                },
+                enabled = formState.canCreate,
+            )
+        }
     }
 }
 
@@ -105,7 +131,9 @@ fun TaskCreateForm(
 private fun TaskCreateFormPreview() {
     TaskCreateForm(
         onDismiss = {},
-        assignees = listOf(User("다이노"), User("다이노소어"), User("우우우")),
+        assignees = listOf(Assignee("다이노"), Assignee("다이노소어"), Assignee("우우우")),
         onClickCreate = { _, _, _, _, _ -> },
+        onClickDelete = {},
+        onClickEdit = { _, _, _, _, _ -> },
     )
 }

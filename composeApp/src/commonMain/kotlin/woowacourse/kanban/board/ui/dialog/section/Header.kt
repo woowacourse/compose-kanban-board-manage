@@ -19,11 +19,12 @@ import androidx.compose.ui.unit.sp
 import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.create_dialog_close
 import kanbanboard.composeapp.generated.resources.create_dialog_title
+import kanbanboard.composeapp.generated.resources.edit_dialog_title
 import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.ui.theme.Gray900
 
 @Composable
-fun Header(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
+fun Header(modifier: Modifier = Modifier, isEditMode: Boolean, onDismiss: () -> Unit) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -32,7 +33,7 @@ fun Header(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = stringResource(Res.string.create_dialog_title),
+            text = stringResource(if (isEditMode) Res.string.edit_dialog_title else Res.string.create_dialog_title),
             fontSize = 28.sp,
             fontWeight = FontWeight.SemiBold,
             color = Gray900,
@@ -53,5 +54,6 @@ fun Header(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
 private fun HeaderPreview() {
     Header(
         onDismiss = {},
+        isEditMode = true,
     )
 }

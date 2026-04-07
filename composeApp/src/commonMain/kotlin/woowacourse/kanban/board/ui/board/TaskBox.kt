@@ -32,12 +32,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.util.UUID
 import org.jetbrains.compose.resources.stringResource
+import woowacourse.kanban.board.domain.model.Assignee
 import woowacourse.kanban.board.domain.model.Status
 import woowacourse.kanban.board.domain.model.Tags
 import woowacourse.kanban.board.domain.model.Task
-import woowacourse.kanban.board.domain.model.User
 import woowacourse.kanban.board.ui.component.DraggableContainer
 import woowacourse.kanban.board.ui.util.toUiString
 
@@ -47,6 +46,7 @@ fun TaskBox(
     tasks: List<Task>,
     boxColor: TaskBoxColor,
     modifier: Modifier = Modifier,
+    onClickTask: (Task) -> Unit = {},
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = {},
     onTaskDragStart: (Task) -> Unit = {},
@@ -105,6 +105,7 @@ fun TaskBox(
                     TaskCard(
                         task = it,
                         modifier = Modifier.fillMaxWidth().semantics { contentDescription = "${it.status}상태의 ${it.title}태스크" },
+                        onClick = onClickTask,
                     )
                 }
             }
@@ -127,6 +128,12 @@ fun Status.getBoxColor(): TaskBoxColor = when (this) {
         border = Color(0xffFEE685),
     )
 
+    Status.REVIEW -> TaskBoxColor(
+        background = Color(0xffEDE9FE),
+        headerBackground = Color(0xff8B5CF6),
+        border = Color(0xffD2C7EA),
+    )
+
     Status.DONE -> TaskBoxColor(
         background = Color(0xffF0FDF4),
         headerBackground = Color(0xff00A63E),
@@ -137,80 +144,70 @@ fun Status.getBoxColor(): TaskBoxColor = when (this) {
 @Preview
 @Composable
 private fun TaskBoxPreview() {
-    val projectId: UUID = UUID.randomUUID()
     TaskBox(
         status = Status.DONE,
         tasks = listOf(
             Task(
-                projectId = projectId,
                 title = "Task 1",
                 description = "asdfasd",
                 tags = Tags(emptyList()),
-                user = User("dino"),
+                assignee = Assignee("dino"),
                 status = Status.TODO,
             ),
             Task(
-                projectId = projectId,
                 title = "Task 2",
                 description = "asdfasd",
                 tags = Tags(emptyList()),
-                user = User("dino"),
+                assignee = Assignee("dino"),
                 status = Status.TODO,
             ),
             Task(
-                projectId = projectId,
                 title = "Task 3",
                 description = "asdfasd",
                 tags = Tags(emptyList()),
-                user = User("dino"),
+                assignee = Assignee("dino"),
                 status = Status.TODO,
             ),
             Task(
-                projectId = projectId,
                 title = "Task 1",
                 description = "asdfasd",
                 tags = Tags(emptyList()),
-                user = User("dino"),
+                assignee = Assignee("dino"),
                 status = Status.TODO,
             ),
             Task(
-                projectId = projectId,
                 title = "Task 2",
                 description = "asdfasd",
                 tags = Tags(emptyList()),
-                user = User("dino"),
+                assignee = Assignee("dino"),
                 status = Status.TODO,
             ),
             Task(
-                projectId = projectId,
                 title = "Task 3",
                 description = "asdfasd",
                 tags = Tags(emptyList()),
-                user = User("dino"),
+                assignee = Assignee("dino"),
                 status = Status.TODO,
             ),
             Task(
-                projectId = projectId,
                 title = "Task 1",
                 description = "asdfasd",
                 tags = Tags(emptyList()),
-                user = User("dino"),
+                assignee = Assignee("dino"),
                 status = Status.TODO,
             ),
             Task(
-                projectId = projectId,
                 title = "Task 2",
                 description = "asdfasd",
                 tags = Tags(emptyList()),
-                user = User("dino"),
+                assignee = Assignee("dino"),
                 status = Status.TODO,
             ),
             Task(
-                projectId = projectId,
                 title = "Task 3",
                 description = "asdfasd",
                 tags = Tags(emptyList()),
-                user = User("dino"),
+                assignee = Assignee("dino"),
                 status = Status.TODO,
             ),
         ),

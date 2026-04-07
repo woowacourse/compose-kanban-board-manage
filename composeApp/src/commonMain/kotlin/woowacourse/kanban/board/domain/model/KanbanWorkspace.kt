@@ -1,55 +1,116 @@
 package woowacourse.kanban.board.domain.model
 
-import java.util.UUID
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
-class KanbanWorkspace(initialProjects: List<KanbanProject> = emptyList(), initialTasks: List<Task> = emptyList()) {
-    private val _projects: MutableList<KanbanProject> = initialProjects.toMutableList()
-    val projects get() = _projects.toList()
+class KanbanWorkspace(initialProject: List<KanbanProject> = emptyList()) {
 
-    private val projectTasks: MutableMap<UUID, MutableList<Task>> =
-        initialProjects.associate { project ->
-            project.id to initialTasks.filter { task ->
-                task.projectId == project.id
-            }.toMutableList()
-        }.toMutableMap()
+    private val _projectTasks: MutableList<KanbanProject> = initialProject.toMutableList()
+    val projectTasks: List<KanbanProject> get() = _projectTasks
 
     fun addTask(
         title: String,
         description: String,
         tags: List<String>,
-        assignee: User,
+        assignee: Assignee?,
         status: Status,
-        projectId: UUID,
-    ): Result<List<Task>> {
-        val tasks = projectTasks[projectId] ?: return Result.failure(IllegalArgumentException("프로젝트(id = $projectId)를 찾을 수 없습니다."))
-        val newTask = try {
-            Task(
+        projectId: String,
+    ): KanbanResult<Unit> {
+        val idx = _projectTasks.indexOfFirst { it.id == projectId }
+        if (idx == -1) return KanbanResult.Failure(KanbanError.ProjectNotFound(projectId))
+
+        val createResult = createTask(null, title, description, tags, assignee, status)
+        if (createResult is KanbanResult.Failure) return createResult
+
+        return when (val result = _projectTasks[idx].addTask((createResult as KanbanResult.Success).data)) {
+            is KanbanResult.Success -> {
+                _projectTasks[idx] = result.data
+                KanbanResult.Success(Unit)
+            }
+
+            is KanbanResult.Failure -> result
+        }
+    }
+
+    fun deleteTask(projectId: String, task: Task): KanbanResult<Unit> {
+        if (!task.status.canDeleteTask) return KanbanResult.Failure(KanbanError.CannotDeleteTask(task.status))
+
+        val idx = _projectTasks.indexOfFirst { it.id == projectId }
+        if (idx == -1) return KanbanResult.Failure(KanbanError.ProjectNotFound(projectId))
+
+        return when (val result = _projectTasks[idx].deleteTask(task.id)) {
+            is KanbanResult.Success -> {
+                _projectTasks[idx] = result.data
+                KanbanResult.Success(Unit)
+            }
+
+            is KanbanResult.Failure -> result
+        }
+    }
+
+    fun editTask(
+        projectId: String,
+        originTask: Task,
+        newTitle: String,
+        newDescription: String,
+        newTags: List<String>,
+        newAssignee: Assignee?,
+        newStatus: Status,
+    ): KanbanResult<Unit> {
+        val idx = _projectTasks.indexOfFirst { it.id == projectId }
+        if (idx == -1) return KanbanResult.Failure(KanbanError.ProjectNotFound(projectId))
+
+        val createResult = createTask(originTask.id, newTitle, newDescription, newTags, newAssignee, newStatus)
+        if (createResult is KanbanResult.Failure) return createResult
+
+        return when (val result = _projectTasks[idx].editTask(originTask.id, (createResult as KanbanResult.Success).data)) {
+            is KanbanResult.Success -> {
+                _projectTasks[idx] = result.data
+                KanbanResult.Success(Unit)
+            }
+
+            is KanbanResult.Failure -> result
+        }
+    }
+
+    fun updateTaskStatus(projectId: String, task: Task, newStatus: Status): KanbanResult<Unit> {
+        val idx = _projectTasks.indexOfFirst { it.id == projectId }
+        if (idx == -1) return KanbanResult.Failure(KanbanError.ProjectNotFound(projectId))
+
+        val validateTransition = task.status.validateTransition(newStatus, task.assignee != null)
+        if (validateTransition is KanbanResult.Failure) return validateTransition
+
+        return when (val result = _projectTasks[idx].updateStatus(task.id, newStatus)) {
+            is KanbanResult.Success -> {
+                _projectTasks[idx] = result.data
+                KanbanResult.Success(Unit)
+            }
+
+            is KanbanResult.Failure -> result
+        }
+    }
+
+    @OptIn(ExperimentalUuidApi::class)
+    private fun createTask(
+        taskId: String?,
+        title: String,
+        description: String,
+        tags: List<String>,
+        assignee: Assignee?,
+        status: Status,
+    ): KanbanResult<Task> {
+        return try {
+            val task = Task(
+                id = taskId ?: Uuid.random().toString(),
                 title = title,
                 description = description,
                 tags = Tags(tags.map { Tag(it) }),
-                user = assignee,
+                assignee = assignee,
                 status = status,
-                projectId = projectId,
             )
+            KanbanResult.Success(task)
         } catch (e: IllegalArgumentException) {
-            return Result.failure(e)
+            KanbanResult.Failure(KanbanError.TaskCreationFailed(e.message ?: "태스크 생성에 실패했습니다."))
         }
-        tasks.add(newTask)
-        return Result.success(tasks.toList())
-    }
-
-    fun changeTaskStatus(projectId: UUID, task: Task, newStatus: Status): Result<List<Task>> {
-        val tasks = projectTasks[projectId] ?: return Result.failure(IllegalArgumentException("프로젝트(id = $projectId)를 찾을 수 없습니다."))
-
-        val idx = tasks.indexOfFirst { it.id == task.id }
-        if (idx == -1) return Result.failure(IllegalArgumentException("$task 태스크를 찾을 수 없습니다."))
-
-        tasks[idx] = task.copy(status = newStatus)
-        return Result.success(tasks.toList())
-    }
-
-    fun getTasks(projectId: UUID): Result<List<Task>> {
-        return projectTasks[projectId]?.let { Result.success(it.toList()) }
-            ?: Result.failure(IllegalArgumentException("프로젝트(id = $projectId)를 찾을 수 없습니다."))
     }
 }

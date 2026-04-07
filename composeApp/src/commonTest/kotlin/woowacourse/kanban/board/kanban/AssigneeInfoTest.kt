@@ -3,15 +3,15 @@ package woowacourse.kanban.board.kanban
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
-import woowacourse.kanban.board.domain.model.User
+import woowacourse.kanban.board.domain.model.Assignee
 
-class UserInfoTest {
+class AssigneeInfoTest {
     @Test
     fun `유저 이름이 빈 값이면 예외`() {
         val given = ""
 
         assertFails {
-            User(
+            Assignee(
                 name = given,
             )
         }
@@ -22,7 +22,7 @@ class UserInfoTest {
         val given = "  "
 
         assertFails {
-            User(
+            Assignee(
                 name = given,
             )
         }
@@ -32,6 +32,6 @@ class UserInfoTest {
     fun `유저 이름이 공백이 아니면 생성 성공`() {
         val given = "다이노"
 
-        assertEquals(given, User(given).name)
+        assertEquals(given, Assignee(given).name)
     }
 }

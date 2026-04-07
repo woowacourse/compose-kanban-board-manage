@@ -22,12 +22,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import woowacourse.kanban.board.domain.model.User
+import woowacourse.kanban.board.domain.model.Assignee
 import woowacourse.kanban.board.ui.theme.Gray400
 import woowacourse.kanban.board.ui.theme.Gray700
 
 @Composable
-fun UserProfile(user: User, modifier: Modifier = Modifier) {
+fun UserProfile(assignee: Assignee, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -47,7 +47,7 @@ fun UserProfile(user: User, modifier: Modifier = Modifier) {
             )
         }
         Text(
-            text = user.name,
+            text = assignee.name,
             fontWeight = FontWeight.W500,
             fontSize = 14.sp,
             color = Gray700,
@@ -60,5 +60,5 @@ fun UserProfile(user: User, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun UserPreView() {
-    UserProfile(User("다이노"))
+    UserProfile(Assignee("다이노"))
 }

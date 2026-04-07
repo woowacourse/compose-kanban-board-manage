@@ -1,5 +1,6 @@
 package woowacourse.kanban.board.domain.validator
 
+import woowacourse.kanban.board.domain.model.Assignee
 import woowacourse.kanban.board.domain.model.Tag.Companion.MAX_TAG_LENGTH
 import woowacourse.kanban.board.domain.model.Tags.Companion.MAX_TAG_SIZE
 
@@ -19,5 +20,10 @@ object TaskValidator {
         if (formatted.size > MAX_TAG_SIZE) return ValidationResult.Invalid(ValidationError.TAG_COUNT_EXCEEDED)
 
         return ValidationResult.Valid
+    }
+
+    fun validateAssignee(required: Boolean, assignee: Assignee?): ValidationResult {
+        return if (required && assignee == null) ValidationResult.Invalid(ValidationError.REQUIRED_ASSIGNEE)
+        else ValidationResult.Valid
     }
 }

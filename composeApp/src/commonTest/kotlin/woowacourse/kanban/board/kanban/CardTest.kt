@@ -1,14 +1,13 @@
 package woowacourse.kanban.board.kanban
 
-import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import woowacourse.kanban.board.domain.model.Assignee
 import woowacourse.kanban.board.domain.model.Status
 import woowacourse.kanban.board.domain.model.Tag
 import woowacourse.kanban.board.domain.model.Tags
 import woowacourse.kanban.board.domain.model.Task
-import woowacourse.kanban.board.domain.model.User
 
 class CardTest {
 
@@ -23,11 +22,10 @@ class CardTest {
     fun `카드에 유저를 제외한 필드가 모두 비어있으면 예외`() {
         assertFails {
             Task(
-                projectId = UUID.randomUUID(),
                 title = "",
                 description = "",
                 tags = Tags(),
-                user = User("테스트"),
+                assignee = Assignee("테스트"),
                 status = Status.TODO,
             )
         }
@@ -38,7 +36,7 @@ class CardTest {
         val given = "타이틀"
         assertEquals(
             given,
-            Task(projectId = UUID.randomUUID(), title = given, tags = Tags(), user = User("테스트"), status = Status.TODO).title,
+            Task(title = given, tags = Tags(), assignee = Assignee("테스트"), status = Status.TODO).title,
         )
     }
 
@@ -48,11 +46,10 @@ class CardTest {
         assertEquals(
             given,
             Task(
-                projectId = UUID.randomUUID(),
                 title = "타이틀",
                 description = given,
                 tags = Tags(),
-                user = User("테스트"),
+                assignee = Assignee("테스트"),
                 status = Status.TODO,
             ).description,
         )
@@ -61,7 +58,7 @@ class CardTest {
     @Test
     fun `카드에 태그가 5개 이하면 생성 성공`() {
         val given = Tags(listOf(Tag("컴포넌트"), Tag("성능"), Tag("컴포즈"), Tag("테스트"), Tag("안드로이드")))
-        Task(projectId = UUID.randomUUID(), title = "타이틀", tags = given, user = User("테스트"), status = Status.TODO)
+        Task(title = "타이틀", tags = given, assignee = Assignee("테스트"), status = Status.TODO)
     }
 
     @Test
@@ -69,19 +66,18 @@ class CardTest {
         val givenTitle = "타이틀"
         val givenContent = "내용"
         val givenTags = Tags(listOf(Tag("컴포넌트"), Tag("성능")))
-        val givenUser = User("다이노")
+        val givenAssignee = Assignee("다이노")
 
         val card = Task(
-            projectId = UUID.randomUUID(),
             title = givenTitle,
             description = givenContent,
             tags = givenTags,
-            user = givenUser,
+            assignee = givenAssignee,
             status = Status.TODO,
         )
         assertEquals(givenTitle, card.title)
         assertEquals(givenContent, card.description)
         assertEquals(givenTags.items.toSet(), card.tags.items.toSet())
-        assertEquals(givenUser, card.user)
+        assertEquals(givenAssignee, card.assignee)
     }
 }

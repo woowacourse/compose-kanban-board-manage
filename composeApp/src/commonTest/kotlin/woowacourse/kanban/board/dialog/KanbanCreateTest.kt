@@ -9,7 +9,7 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
-import woowacourse.kanban.board.domain.model.User
+import woowacourse.kanban.board.domain.model.Assignee
 import woowacourse.kanban.board.ui.dialog.TaskCreateForm
 
 @OptIn(ExperimentalTestApi::class)
@@ -21,9 +21,11 @@ class KanbanCreateTest {
             TaskCreateForm(
                 onDismiss = {},
                 assignees = listOf(
-                    User("우테코"), User("테코"),
+                    Assignee("우테코"), Assignee("테코"),
                 ),
                 onClickCreate = { _, _, _, _, _ -> },
+                onClickDelete = {},
+                onClickEdit = { _, _, _, _, _ -> },
             )
         }
         onAllNodes(hasSetTextAction())[0]
@@ -42,9 +44,11 @@ class KanbanCreateTest {
             TaskCreateForm(
                 onDismiss = {},
                 assignees = listOf(
-                    User("우테코"), User("테코"),
+                    Assignee("우테코"), Assignee("테코"),
                 ),
                 onClickCreate = { _, _, _, _, _ -> },
+                onClickDelete = {},
+                onClickEdit = { _, _, _, _, _ -> },
             )
         }
 
@@ -64,9 +68,11 @@ class KanbanCreateTest {
             TaskCreateForm(
                 onDismiss = {},
                 assignees = listOf(
-                    User("우테코"), User("테코"),
+                    Assignee("우테코"), Assignee("테코"),
                 ),
                 onClickCreate = { _, _, _, _, _ -> },
+                onClickDelete = {},
+                onClickEdit = { _, _, _, _, _ -> },
             )
         }
 

@@ -23,8 +23,10 @@ import woowacourse.kanban.board.domain.model.Task
 
 @Composable
 fun TaskBoard(
-    projectStateHolder: ProjectStateHolder,
+    projectTask: KanbanProject,
     modifier: Modifier = Modifier,
+    targetStatuses: List<Status> = Status.entries,
+    onClickTask: (Task) -> Unit = {},
     getIsDropTarget: (Status) -> Boolean = { false },
     onBoundsChanged: (Rect, Status) -> Unit = { _, _ -> },
     onTaskDragStart: (Task) -> Unit = {},
@@ -37,24 +39,25 @@ fun TaskBoard(
         modifier = modifier.fillMaxWidth().fillMaxHeight().background(Color(0xffF9FAFB)),
     ) {
         KanbanHeader(
-            title = projectStateHolder.selectedProject.name,
+            title = projectTask.name,
             onClickCreate = onClickCreate,
-            totalCount = projectStateHolder.totalCount,
-            completeCount = projectStateHolder.completeCount,
-            completeRatio = projectStateHolder.completeRatio,
+            totalCount = projectTask.totalCount,
+            completeCount = projectTask.completeCount,
+            completeRatio = projectTask.completeRatio,
         )
 
         Row(
             modifier = Modifier.fillMaxWidth().padding(24.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Status.entries.forEach { status ->
+            targetStatuses.forEach { status ->
                 TaskBox(
                     modifier = Modifier.weight(1f, fill = false).widthIn(max = 320.dp).fillMaxHeight()
                         .semantics { contentDescription = "$status 태스크 목록" },
                     status = status,
-                    tasks = projectStateHolder.projectTasks.filter { it.status == status },
+                    tasks = projectTask.tasks.filter { it.status == status },
                     boxColor = status.getBoxColor(),
+                    onClickTask = onClickTask,
                     getIsDropTarget = { getIsDropTarget(status) },
                     onBoundsChanged = { rect -> onBoundsChanged(rect, status) },
                     onTaskDragStart = onTaskDragStart,
@@ -70,5 +73,5 @@ fun TaskBoard(
 @Preview(showBackground = true, widthDp = 800)
 @Composable
 private fun TaskBoardPreview() {
-    TaskBoard(projectStateHolder = ProjectStateHolder(listOf(KanbanProject(name = "스마일은 천재인가?"))))
+    TaskBoard(projectTask = KanbanProject(name = "스마일은 천재인가?"))
 }
