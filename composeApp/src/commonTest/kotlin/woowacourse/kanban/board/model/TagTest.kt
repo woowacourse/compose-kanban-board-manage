@@ -12,7 +12,7 @@ class TagTest {
                 title = "제목",
                 tags = listOf("일", "이", "삼", "사", "오", "육").map { Tag(it) },
                 status = Status.TODO,
-                nickname = "하로",
+                nickname = Nickname.DINO,
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }

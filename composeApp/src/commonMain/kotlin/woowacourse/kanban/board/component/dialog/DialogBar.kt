@@ -20,13 +20,13 @@ import woowacourse.kanban.board.constant.CLOSE_ICON_TINT
 import woowacourse.kanban.board.constant.HEADER_TEXT
 
 @Composable
-fun DialogBar(modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun DialogBar(modifier: Modifier = Modifier, title: String = "", onClick: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier,
     ) {
-        Text("새 태스크 생성", fontWeight = FontWeight.W600, fontSize = 20.sp, color = Color(HEADER_TEXT))
+        Text(title, fontWeight = FontWeight.W600, fontSize = 20.sp, color = Color(HEADER_TEXT))
         IconButton(
             modifier = Modifier.size(36.dp),
             onClick = onClick,

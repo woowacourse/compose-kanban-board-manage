@@ -12,14 +12,14 @@ class BoardDataTest {
             description = "내용 어쩌구 저쩌구",
             tags = listOf(Tag("버그"), Tag("다시하기"), Tag("1시간")),
             status = Status.TODO,
-            nickname = "하로",
+            nickname = Nickname.DINO,
         )
 
         assertThat(taskCreateData.title).isEqualTo("제목")
         assertThat(taskCreateData.description).isEqualTo("내용 어쩌구 저쩌구")
         assertThat(taskCreateData.tags.map { it.text }).isEqualTo(listOf("버그", "다시하기", "1시간"))
         assertThat(taskCreateData.status.state).isEqualTo("To Do")
-        assertThat(taskCreateData.nickname).isEqualTo("하로")
+        assertThat(taskCreateData.nickname).isEqualTo(Nickname.DINO)
     }
 
     @Test
@@ -30,7 +30,7 @@ class BoardDataTest {
                 description = "내용 어쩌구 저쩌구",
                 tags = listOf(Tag("버그"), Tag("다시하기"), Tag("1시간")),
                 status = Status.TODO,
-                nickname = "하로",
+                nickname = Nickname.DINO,
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
 
@@ -38,7 +38,7 @@ class BoardDataTest {
             BoardData(
                 title = "",
                 status = Status.TODO,
-                nickname = "하로",
+                nickname = Nickname.DINO,
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }

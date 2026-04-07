@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,17 +25,17 @@ import woowacourse.kanban.board.model.Status
 
 @Composable
 fun StatusButton(status: Status, onClick: () -> Unit, modifier: Modifier = Modifier, isSelected: Boolean = false) {
-    val unSelectedModifier = modifier.border(width = 2.dp, color = Color(PRIMARY_BORDER), shape = RoundedCornerShape(10.dp))
-    val selectedModifier = modifier.border(width = 2.dp, color = Color(STATUS_BORDER_SELECTED), shape = RoundedCornerShape(10.dp))
-        .background(Color(STATUS_BG_SELECTED), shape = RoundedCornerShape(10.dp))
     Box(
-        modifier = if (!isSelected) {
-            unSelectedModifier
-        } else {
-            selectedModifier
-        }.clickable(
-            onClick = onClick,
-        ),
+        modifier = modifier.clip(shape = RoundedCornerShape(10.dp))
+            .border(
+                width = 2.dp,
+                color = Color(if (isSelected) STATUS_BORDER_SELECTED else PRIMARY_BORDER),
+                shape = RoundedCornerShape(10.dp),
+            )
+            .background(Color(if (isSelected) STATUS_BG_SELECTED else 0xFFFFFFFF), shape = RoundedCornerShape(10.dp))
+            .clickable(
+                onClick = onClick,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Text(

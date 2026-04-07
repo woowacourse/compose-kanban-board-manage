@@ -35,13 +35,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.constant.DEFAULT_CONTENT
-import woowacourse.kanban.board.constant.DEFAULT_NAME
 import woowacourse.kanban.board.constant.DEFAULT_TITLE
 import woowacourse.kanban.board.constant.KanbanBoardColor
 import woowacourse.kanban.board.constant.MAX_CONTENT
-import woowacourse.kanban.board.constant.MAX_NAME
 import woowacourse.kanban.board.constant.MAX_TITLE
 import woowacourse.kanban.board.model.BoardData
+import woowacourse.kanban.board.model.Nickname
 import woowacourse.kanban.board.model.Status
 import woowacourse.kanban.board.model.StatusColor
 import woowacourse.kanban.board.model.Tag
@@ -59,6 +58,7 @@ fun StatusCardManageBox(
     onTaskDragChange: (Offset) -> Unit = {},
     onTaskDragEnd: () -> Unit = {},
     onTaskDragCancel: () -> Unit = {},
+    onClick: (BoardData) -> Unit = {},
 ) {
 
     val isDropTarget by remember { derivedStateOf { getIsDropTarget() } }
@@ -133,6 +133,7 @@ fun StatusCardManageBox(
                             onDragChange = onTaskDragChange,
                             onDragEnd = onTaskDragEnd,
                             onDragCancel = onTaskDragCancel,
+                            onClick = { onClick(boardData) },
                         )
                     }
                     if (index != boardList.lastIndex) Box(modifier = Modifier.height(12.dp))
@@ -151,31 +152,31 @@ private fun StatusCardManageBoxPreview() {
             description = DEFAULT_CONTENT,
             tags = listOf(Tag("컴포넌트"), Tag("성능")),
             status = Status.TODO,
-            nickname = DEFAULT_NAME,
+            nickname = Nickname.DINO,
         ),
         BoardData(
             title = DEFAULT_TITLE,
             tags = listOf(Tag("컴포넌트"), Tag("성능")),
             status = Status.TODO,
-            nickname = DEFAULT_NAME,
+            nickname = Nickname.DINO,
         ),
         BoardData(
             title = DEFAULT_TITLE,
             description = DEFAULT_CONTENT,
             status = Status.TODO,
-            nickname = DEFAULT_NAME,
+            nickname = Nickname.DINO,
         ),
         BoardData(
             title = DEFAULT_TITLE,
             status = Status.TODO,
-            nickname = DEFAULT_NAME,
+            nickname = Nickname.DINO,
         ),
         BoardData(
             title = MAX_TITLE,
             description = MAX_CONTENT,
             tags = listOf(Tag("너무너무"), Tag("긴태그"), Tag("최대로"), Tag("5자까지"), Tag("5개제한임")),
             status = Status.TODO,
-            nickname = MAX_NAME,
+            nickname = Nickname.DINO,
         ),
     )
     StatusCardManageBox(
@@ -186,5 +187,6 @@ private fun StatusCardManageBoxPreview() {
             KanbanBoardColor.TODO_CARD_BOX_CONTENT_COLOR,
             KanbanBoardColor.TODO_CARD_BOX_BORDER_COLOR,
         ),
+        onClick = {},
     )
 }

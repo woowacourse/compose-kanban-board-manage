@@ -24,7 +24,7 @@ fun <T> CommonButtonColumn(
     Column(modifier) {
         HeaderText(title = header)
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            columns = GridCells.Fixed(4),
             modifier = Modifier.fillMaxWidth().heightIn(max = 100.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             userScrollEnabled = false,
