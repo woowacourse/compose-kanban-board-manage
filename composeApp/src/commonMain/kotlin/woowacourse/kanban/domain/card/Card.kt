@@ -1,6 +1,6 @@
 package woowacourse.kanban.domain.card
 
-import woowacourse.kanban.domain.card.Card.Companion.create
+import woowacourse.kanban.domain.common.FailureReason
 import woowacourse.kanban.domain.common.generateId
 
 /**
@@ -13,7 +13,7 @@ class Card private constructor(
     val title: String,
     val content: String,
     val tags: List<String>,
-    val managerState: CardManagerState,
+    val managerState: CardManagerState?,
     val taskState: CardTaskState,
 ) {
     companion object {
@@ -30,7 +30,43 @@ class Card private constructor(
             title: String,
             content: String,
             tags: List<String>,
-            manager: CardManagerState,
+            manager: CardManagerState?,
+            state: CardTaskState,
+        ): Card {
+            return createDefaultCard(
+                id = generateId(),
+                title = title,
+                content = content,
+                tags = tags,
+                manager = manager,
+                state = state,
+            )
+        }
+
+        fun update(
+            id: String,
+            title: String,
+            content: String,
+            tags: List<String>,
+            manager: CardManagerState?,
+            state: CardTaskState,
+        ): Card {
+            return createDefaultCard(
+                id = id,
+                title = title,
+                content = content,
+                tags = tags,
+                manager = manager,
+                state = state,
+            )
+        }
+
+        private fun createDefaultCard(
+            id: String,
+            title: String,
+            content: String,
+            tags: List<String>,
+            manager: CardManagerState?,
             state: CardTaskState,
         ): Card {
             require(CardValidator.validateTitle(title).isValid) {
@@ -41,11 +77,12 @@ class Card private constructor(
                 "[Card] 태그 형식이 올바르지 않습니다."
             }
 
+            val normalizedTitle = title.trim()
             val normalizedTags = CardValidator.normalizeTags(tags)
 
             return Card(
-                id = generateId(),
-                title = title.trim(),
+                id = id,
+                title = normalizedTitle,
                 content = content,
                 tags = normalizedTags,
                 managerState = manager,
@@ -54,9 +91,20 @@ class Card private constructor(
         }
     }
 
-    fun updateWithNewState(
-        newState: CardTaskState,
-    ): Card {
+    fun move(targetState: CardTaskState): CardMoveResult {
+        if (targetState.isManagerRequired && !hasManager()) {
+            return CardMoveResult.Failure(FailureReason.MANAGER_REQUIRED)
+        }
+
+        return taskState.move(this, targetState)
+    }
+
+    fun validateUpdate(targetCard: Card): CardUpdateResult {
+        return taskState.update(this, targetCard)
+    }
+
+    fun canDelete(): Boolean = taskState.isDeletable
+    fun updateWithNewState(newState: CardTaskState): Card {
         return Card(
             id = id,
             title = title,
@@ -78,4 +126,6 @@ class Card private constructor(
      * @return 태그가 있다면 true 리턴.
      */
     fun hasTag(): Boolean = tags.isNotEmpty()
+
+    fun hasManager(): Boolean = managerState != null
 }

@@ -48,12 +48,12 @@ import woowacourse.kanban.ui.board.common.toDisplayText
 /**
  * Card UI 출력을 위한 브릿지입니다.
  * @param modifier Modifier
- * @param cardData Card의 데이터입니다.
+ * @param card Card의 데이터입니다.
  */
 @Composable
 fun CardScreen(
     modifier: Modifier = Modifier,
-    cardData: Card,
+    card: Card,
     onDragStart: () -> Unit = {},
     onDragChange: (Offset) -> Unit = {},
     onDragEnd: () -> Unit = {},
@@ -61,9 +61,9 @@ fun CardScreen(
 ) {
     var cardWindowPosition by remember { mutableStateOf(Offset.Zero) }
 
-    CardScreen(
+    CardScreenContents(
         modifier = modifier
-            .testTag("카드_${cardData.title}")
+            .testTag("카드_${card.title}")
             .onGloballyPositioned { cardWindowPosition = it.positionInWindow() }
             .pointerInput(Unit) {
                 detectDragGestures(
@@ -76,13 +76,11 @@ fun CardScreen(
                     onDragCancel = { onDragCancel() },
                 )
             },
-        title = cardData.title,
-        content = cardData.content,
-        tags = cardData.tags,
-        managerState = cardData.managerState,
-        taskState = cardData.taskState,
-        hasContent = cardData.hasContent(),
-        hasTag = cardData.hasTag(),
+        title = card.title,
+        content = card.content,
+        tags = card.tags,
+        managerState = card.managerState,
+        taskState = card.taskState,
     )
 }
 
@@ -98,16 +96,18 @@ fun CardScreen(
  * @param modifier Modifier
  */
 @Composable
-fun CardScreen(
+fun CardScreenContents(
     title: String,
     content: String,
     tags: List<String>,
-    managerState: CardManagerState,
+    managerState: CardManagerState?,
     taskState: CardTaskState,
-    hasContent: Boolean,
-    hasTag: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val hasContent = content.isNotBlank()
+    val hasTag = tags.isNotEmpty()
+    val hasManager = managerState != null
+
     Column(
         modifier = modifier
             .background(
@@ -146,19 +146,20 @@ fun CardScreen(
         if (hasTag) CardTagsSection(
             tags = tags,
         )
+        if (hasManager) {
+            HorizontalDivider()
 
-        HorizontalDivider()
-
-        CardAccountInfo(
-            accountName = managerState.toDisplayText(),
-            modifier = Modifier
-                .padding(vertical = 10.dp)
-                .fillMaxWidth()
-                .semantics {
-                    contentDescription = "Kanban Card Account Info"
-                },
-            accountImage = Icons.Default.AccountCircle, /* 추후 api나, Async 등으로 이미지를 불러올 경우 수정할 예정. */
-        )
+            CardAccountInfo(
+                accountName = managerState.toDisplayText(),
+                modifier = Modifier
+                    .padding(vertical = 10.dp)
+                    .fillMaxWidth()
+                    .semantics {
+                        contentDescription = "Kanban Card Account Info"
+                    },
+                accountImage = Icons.Default.AccountCircle, /* 추후 api나, Async 등으로 이미지를 불러올 경우 수정할 예정. */
+            )
+        }
     }
 }
 

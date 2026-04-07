@@ -1,8 +1,14 @@
 package woowacourse.kanban.ui.project
 
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
@@ -10,7 +16,11 @@ import woowacourse.kanban.domain.board.Board
 import woowacourse.kanban.domain.card.Card
 import woowacourse.kanban.domain.card.CardManagerState
 import woowacourse.kanban.domain.card.CardTaskState
-import woowacourse.kanban.ui.board.BoardScreen
+import woowacourse.kanban.domain.common.FailureReason
+import woowacourse.kanban.ui.board.BoardScreenContents
+import woowacourse.kanban.ui.board.message
+import woowacourse.kanban.ui.card.editor.CardEditorMode
+import woowacourse.kanban.ui.card.editor.CardEditorState
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
@@ -34,37 +44,5 @@ class ProjectScreenTest {
 
         onNodeWithText("Compose2").performClick()
         onNodeWithText("제목4").assertExists()
-    }
-
-    @Test
-    fun `태스크를 다른 컬럼으로 옮기면 스낵바가 표시된다`() = runComposeUiTest {
-        setContent {
-            BoardScreen(
-                board = Board(
-                    cards = listOf(
-                        Card.create(
-                            title = "드래그테스트",
-                            content = "TODO 에서 DONE 으로 이동",
-                            tags = listOf("드래그"),
-                            manager = CardManagerState.DINO,
-                            state = CardTaskState.TODO,
-                        ),
-                    ),
-                ),
-                onAddCard = {},
-                onBoardChange = {},
-            )
-        }
-
-        onNodeWithTag("카드_드래그테스트").performTouchInput {
-            down(center)
-            advanceEventTime(viewConfiguration.longPressTimeoutMillis + 100)
-            moveTo(onNodeWithText("Done").fetchSemanticsNode().positionInRoot)
-            advanceEventTime(1000)
-            up()
-        }
-
-        waitForIdle()
-        onNodeWithText("태스크가 이동되었습니다.").assertExists()
     }
 }

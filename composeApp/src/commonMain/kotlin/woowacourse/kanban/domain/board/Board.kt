@@ -1,7 +1,10 @@
 package woowacourse.kanban.domain.board
 
 import woowacourse.kanban.domain.card.Card
+import woowacourse.kanban.domain.card.CardMoveResult
 import woowacourse.kanban.domain.card.CardTaskState
+import woowacourse.kanban.domain.card.CardUpdateResult
+import woowacourse.kanban.domain.common.FailureReason
 import woowacourse.kanban.domain.common.generateId
 
 /**
@@ -17,6 +20,7 @@ data class Board(
 ) {
     val totalTaskCount: Int = cards.size
     val doneTaskCount: Int = cards.count { it.taskState == CardTaskState.DONE }
+    val reviewTaskCount: Int = cards.count { it.taskState == CardTaskState.REVIEW }
     val inProgressTaskCount: Int = cards.count { it.taskState == CardTaskState.IN_PROGRESS }
     val toDoTaskCount: Int = cards.count { it.taskState == CardTaskState.TODO }
     val completionRatio = if (totalTaskCount == 0) 0f
@@ -26,15 +30,55 @@ data class Board(
     fun cardsByState(state: CardTaskState): List<Card> = cards.filter { it.taskState == state }
 
     fun addCard(card: Card): Board = copy(cards = cards + card)
-    /**
-     * Card의 상태를 변경합니다. Card Class의 updateWithNewState 메서드를 활용합니다.
-     * @param cardId 변경할 카드의 ID입니다.
-     */
-    fun moveCard(cardId: String, targetState: CardTaskState): Board =
+
+    fun moveCard(cardId: String, targetState: CardTaskState): BoardManageResult {
+        val originalCard = cards.first { it.id == cardId }
+
+        return when (val result = originalCard.move(targetState)) {
+            is CardMoveResult.Success -> {
+                val updatedBoard = updatedBoardWithNewCard(result.card)
+                BoardManageResult.Success(updatedBoard)
+            }
+
+            is CardMoveResult.Failure -> {
+                BoardManageResult.Failure(result.reason)
+            }
+        }
+    }
+
+    fun deleteCard(cardId: String): BoardManageResult {
+        val targetCard = cards.first { it.id == cardId }
+
+        if (!targetCard.canDelete()) {
+            return BoardManageResult.Failure(FailureReason.INVALID_DELETE)
+        }
+
+        val updatedBoard = copy(
+            cards = cards.filterNot { it.id == cardId },
+        )
+
+        return BoardManageResult.Success(updatedBoard)
+    }
+
+    fun updateCard(targetCard: Card): BoardManageResult {
+        val originalCard = cards.first { it.id == targetCard.id }
+
+        return when (val result = originalCard.validateUpdate(targetCard)) {
+            is CardUpdateResult.Success -> {
+                val updatedBoard = updatedBoardWithNewCard(result.card)
+                BoardManageResult.Success(updatedBoard)
+            }
+
+            is CardUpdateResult.Failure -> {
+                BoardManageResult.Failure(result.reason)
+            }
+        }
+    }
+
+    private fun updatedBoardWithNewCard(updatedCard: Card): Board =
         copy(
             cards = cards.map { card ->
-                if (card.id == cardId) card.updateWithNewState(targetState)
-                else card
-            }
+                if (card.id == updatedCard.id) updatedCard else card
+            },
         )
 }

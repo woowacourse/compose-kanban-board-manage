@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.domain.card.Card
 import woowacourse.kanban.domain.card.CardManagerState
 import woowacourse.kanban.domain.card.CardTaskState
+import woowacourse.kanban.domain.common.FailureReason
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -42,14 +43,14 @@ class BoardTest {
                 content = "내용내용2",
                 tags = listOf("태그2"),
                 manager = CardManagerState.DINO,
-                state = CardTaskState.TODO,
+                state = CardTaskState.IN_PROGRESS,
             ),
             Card.create(
                 title = "제목3",
                 content = "내용내용3",
                 tags = listOf("태그3"),
                 manager = CardManagerState.FAMES,
-                state = CardTaskState.IN_PROGRESS,
+                state = CardTaskState.REVIEW,
             ),
             Card.create(
                 title = "제목4",
@@ -62,8 +63,9 @@ class BoardTest {
 
         val board = Board(cards = cardList)
 
-        assertThat(board.toDoTaskCount).isEqualTo(2)
+        assertThat(board.toDoTaskCount).isEqualTo(1)
         assertThat(board.inProgressTaskCount).isEqualTo(1)
+        assertThat(board.reviewTaskCount).isEqualTo(1)
         assertThat(board.doneTaskCount).isEqualTo(1)
     }
 
@@ -74,6 +76,7 @@ class BoardTest {
         assertThat(board.totalTaskCount).isEqualTo(0)
         assertThat(board.doneTaskCount).isEqualTo(0)
         assertThat(board.inProgressTaskCount).isEqualTo(0)
+        assertThat(board.reviewTaskCount).isEqualTo(0)
         assertThat(board.toDoTaskCount).isEqualTo(0)
     }
 
@@ -145,33 +148,6 @@ class BoardTest {
     }
 
     @Test
-    fun `카드 상태 변경 요청이 들어올 시, 해당 카드를 제거하고 변경된 상태를 가진 카드를 반환한다`() {
-        val card1 = Card.create(
-            title = "제목1",
-            content = "내용1",
-            tags = listOf("태그1"),
-            manager = CardManagerState.DINO,
-            state = CardTaskState.TODO,
-        )
-        val card2 = Card.create(
-            title = "제목2",
-            content = "내용2",
-            tags = listOf("태그2"),
-            manager = CardManagerState.FAMES,
-            state = CardTaskState.IN_PROGRESS,
-        )
-
-        val oldBoard = Board(cards = listOf(card1, card2))
-        val newBoard = oldBoard.moveCard(card1.id, CardTaskState.DONE)
-
-        val targetCard1 = newBoard.cards.first { it.id == card1.id }
-        val targetCard2 = newBoard.cards.first { it.id == card2.id }
-
-        assertThat(targetCard1.taskState).isEqualTo(CardTaskState.DONE)
-        assertThat(targetCard2.taskState).isEqualTo(CardTaskState.IN_PROGRESS)
-    }
-
-    @Test
     fun `태스크를 옮기면 같은 태스크의 상태가 변경된다`() {
         val oldCard: Card = Card.create(
             title = "제목",
@@ -188,19 +164,27 @@ class BoardTest {
 
         val movedBoard = board.moveCard(
             cardId = oldCard.id,
-            targetState = CardTaskState.DONE,
+            targetState = CardTaskState.IN_PROGRESS,
         )
 
-        assertThat(movedBoard.toDoTaskCount).isEqualTo(0)
-        assertThat(movedBoard.doneTaskCount).isEqualTo(1)
+        when(movedBoard) {
+            is BoardManageResult.Success -> {
+                val board = movedBoard.board
+                assertThat(board.toDoTaskCount).isEqualTo(0)
+                assertThat(board.inProgressTaskCount).isEqualTo(1)
 
-        val movedCard = movedBoard.cards.first()
-        assertThat(movedCard.id).isEqualTo(oldCard.id)
-        assertThat(movedCard.taskState).isEqualTo(CardTaskState.DONE)
-        assertThat(movedCard.title).isEqualTo(oldCard.title)
-        assertThat(movedCard.content).isEqualTo(oldCard.content)
-        assertThat(movedCard.tags).containsExactlyElementsOf(oldCard.tags)
-        assertThat(movedCard.managerState).isEqualTo(oldCard.managerState)
+                val movedCard = board.cards.first()
+                assertThat(movedCard.id).isEqualTo(oldCard.id)
+                assertThat(movedCard.taskState).isEqualTo(CardTaskState.IN_PROGRESS)
+                assertThat(movedCard.title).isEqualTo(oldCard.title)
+                assertThat(movedCard.content).isEqualTo(oldCard.content)
+                assertThat(movedCard.tags).containsExactlyElementsOf(oldCard.tags)
+                assertThat(movedCard.managerState).isEqualTo(oldCard.managerState)
+            }
+            is BoardManageResult.Failure -> {
+                error("성공해야 하는 테스트임에도 실패 : ${movedBoard.reason}")
+            }
+        }
     }
 
     @Test
@@ -210,7 +194,7 @@ class BoardTest {
             content = "내용",
             tags = listOf("태그1", "태그2"),
             manager = CardManagerState.DINO,
-            state = CardTaskState.TODO,
+            state = CardTaskState.REVIEW,
         )
 
         val board: Board = Board().addCard(oldCard)
@@ -221,7 +205,396 @@ class BoardTest {
             cardId = oldCard.id,
             targetState = CardTaskState.DONE,
         )
+        when(movedBoard) {
+            is BoardManageResult.Success -> {
+                assertThat(movedBoard.board.completionPercentage).isEqualTo(100)
+            }
+            is BoardManageResult.Failure -> {
+                error("성공해야 하는 테스트임에도 실패 : ${movedBoard.reason}")
+            }
+        }
+    }
 
-        assertThat(movedBoard.completionPercentage).isEqualTo(100)
+    @Test
+    fun `To Do 상태 태스크는 삭제할 수 있다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = null,
+            state = CardTaskState.TODO,
+        )
+        val board = Board(cards = listOf(card))
+        when(val result = board.deleteCard(card.id)) {
+            is BoardManageResult.Success -> {
+                assertThat(result.board.cards).doesNotContain(card)
+            }
+            is BoardManageResult.Failure -> {
+                assertThat(result.reason).isEqualTo(FailureReason.INVALID_DELETE)
+            }
+        }
+    }
+
+    @Test
+    fun `In Progress 상태 태스크는 삭제할 수 있다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.FAMES,
+            state = CardTaskState.IN_PROGRESS,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.deleteCard(card.id)) {
+            is BoardManageResult.Success -> {
+                assertThat(result.board.totalTaskCount).isEqualTo(0)
+                assertThat(result.board.inProgressTaskCount).isEqualTo(0)
+            }
+            is BoardManageResult.Failure -> {
+                error("성공해야 하는 테스트임에도 실패 : ${result.reason}")
+            }
+        }
+    }
+
+    @Test
+    fun `Review 상태 태스크는 삭제할 수 없다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.FAMES,
+            state = CardTaskState.REVIEW,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.deleteCard(card.id)) {
+            is BoardManageResult.Success -> {
+                error("실패해야 하는 테스트임에도 성공했습니다.")
+            }
+            is BoardManageResult.Failure -> {
+                assertThat(result.reason).isEqualTo(FailureReason.INVALID_DELETE)
+            }
+        }
+
+
+    }
+
+    @Test
+    fun `Done 상태 태스크는 삭제할 수 없다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.FAMES,
+            state = CardTaskState.DONE,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.deleteCard(card.id)) {
+            is BoardManageResult.Success -> {
+                error("실패해야 하는 테스트임에도 성공했습니다.")
+            }
+            is BoardManageResult.Failure -> {
+                assertThat(result.reason).isEqualTo(FailureReason.INVALID_DELETE)
+            }
+        }
+    }
+
+    @Test
+    fun `담당자 없는 To Do 상태 태스크는 In Progress 상태로 전이할 수 없다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = null,
+            state = CardTaskState.TODO,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.moveCard(card.id, CardTaskState.IN_PROGRESS)) {
+            is BoardManageResult.Success -> {
+                error("실패해야 하는 테스트임에도 성공했습니다.")
+            }
+            is BoardManageResult.Failure -> {
+                assertThat(result.reason).isEqualTo(FailureReason.MANAGER_REQUIRED)
+            }
+        }
+    }
+
+    @Test
+    fun `담당자 있는 To Do 상태 태스크는 In Progress 상태로 전이할 수 있다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.TODO,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.moveCard(card.id, CardTaskState.IN_PROGRESS)){
+            is BoardManageResult.Success -> {
+                assertThat(result.board.toDoTaskCount).isEqualTo(0)
+                assertThat(result.board.inProgressTaskCount).isEqualTo(1)
+                assertThat(result.board.cards.first().taskState).isEqualTo(CardTaskState.IN_PROGRESS)
+            }
+            is BoardManageResult.Failure -> {
+                error("성공해야 하는 테스트임에도 실패 : ${result.reason}")
+            }
+        }
+    }
+
+    @Test
+    fun `담당자 있는 To Do 상태 태스크는 Review 상태로 전이할 수 없다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.TODO,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.moveCard(card.id, CardTaskState.REVIEW)){
+            is BoardManageResult.Success -> {
+                error("실패해야 하는 테스트임에도 성공했습니다.")
+            }
+            is BoardManageResult.Failure -> {
+                assertThat(result.reason).isEqualTo(FailureReason.INVALID_TRANSITION)
+            }
+        }
+    }
+
+    @Test
+    fun `담당자 있는 To Do 상태 태스크는 Done 상태로 전이할 수 없다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.TODO,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.moveCard(card.id, CardTaskState.DONE)) {
+            is BoardManageResult.Success -> {
+                error("실패해야 하는 테스트임에도 성공했습니다.")
+            }
+            is BoardManageResult.Failure -> {
+                assertThat(result.reason).isEqualTo(FailureReason.INVALID_TRANSITION)
+            }
+        }
+    }
+
+    @Test
+    fun `In Progress 상태 태스크는 Review 상태로 전이할 수 있다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.IN_PROGRESS,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.moveCard(card.id, CardTaskState.REVIEW)){
+            is BoardManageResult.Success -> {
+                assertThat(result.board.inProgressTaskCount).isEqualTo(0)
+                assertThat(result.board.reviewTaskCount).isEqualTo(1)
+            }
+            is BoardManageResult.Failure -> {
+                error("성공해야 하는 테스트임에도 실패 : ${result.reason}")
+            }
+        }
+    }
+
+    @Test
+    fun `In Progress 상태 태스크는 Done 상태로 전이할 수 없다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.IN_PROGRESS,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.moveCard(card.id, CardTaskState.DONE)){
+            is BoardManageResult.Success -> {
+                error("실패해야 하는 테스트임에도 성공했습니다.")
+            }
+            is BoardManageResult.Failure -> {
+                assertThat(result.reason).isEqualTo(FailureReason.INVALID_TRANSITION)
+            }
+        }
+    }
+
+    @Test
+    fun `Review 상태 태스크는 Done 상태로 전이할 수 있다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.REVIEW,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.moveCard(card.id, CardTaskState.DONE)){
+            is BoardManageResult.Success -> {
+                assertThat(result.board.reviewTaskCount).isEqualTo(0)
+                assertThat(result.board.doneTaskCount).isEqualTo(1)
+            }
+            is BoardManageResult.Failure -> {
+                error("성공해야 하는 테스트임에도 실패 : ${result.reason}")
+            }
+        }
+    }
+
+    @Test
+    fun `Review 상태 태스크는 To Do 상태로 전이할 수 없다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.REVIEW,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.moveCard(card.id, CardTaskState.TODO)){
+            is BoardManageResult.Success -> {
+                error("실패해야 하는 테스트임에도 성공했습니다.")
+            }
+            is BoardManageResult.Failure -> {
+                assertThat(result.reason).isEqualTo(FailureReason.INVALID_TRANSITION)
+            }
+        }
+    }
+
+    @Test
+    fun `Done 상태 태스크는 To Do 상태로 전이할 수 있다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.DONE,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.moveCard(card.id, CardTaskState.TODO)){
+            is BoardManageResult.Success -> {
+                assertThat(result.board.doneTaskCount).isEqualTo(0)
+                assertThat(result.board.toDoTaskCount).isEqualTo(1)
+            }
+            is BoardManageResult.Failure -> {
+                error("성공해야 하는 테스트임에도 실패 : ${result.reason}")
+            }
+        }
+    }
+
+    @Test
+    fun `Done 상태 태스크는 In Progress 상태로 전이할 수 없다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.DONE,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.moveCard(card.id, CardTaskState.IN_PROGRESS)){
+            is BoardManageResult.Success -> {
+                error("실패해야 하는 테스트임에도 성공했습니다.")
+            }
+            is BoardManageResult.Failure -> {
+                assertThat(result.reason).isEqualTo(FailureReason.INVALID_TRANSITION)
+            }
+        }
+    }
+
+    @Test
+    fun `Done 상태 태스크는 Review 상태로 전이할 수 없다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.DONE,
+        )
+        val board = Board(cards = listOf(card))
+
+        when(val result = board.moveCard(card.id, CardTaskState.REVIEW)){
+            is BoardManageResult.Success -> {
+                error("실패해야 하는 테스트임에도 성공했습니다.")
+            }
+            is BoardManageResult.Failure -> {
+                assertThat(result.reason).isEqualTo(FailureReason.INVALID_TRANSITION)
+            }
+        }
+    }
+
+    @Test
+    fun `태스크 수정 시 Board의 상태별 태스크 개수가 변경된다`() {
+        val card = Card.create(
+            title = "제목",
+            content = "내용",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.IN_PROGRESS,
+        )
+        val board = Board(cards = listOf(card))
+
+        val updatedCard = Card.update(
+            id = card.id,
+            title = card.title,
+            content = card.content,
+            tags = card.tags,
+            manager = card.managerState,
+            state = CardTaskState.REVIEW,
+        )
+
+        when(val result = board.updateCard(updatedCard)){
+            is BoardManageResult.Success -> {
+                assertThat(result.board.inProgressTaskCount).isEqualTo(0)
+                assertThat(result.board.reviewTaskCount).isEqualTo(1)
+            }
+            is BoardManageResult.Failure -> {
+                error("성공해야 하는 테스트임에도 실패 : ${result.reason}")
+            }
+        }
+    }
+
+    @Test
+    fun `태스크 삭제 시 Board의 상태별 태스크 개수가 변경된다`() {
+        val todoCard = Card.create(
+            title = "todo",
+            content = "내용1",
+            tags = listOf("태그1", "태그2"),
+            manager = null,
+            state = CardTaskState.TODO,
+        )
+        val doneCard = Card.create(
+            title = "done",
+            content = "내용2",
+            tags = listOf("태그1", "태그2"),
+            manager = CardManagerState.DINO,
+            state = CardTaskState.DONE,
+        )
+        val board = Board(cards = listOf(todoCard, doneCard))
+
+        when(val result = board.deleteCard(todoCard.id)){
+            is BoardManageResult.Success -> {
+                assertThat(result.board.totalTaskCount).isEqualTo(1)
+                assertThat(result.board.toDoTaskCount).isEqualTo(0)
+                assertThat(result.board.doneTaskCount).isEqualTo(1)
+            }
+            is BoardManageResult.Failure -> {
+                error("성공해야 하는 테스트임에도 실패 : ${result.reason}")
+            }
+        }
     }
 }
