@@ -4,17 +4,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.data.AssigneePool
-import woowacourse.kanban.board.domain.Assignee
+import woowacourse.kanban.board.domain.Assigned
+import woowacourse.kanban.board.domain.AssigneeState
 import woowacourse.kanban.board.domain.Status
+import woowacourse.kanban.board.domain.Unassigned
 
 class TaskDialogState(
     initialTitle: String = "",
     initialDescription: String = "",
     initialTag: String = "",
     initialStatus: Status = Status.TO_DO,
-    initialAssignee: Assignee? = null,
+    initialAssigneeState: AssigneeState = Unassigned,
 ) {
-    private val allAssignees: List<Assignee> = AssigneePool.getAll()
+    private val allAssigneeStates = AssigneePool.getAll().map { Assigned(it) }
 
     var titleValue by mutableStateOf(initialTitle)
         private set
@@ -24,13 +26,13 @@ class TaskDialogState(
     var tagValue by mutableStateOf(initialTag)
     var selectedStatus by mutableStateOf(initialStatus)
         private set
-    val assignees: List<Assignee?>
+    val assigneeStates: List<AssigneeState>
         get() = if (selectedStatus.isRequiredAssignee) {
-            allAssignees
+            allAssigneeStates
         } else {
-            listOf(null) + allAssignees
+            listOf(Unassigned) + allAssigneeStates
         }
-    var assignee by mutableStateOf(initialAssignee)
+    var assigneeState by mutableStateOf(initialAssigneeState)
         private set
 
     fun changeTitle(newTitle: String) {
@@ -41,12 +43,12 @@ class TaskDialogState(
     fun changeStatus(newSelectedStatus: Status) {
         selectedStatus = newSelectedStatus
 
-        if ((assignee in assignees).not()) {
-            assignee = assignees.firstOrNull()
+        if ((assigneeState in assigneeStates).not()) {
+            assigneeState = assigneeStates.first()
         }
     }
 
-    fun changeAssignee(newAssignee: Assignee?) {
-        assignee = newAssignee
+    fun changeAssignee(newAssigneeState: AssigneeState) {
+        assigneeState = newAssigneeState
     }
 }

@@ -31,8 +31,11 @@ import kanbanboard.composeapp.generated.resources.tag_default_message
 import kanbanboard.composeapp.generated.resources.tag_format_error
 import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.data.AssigneePool
+import woowacourse.kanban.board.domain.Assigned
 import woowacourse.kanban.board.domain.Assignee
+import woowacourse.kanban.board.domain.AssigneeState
 import woowacourse.kanban.board.domain.Status
+import woowacourse.kanban.board.domain.Unassigned
 import woowacourse.kanban.board.ui.toTitle
 
 @Composable
@@ -49,9 +52,9 @@ fun TaskDialogContent(
     statuses: List<Status>,
     selectedStatus: Status,
     onStatusChanged: (Status) -> Unit,
-    assignees: List<Assignee?>,
-    assignee: Assignee?,
-    onAssigneeChanged: (Assignee?) -> Unit,
+    assigneeStates: List<AssigneeState>,
+    assigneeState: AssigneeState,
+    onAssigneeChanged: (AssigneeState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isTagError = isTagCountError || isTagFormatError
@@ -90,8 +93,8 @@ fun TaskDialogContent(
         )
 
         AssigneesSegmentedButtons(
-            assignees = assignees,
-            assignee = assignee,
+            assigneeStates = assigneeStates,
+            assigneeState = assigneeState,
             onAssigneeChanged = onAssigneeChanged,
         )
     }
@@ -209,9 +212,9 @@ private fun StatusSegmentedButtons(
 
 @Composable
 private fun AssigneesSegmentedButtons(
-    assignees: List<Assignee?>,
-    assignee: Assignee?,
-    onAssigneeChanged: (Assignee?) -> Unit,
+    assigneeStates: List<AssigneeState>,
+    assigneeState: AssigneeState,
+    onAssigneeChanged: (AssigneeState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     TaskLabelLayout(
@@ -223,10 +226,10 @@ private fun AssigneesSegmentedButtons(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            assignees.forEach {
+            assigneeStates.forEach {
                 AssigneeOptionCard(
-                    assignee = it,
-                    isSelected = it == assignee,
+                    assigneeState = it,
+                    isSelected = it == assigneeState,
                     onClick = { onAssigneeChanged(it) },
                 )
             }
@@ -271,8 +274,8 @@ private fun TaskDialogContentPreview() {
         statuses = Status.entries,
         selectedStatus = Status.TO_DO,
         onStatusChanged = {},
-        assignees = AssigneePool.getAll(),
-        assignee = AssigneePool.getAll()[0],
+        assigneeStates = listOf(Unassigned, Assigned(Assignee("별터"))),
+        assigneeState = Assigned(AssigneePool.getAll()[0]),
         onAssigneeChanged = {},
     )
 }

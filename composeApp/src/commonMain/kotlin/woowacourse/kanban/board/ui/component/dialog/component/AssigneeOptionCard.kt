@@ -22,17 +22,20 @@ import androidx.compose.ui.unit.dp
 import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.assignee_null
 import org.jetbrains.compose.resources.stringResource
+import woowacourse.kanban.board.domain.Assigned
 import woowacourse.kanban.board.domain.Assignee
+import woowacourse.kanban.board.domain.AssigneeState
+import woowacourse.kanban.board.domain.Unassigned
 import woowacourse.kanban.board.ui.KanbanTypography
 
 @Composable
 fun AssigneeOptionCard(
-    assignee: Assignee?,
+    assigneeState: AssigneeState,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (assignee != null) {
+    if (assigneeState is Assigned) {
         TaskOptionCard(
             isSelected = isSelected,
             onClick = onClick,
@@ -52,7 +55,7 @@ fun AssigneeOptionCard(
                 )
 
                 Text(
-                    text = assignee.name,
+                    text = assigneeState.assignee.name,
                     style = KanbanTypography.label14Medium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -83,7 +86,7 @@ private fun AssigneeOptionCardPreview1() {
     var isSelected by remember { mutableStateOf(false) }
 
     AssigneeOptionCard(
-        assignee = Assignee("다이노"),
+        assigneeState = Assigned(Assignee("다이노")),
         isSelected = isSelected,
         onClick = { isSelected = !isSelected },
     )
@@ -95,7 +98,7 @@ private fun AssigneeOptionCardPreview2() {
     var isSelected by remember { mutableStateOf(false) }
 
     AssigneeOptionCard(
-        assignee = null,
+        assigneeState = Unassigned,
         isSelected = isSelected,
         onClick = { isSelected = !isSelected },
     )

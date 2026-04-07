@@ -6,8 +6,8 @@ enum class Status(val isDeletable: Boolean, val isRequiredAssignee: Boolean) {
     REVIEW(false, true),
     DONE(false, true);
 
-    fun isValidAssignee(assignee: Assignee?): Boolean {
-        return if (isRequiredAssignee) assignee != null else true
+    fun isValidAssignee(assigneeState: AssigneeState): Boolean {
+        return if (isRequiredAssignee) assigneeState is Assigned else true
     }
 
     fun isValidTransition(targetStatus: Status): Boolean {

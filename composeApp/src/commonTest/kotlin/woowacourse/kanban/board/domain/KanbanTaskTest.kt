@@ -22,14 +22,14 @@ class KanbanTaskTest {
             description = description,
             tags = tags,
             status = Status.TO_DO,
-            assignee = Assignee(crewName),
+            assigneeState = Assigned(Assignee(crewName)),
         )
 
         // Then
         assertThat(task.title).isEqualTo(title)
         assertThat(task.description).isEqualTo(description)
         assertThat(task.tags).containsExactlyElementsOf(tags)
-        assertThat(task.assignee?.name).isEqualTo(crewName)
+        assertThat(task.assigneeState).isEqualTo(Assigned(Assignee(crewName)))
     }
 
     @Test
@@ -42,7 +42,7 @@ class KanbanTaskTest {
             KanbanTask(
                 title = emptyTitle,
                 status = Status.TO_DO,
-                assignee = null,
+                assigneeState = Unassigned,
             )
         }
         assertThat(exception.message).isEqualTo("제목은 비어 있거나 공백만 있을 수 없습니다.")
@@ -58,7 +58,7 @@ class KanbanTaskTest {
             KanbanTask(
                 title = blankTitle,
                 status = Status.TO_DO,
-                assignee = null,
+                assigneeState = Unassigned,
             )
         }
         assertThat(exception.message).isEqualTo("제목은 비어 있거나 공백만 있을 수 없습니다.")
@@ -74,7 +74,7 @@ class KanbanTaskTest {
             KanbanTask(
                 title = "제목",
                 status = Status.TO_DO,
-                assignee = null,
+                assigneeState = Unassigned,
                 tags = tags,
             )
         }
@@ -91,7 +91,7 @@ class KanbanTaskTest {
             KanbanTask(
                 title = "제목",
                 status = Status.TO_DO,
-                assignee = null,
+                assigneeState = Unassigned,
                 tags = tags,
             )
         }
@@ -146,12 +146,12 @@ class KanbanTaskTest {
         val kanbanTask1 = KanbanTask(
             title = "제목",
             status = Status.TO_DO,
-            assignee = null,
+            assigneeState = Unassigned,
         )
         val kanbanTask2 = KanbanTask(
             title = "제목",
             status = Status.TO_DO,
-            assignee = null,
+            assigneeState = Unassigned,
         )
 
         // Then: 두 개의 KanbanTask의 id 가 중복되지 않는다

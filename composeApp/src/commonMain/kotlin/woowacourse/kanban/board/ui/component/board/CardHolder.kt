@@ -32,8 +32,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.data.AssigneePool
+import woowacourse.kanban.board.domain.Assigned
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.Status
+import woowacourse.kanban.board.domain.Unassigned
 import woowacourse.kanban.board.ui.component.card.KanbanCard
 
 @Composable
@@ -98,7 +100,7 @@ fun CardHolder(
             ) { task ->
                 KanbanCard(
                     title = task.title,
-                    assignee = task.assignee,
+                    assigneeState = task.assigneeState,
                     tags = task.tags,
                     description = task.description,
                     onClick = { onTaskClick(task) },
@@ -164,14 +166,14 @@ private fun CardHolderPreview() {
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.TO_DO,
-                assignee = AssigneePool.getAll()[0],
+                assigneeState = Assigned(AssigneePool.getAll()[0]),
             ),
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.TO_DO,
-                assignee = null,
+                assigneeState = Unassigned,
             ),
         ),
     )

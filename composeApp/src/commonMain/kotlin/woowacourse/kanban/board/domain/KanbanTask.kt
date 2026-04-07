@@ -9,7 +9,7 @@ data class KanbanTask(
     val id: Long = generateId(),
     val title: String,
     val status: Status,
-    val assignee: Assignee?,
+    val assigneeState: AssigneeState,
     val description: String? = null,
     val tags: List<String> = emptyList(),
 ) {
@@ -26,7 +26,7 @@ data class KanbanTask(
     }
 
     fun isValidAssigneeRequirement(targetStatus: Status): Boolean {
-        return targetStatus.isValidAssignee(this.assignee)
+        return targetStatus.isValidAssignee(this.assigneeState)
     }
 
     companion object {

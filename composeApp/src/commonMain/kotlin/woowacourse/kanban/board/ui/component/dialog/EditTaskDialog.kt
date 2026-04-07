@@ -41,7 +41,7 @@ fun EditTaskDialog(
             initialDescription = clickedTask.description ?: "",
             initialTag = clickedTask.tags.joinToString(","),
             initialStatus = clickedTask.status,
-            initialAssignee = clickedTask.assignee,
+            initialAssigneeState = clickedTask.assigneeState,
         )
     }
     val isTitleError by remember {
@@ -111,7 +111,7 @@ fun EditTaskDialog(
                                     description = state.descriptionValue.takeIf { it.isNotBlank() },
                                     tags = if (state.tagValue.isEmpty()) emptyList() else tags,
                                     status = state.selectedStatus,
-                                    assignee = state.assignee,
+                                    assigneeState = state.assigneeState,
                                 ),
                             )
                         },
@@ -134,8 +134,8 @@ fun EditTaskDialog(
                     statuses = Status.entries,
                     selectedStatus = state.selectedStatus,
                     onStatusChanged = state::changeStatus,
-                    assignees = state.assignees,
-                    assignee = state.assignee,
+                    assigneeStates = state.assigneeStates,
+                    assigneeState = state.assigneeState,
                     onAssigneeChanged = state::changeAssignee,
                 )
             },

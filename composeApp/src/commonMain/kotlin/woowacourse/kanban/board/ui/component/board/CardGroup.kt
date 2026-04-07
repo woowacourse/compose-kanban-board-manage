@@ -10,6 +10,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.board.data.AssigneePool
+import woowacourse.kanban.board.domain.Assigned
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.Status
 import woowacourse.kanban.board.ui.toBodyColor
@@ -64,42 +65,42 @@ private fun CardGroupPreview() {
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.TO_DO,
-                assignee = assignee,
+                assigneeState = Assigned(assignee),
             ),
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.TO_DO,
-                assignee = assignee,
+                assigneeState = Assigned(assignee),
             ),
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.IN_PROGRESS,
-                assignee = assignee,
+                assigneeState = Assigned(assignee),
             ),
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.DONE,
-                assignee = assignee,
+                assigneeState = Assigned(assignee),
             ),
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.DONE,
-                assignee = assignee,
+                assigneeState = Assigned(assignee),
             ),
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.DONE,
-                assignee = assignee,
+                assigneeState = Assigned(assignee),
             ),
         ),
     )

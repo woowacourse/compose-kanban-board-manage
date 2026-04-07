@@ -95,7 +95,7 @@ fun CreateTaskDialog(
                                     description = state.descriptionValue.takeIf { it.isNotBlank() },
                                     tags = if (state.tagValue.isEmpty()) emptyList() else tags,
                                     status = state.selectedStatus,
-                                    assignee = state.assignee,
+                                    assigneeState = state.assigneeState,
                                 ),
                             )
                         },
@@ -118,8 +118,8 @@ fun CreateTaskDialog(
                     statuses = Status.entries,
                     selectedStatus = state.selectedStatus,
                     onStatusChanged = state::changeStatus,
-                    assignees = state.assignees,
-                    assignee = state.assignee,
+                    assigneeStates = state.assigneeStates,
+                    assigneeState = state.assigneeState,
                     onAssigneeChanged = state::changeAssignee,
                 )
             },

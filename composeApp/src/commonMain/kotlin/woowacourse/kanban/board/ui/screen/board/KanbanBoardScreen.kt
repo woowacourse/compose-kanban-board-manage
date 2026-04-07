@@ -31,6 +31,7 @@ import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.Status
+import woowacourse.kanban.board.domain.Unassigned
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
 import woowacourse.kanban.board.ui.component.board.sidebar.SideBar
@@ -241,7 +242,7 @@ private fun KanbanBoardContentPreview() {
         description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
         tags = listOf("컴포넌트", "성능"),
         status = Status.TO_DO,
-        assignee = null,
+        assigneeState = Unassigned,
     )
     val cards = listOf(
         task.copy(id = 0L),
