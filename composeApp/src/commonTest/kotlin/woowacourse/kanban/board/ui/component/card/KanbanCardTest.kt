@@ -6,9 +6,11 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.runComposeUiTest
-import kotlin.test.Test
+import woowacourse.kanban.board.domain.Assigned
+import woowacourse.kanban.board.domain.Assignee
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
+import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class KanbanCardTest {
@@ -21,7 +23,7 @@ class KanbanCardTest {
             description = "이 기능은 매우 중요합니다.",
             tags = listOf("긴급", "백엔드"),
             status = Status.TO_DO,
-            assignee = "아키",
+            assigneeState = Assigned(Assignee("아키")),
         )
 
         // When
@@ -30,7 +32,7 @@ class KanbanCardTest {
                 title = task.title,
                 description = task.description,
                 tags = task.tags,
-                crewName = task.assignee,
+                assigneeState = Assigned(Assignee("아키")),
             )
         }
 
@@ -50,7 +52,7 @@ class KanbanCardTest {
             description = null,
             tags = listOf("긴급"),
             status = Status.TO_DO,
-            assignee = "아키",
+            assigneeState = Assigned(Assignee("아키")),
         )
 
         // When
@@ -59,7 +61,7 @@ class KanbanCardTest {
                 title = task.title,
                 description = task.description,
                 tags = task.tags,
-                crewName = task.assignee,
+                assigneeState = task.assigneeState,
             )
         }
 
@@ -77,7 +79,7 @@ class KanbanCardTest {
             description = "설명입니다.",
             tags = emptyList(),
             status = Status.TO_DO,
-            assignee = "아키",
+            assigneeState = Assigned(Assignee("아키")),
         )
 
         // When
@@ -86,7 +88,7 @@ class KanbanCardTest {
                 title = task.title,
                 description = task.description,
                 tags = task.tags,
-                crewName = task.assignee,
+                assigneeState = task.assigneeState,
             )
         }
 

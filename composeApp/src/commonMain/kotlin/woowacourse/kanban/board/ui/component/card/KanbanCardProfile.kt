@@ -12,15 +12,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import woowacourse.kanban.board.domain.Assignee
+import woowacourse.kanban.board.ui.KanbanTypography
 
 @Composable
 fun KanbanCardProfile(
-    crewName: String,
+    assignee: Assignee,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -36,17 +36,16 @@ fun KanbanCardProfile(
         )
 
         Text(
-            text = crewName,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
+            text = assignee.name,
+            style = KanbanTypography.body14Medium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
     }
 }
 
-@Preview
+@Preview(showBackground = true, name = "작성자 있음")
 @Composable
-private fun KanbanCardProfilePreview() {
-    KanbanCardProfile(crewName = "바드")
+private fun KanbanCardProfilePreview1() {
+    KanbanCardProfile(assignee = Assignee("별터"))
 }

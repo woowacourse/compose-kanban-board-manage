@@ -30,11 +30,13 @@ import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
+import woowacourse.kanban.board.domain.Unassigned
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
 import woowacourse.kanban.board.ui.component.board.sidebar.SideBar
-import woowacourse.kanban.board.ui.component.dialog.TaskDialog
+import woowacourse.kanban.board.ui.component.dialog.CreateTaskDialog
+import woowacourse.kanban.board.ui.component.dialog.EditTaskDialog
 
 @Composable
 fun KanbanBoardScreen(
@@ -42,57 +44,76 @@ fun KanbanBoardScreen(
     projects: List<KanbanProject> = listOf(KanbanProject("Compose1")),
     kanbanBoard: KanbanBoard = KanbanBoard(),
 ) {
-    val kanbanBoardState = remember {
+    val state = remember {
         KanbanBoardState(
             kanbanBoard = kanbanBoard,
             projects = projects,
         )
     }
     val snackBarHostState = remember { SnackbarHostState() }
-    var snackbarMessage by remember { mutableStateOf<SnackbarMessage?>(null) }
+    var snackbarMessageType by remember { mutableStateOf<SnackbarMessage?>(null) }
+    val snackbarMessage = snackbarMessageType?.let { stringResource(it.textRes) } ?: ""
 
-    val totalCount = kanbanBoardState.getTotalCount()
-    val completeCount = kanbanBoardState.getCompleteCount()
+    val totalCount = state.getTotalCount()
+    val completeCount = state.getCompleteCount()
     val progress = if (totalCount == 0) 0f else completeCount.toFloat() / totalCount.toFloat()
     val progressPercent = (progress * 100).toInt()
 
-    LaunchedEffect(key1 = snackbarMessage) {
-        snackbarMessage?.let { message ->
+    LaunchedEffect(key1 = snackbarMessageType) {
+        snackbarMessageType?.let {
             snackBarHostState.showSnackbar(
-                message = message.text,
+                message = snackbarMessage,
                 withDismissAction = true,
                 duration = SnackbarDuration.Short,
             )
-            snackbarMessage = null
+            snackbarMessageType = null
         }
     }
 
     KanbanBoardContent(
-        projectTitles = kanbanBoardState.getProjectsTitles(),
-        projectSelectedIndex = kanbanBoardState.selectedProjectIndex,
-        cards = kanbanBoardState.tasks,
+        projectTitles = state.getProjectsTitles(),
+        projectSelectedIndex = state.selectedProjectIndex,
+        cards = state.tasks,
         completeCount = completeCount,
         totalCount = totalCount,
         progress = progress,
         progressPercent = progressPercent,
-        isNewTaskDialog = kanbanBoardState.isNewTaskDialog,
+        isCreateTaskDialog = state.isCreateTaskDialog,
+        snackbarHost = snackBarHostState,
         modifier = modifier,
         onNewTaskClick = {
-            kanbanBoardState.showNewTaskDialog()
+            state.showCreateTaskDialog()
         },
         onDismissClick = {
-            kanbanBoardState.hideNewTaskDialog()
+            state.hideCreateTaskDialog()
         },
-        snackHost = snackBarHostState,
         onCreateClick = {
-            kanbanBoardState.addTask(it)
-            kanbanBoardState.hideNewTaskDialog()
-            snackbarMessage = SnackbarMessage.TASK_CREATED
+            state.addTask(it)
+            state.hideCreateTaskDialog()
+            snackbarMessageType = SnackbarMessage.TASK_CREATED
         },
-        updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
+        onEditClick = { originalTask, editedTask ->
+            state.editTask(originalTask, editedTask)
+            snackbarMessageType = SnackbarMessage.TASK_EDITED
+        },
+        onDeleteClick = {
+            if (it.status.isDeletable) {
+                state.deleteTask(it)
+                snackbarMessageType = SnackbarMessage.TASK_DELETED
+            } else {
+                snackbarMessageType = SnackbarMessage.TASK_DELETE_NOT_ALLOWED
+            }
+        },
+        updateSelectedProjectIndex = { state.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
-            kanbanBoardState.moveTask(task, targetStatus)
-            snackbarMessage = SnackbarMessage.TASK_MOVED
+            if (!task.isValidAssigneeRequirement(targetStatus)) {
+                snackbarMessageType = SnackbarMessage.TASK_ASSIGNEE_REQUIRED
+            } else if (!task.isValidStatusTransition(targetStatus)) {
+                snackbarMessageType = SnackbarMessage.TASK_MOVE_NOT_ALLOWED
+            } else {
+                state.moveTask(task, targetStatus)
+                snackbarMessageType = SnackbarMessage.TASK_MOVED
+            }
         },
     )
 }
@@ -106,23 +127,25 @@ private fun KanbanBoardContent(
     totalCount: Int,
     progress: Float,
     progressPercent: Int,
-    isNewTaskDialog: Boolean,
-    snackHost: SnackbarHostState,
+    isCreateTaskDialog: Boolean,
+    snackbarHost: SnackbarHostState,
     modifier: Modifier = Modifier,
     onNewTaskClick: () -> Unit,
     onDismissClick: () -> Unit,
     onCreateClick: (KanbanTask) -> Unit,
+    onEditClick: (KanbanTask, KanbanTask) -> Unit,
+    onDeleteClick: (KanbanTask) -> Unit,
     onMoveTask: (KanbanTask, Status) -> Unit,
     updateSelectedProjectIndex: (Int) -> Unit,
 ) {
-    // drag
     var draggedTask by remember { mutableStateOf<KanbanTask?>(null) }
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
     val columnBounds = remember { mutableStateMapOf<Status, Rect>() }
+    var taskToEdit by remember { mutableStateOf<KanbanTask?>(null) }
 
     Scaffold(
         modifier = modifier,
-        snackbarHost = { SnackbarHost(hostState = snackHost) },
+        snackbarHost = { SnackbarHost(hostState = snackbarHost) },
         containerColor = Color.White,
     ) { innerPadding ->
         Row(
@@ -182,12 +205,29 @@ private fun KanbanBoardContent(
                         currentDragPosition = null
                         draggedTask = null
                     },
+                    onTaskClick = { task ->
+                        taskToEdit = task
+                    },
                 )
             }
-            if (isNewTaskDialog) {
-                TaskDialog(
+            if (isCreateTaskDialog) {
+                CreateTaskDialog(
                     onDismissClick = onDismissClick,
                     onCreateClick = onCreateClick,
+                )
+            }
+            taskToEdit?.let { task ->
+                EditTaskDialog(
+                    clickedTask = task,
+                    onEditClick = { editedTask ->
+                        onEditClick(task, editedTask)
+                        taskToEdit = null
+                    },
+                    onDeleteClick = {
+                        onDeleteClick(task)
+                        taskToEdit = null
+                    },
+                    onDismissClick = { taskToEdit = null },
                 )
             }
         }
@@ -202,7 +242,7 @@ private fun KanbanBoardContentPreview() {
         description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
         tags = listOf("컴포넌트", "성능"),
         status = Status.TO_DO,
-        assignee = "다이노",
+        assigneeState = Unassigned,
     )
     val cards = listOf(
         task.copy(id = 0L),
@@ -221,12 +261,14 @@ private fun KanbanBoardContentPreview() {
         totalCount = 6,
         progress = 0.5f,
         progressPercent = 50,
-        isNewTaskDialog = false,
+        isCreateTaskDialog = false,
+        snackbarHost = remember { SnackbarHostState() },
         modifier = Modifier.fillMaxSize(),
         onNewTaskClick = { },
         onCreateClick = { },
-        snackHost = remember { SnackbarHostState() },
         onDismissClick = { },
+        onEditClick = { _, _ -> },
+        onDeleteClick = { },
         updateSelectedProjectIndex = { },
         onMoveTask = { _, _ -> },
     )

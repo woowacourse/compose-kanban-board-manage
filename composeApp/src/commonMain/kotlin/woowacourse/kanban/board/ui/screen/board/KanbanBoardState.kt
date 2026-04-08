@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 
 class KanbanBoardState(
     val kanbanBoard: KanbanBoard,
@@ -17,7 +17,7 @@ class KanbanBoardState(
         private set
     var tasks by mutableStateOf<List<KanbanTask>>(emptyList())
         private set
-    var isNewTaskDialog by mutableStateOf(false)
+    var isCreateTaskDialog by mutableStateOf(false)
         private set
 
     fun updateSelectedProjectIndex(newIndex: Int) {
@@ -26,10 +26,10 @@ class KanbanBoardState(
         updateTasks()
     }
 
-    fun addTask(kanbanTask: KanbanTask) {
+    fun addTask(task: KanbanTask) {
         val project = projects.getOrNull(selectedProjectIndex) ?: return
-        kanbanBoard.addTask(kanbanTask)
-        project.addTaskId(kanbanTask.id)
+        kanbanBoard.addTask(task)
+        project.addTaskId(task.id)
         updateTasks()
     }
 
@@ -41,12 +41,24 @@ class KanbanBoardState(
         updateTasks()
     }
 
-    fun showNewTaskDialog() {
-        isNewTaskDialog = true
+    fun deleteTask(task: KanbanTask) {
+        val project = projects.getOrNull(selectedProjectIndex) ?: return
+        kanbanBoard.deleteTask(task)
+        project.deleteTaskId(task.id)
+        updateTasks()
     }
 
-    fun hideNewTaskDialog() {
-        isNewTaskDialog = false
+    fun editTask(originalTask: KanbanTask, editedTask: KanbanTask) {
+        kanbanBoard.editTask(originalTask, editedTask)
+        updateTasks()
+    }
+
+    fun showCreateTaskDialog() {
+        isCreateTaskDialog = true
+    }
+
+    fun hideCreateTaskDialog() {
+        isCreateTaskDialog = false
     }
 
     fun getProjectsTitles(): List<String> = projects.map { it.title }
@@ -61,6 +73,6 @@ class KanbanBoardState(
 
     private fun loadTasks(): List<KanbanTask> {
         val project = projects.getOrNull(selectedProjectIndex) ?: return emptyList()
-        return kanbanBoard.getTasks(project.getTaskIds())
+        return kanbanBoard.getTasksByIds(project.getTaskIds())
     }
 }

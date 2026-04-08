@@ -3,7 +3,7 @@
 package woowacourse.kanban.board.domain
 
 import org.assertj.core.api.Assertions.assertThat
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.fixture.createKanbanTask
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -22,14 +22,14 @@ class KanbanTaskTest {
             description = description,
             tags = tags,
             status = Status.TO_DO,
-            assignee = crewName,
+            assigneeState = Assigned(Assignee(crewName)),
         )
 
         // Then
         assertThat(task.title).isEqualTo(title)
         assertThat(task.description).isEqualTo(description)
         assertThat(task.tags).containsExactlyElementsOf(tags)
-        assertThat(task.assignee).isEqualTo(crewName)
+        assertThat(task.assigneeState).isEqualTo(Assigned(Assignee(crewName)))
     }
 
     @Test
@@ -42,7 +42,7 @@ class KanbanTaskTest {
             KanbanTask(
                 title = emptyTitle,
                 status = Status.TO_DO,
-                assignee = "아키",
+                assigneeState = Unassigned,
             )
         }
         assertThat(exception.message).isEqualTo("제목은 비어 있거나 공백만 있을 수 없습니다.")
@@ -58,7 +58,7 @@ class KanbanTaskTest {
             KanbanTask(
                 title = blankTitle,
                 status = Status.TO_DO,
-                assignee = "아키",
+                assigneeState = Unassigned,
             )
         }
         assertThat(exception.message).isEqualTo("제목은 비어 있거나 공백만 있을 수 없습니다.")
@@ -74,7 +74,7 @@ class KanbanTaskTest {
             KanbanTask(
                 title = "제목",
                 status = Status.TO_DO,
-                assignee = "아키",
+                assigneeState = Unassigned,
                 tags = tags,
             )
         }
@@ -91,7 +91,7 @@ class KanbanTaskTest {
             KanbanTask(
                 title = "제목",
                 status = Status.TO_DO,
-                assignee = "아키",
+                assigneeState = Unassigned,
                 tags = tags,
             )
         }
@@ -146,15 +146,43 @@ class KanbanTaskTest {
         val kanbanTask1 = KanbanTask(
             title = "제목",
             status = Status.TO_DO,
-            assignee = "별터",
+            assigneeState = Unassigned,
         )
         val kanbanTask2 = KanbanTask(
             title = "제목",
             status = Status.TO_DO,
-            assignee = "별터",
+            assigneeState = Unassigned,
         )
 
         // Then: 두 개의 KanbanTask의 id 가 중복되지 않는다
         assertThat(kanbanTask1.id).isNotEqualTo(kanbanTask2.id)
+    }
+
+    @Test
+    fun `isValidStatusTransition()를 실행 시 허용된 상태로의 이동 가능 여부를 반환한다`() {
+        // Given: To Do 태스크 한 개를 생성한다.
+        val task = createKanbanTask()
+
+        // When & Then: In Progress 로 이동하면 true를 반환한다.
+        val result1 = task.isValidStatusTransition(Status.IN_PROGRESS)
+        assertThat(result1).isEqualTo(true)
+
+        // When & Then: Review 로 이동하면 false를 반환한다.
+        val result2 = task.isValidStatusTransition(Status.REVIEW)
+        assertThat(result2).isEqualTo(false)
+    }
+
+    @Test
+    fun `isValidAssigneeRequirement()를 실행 시 이동할 상태의 작성자 필요 여부를 반환한다`() {
+        // Given: In Progress 태스크 한 개를 생성한다.
+        val inProgressTask = createKanbanTask(status = Status.IN_PROGRESS)
+
+        // When & Then: To Do로 이동 시 작성자가 필요 없으므로, false를 반환한다.
+        val result1 = inProgressTask.isValidAssigneeRequirement(Status.TO_DO)
+        assertThat(result1).isEqualTo(true)
+
+        // When & Then: Review로 이동 시 작성자가 필요하므로, true를 반환한다.
+        val result2 = inProgressTask.isValidAssigneeRequirement(Status.REVIEW)
+        assertThat(result2).isEqualTo(true)
     }
 }

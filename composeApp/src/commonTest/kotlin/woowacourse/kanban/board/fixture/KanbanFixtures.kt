@@ -1,13 +1,16 @@
 package woowacourse.kanban.board.fixture
 
+import woowacourse.kanban.board.domain.Assigned
+import woowacourse.kanban.board.domain.Assignee
+import woowacourse.kanban.board.domain.AssigneeState
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
 
 fun createKanbanTask(
     id: Long = 0L,
     title: String = "제목",
     status: Status = Status.TO_DO,
-    assignee: String = "별터",
+    assigneeState: AssigneeState = Assigned(Assignee("별터")),
     description: String? = null,
     tags: List<String> = emptyList(),
 ): KanbanTask {
@@ -15,7 +18,7 @@ fun createKanbanTask(
         id = id,
         title = title,
         status = status,
-        assignee = assignee,
+        assigneeState = assigneeState,
         description = description,
         tags = tags,
     )

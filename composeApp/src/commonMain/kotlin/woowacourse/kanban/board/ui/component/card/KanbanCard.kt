@@ -2,6 +2,7 @@ package woowacourse.kanban.board.ui.component.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,16 +32,21 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import woowacourse.kanban.board.data.AssigneePool
+import woowacourse.kanban.board.domain.Assigned
+import woowacourse.kanban.board.domain.AssigneeState
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
+import woowacourse.kanban.board.domain.Unassigned
 
 @Composable
 fun KanbanCard(
     title: String,
-    crewName: String,
+    assigneeState: AssigneeState,
     modifier: Modifier = Modifier,
     tags: List<String> = emptyList(),
     description: String? = null,
+    onClick: () -> Unit = { },
     onDragStart: () -> Unit = { },
     onDragChange: (Offset) -> Unit = { },
     onDragEnd: () -> Unit = { },
@@ -53,6 +59,7 @@ fun KanbanCard(
             .width(286.dp)
             .background(Color.White, RoundedCornerShape(10.dp))
             .border(Dp.Hairline, Color.Gray, RoundedCornerShape(10.dp))
+            .clickable(onClick = onClick)
             .padding(17.dp)
             .onGloballyPositioned { cardWindowPosition = it.positionInWindow() }
             .pointerInput(Unit) {
@@ -94,9 +101,10 @@ fun KanbanCard(
             KanbanCardTags(tags = tags)
         }
 
-        HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
-
-        KanbanCardProfile(crewName = crewName)
+        if (assigneeState is Assigned) {
+            HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
+            KanbanCardProfile(assignee = assigneeState.assignee)
+        }
     }
 }
 
@@ -111,37 +119,38 @@ private fun KanbanCardTags(tags: List<String>) {
 }
 
 private class KanbanCardPreviewParameterProvider : PreviewParameterProvider<KanbanTask> {
+    val assignee = AssigneePool.getAll()[0]
     override val values = sequenceOf(
         KanbanTask(
             title = "너무너무 긴 제목은 한 줄까지만 노출합니다",
             description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
             tags = listOf("컴포넌트", "성능", "긴 태그", "최대로", "5자까지"),
             status = Status.TO_DO,
-            assignee = "아키".repeat(10),
+            assigneeState = Assigned(assignee),
         ),
         KanbanTask(
             title = "LazyColumn 컴포넌트 구현",
             description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
             tags = listOf("컴포넌트", "성능"),
             status = Status.TO_DO,
-            assignee = "아키",
+            assigneeState = Assigned(assignee),
         ),
         KanbanTask(
             title = "LazyColumn 컴포넌트 구현",
             description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
             status = Status.TO_DO,
-            assignee = "아키",
+            assigneeState = Assigned(assignee),
         ),
         KanbanTask(
             title = "LazyColumn 컴포넌트 구현",
             tags = listOf("컴포넌트", "성능"),
             status = Status.TO_DO,
-            assignee = "아키",
+            assigneeState = Assigned(assignee),
         ),
         KanbanTask(
             title = "LazyColumn 컴포넌트 구현",
             status = Status.TO_DO,
-            assignee = "아키",
+            assigneeState = Unassigned,
         ),
     )
 }
@@ -152,7 +161,7 @@ private fun KanbanCardPreview(@PreviewParameter(KanbanCardPreviewParameterProvid
     Box(modifier = Modifier.padding(12.dp)) {
         KanbanCard(
             title = card.title,
-            crewName = card.assignee,
+            assigneeState = card.assigneeState,
             tags = card.tags,
             description = card.description,
         )

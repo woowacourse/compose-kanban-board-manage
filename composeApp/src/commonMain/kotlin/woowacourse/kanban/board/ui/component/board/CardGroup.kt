@@ -9,8 +9,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import woowacourse.kanban.board.data.AssigneePool
+import woowacourse.kanban.board.domain.Assigned
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.Status
+import woowacourse.kanban.board.ui.toBodyColor
+import woowacourse.kanban.board.ui.toBorderColor
+import woowacourse.kanban.board.ui.toMainColor
+import woowacourse.kanban.board.ui.toTitle
 
 @Composable
 fun CardGroup(
@@ -22,6 +28,7 @@ fun CardGroup(
     onTaskDragChange: (Offset) -> Unit = { },
     onTaskDragEnd: () -> Unit = { },
     onTaskDragCancel: () -> Unit = { },
+    onTaskClick: (KanbanTask) -> Unit = { },
 ) {
     Row(
         modifier = modifier,
@@ -33,7 +40,7 @@ fun CardGroup(
                 bodyColor = status.toBodyColor(),
                 borderColor = status.toBorderColor(),
                 mainColor = status.toMainColor(),
-                cards = cards.filter { card -> card.status == status },
+                tasks = cards.filter { card -> card.status == status },
                 modifier = Modifier.width(320.dp),
                 getIsDropTarget = { getIsDropTarget(status) },
                 onBoundsChanged = { onBoundsChanged(it, status) },
@@ -41,6 +48,7 @@ fun CardGroup(
                 onTaskDragChange = onTaskDragChange,
                 onTaskDragEnd = onTaskDragEnd,
                 onTaskDragCancel = onTaskDragCancel,
+                onTaskClick = onTaskClick,
             )
         }
     }
@@ -49,6 +57,7 @@ fun CardGroup(
 @Preview(widthDp = 1300)
 @Composable
 private fun CardGroupPreview() {
+    val assignee = AssigneePool.getAll()[0]
     CardGroup(
         cards = listOf(
             KanbanTask(
@@ -56,42 +65,42 @@ private fun CardGroupPreview() {
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.TO_DO,
-                assignee = "다이노",
+                assigneeState = Assigned(assignee),
             ),
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.TO_DO,
-                assignee = "다이노",
+                assigneeState = Assigned(assignee),
             ),
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.IN_PROGRESS,
-                assignee = "다이노",
+                assigneeState = Assigned(assignee),
             ),
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.DONE,
-                assignee = "다이노",
+                assigneeState = Assigned(assignee),
             ),
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.DONE,
-                assignee = "다이노",
+                assigneeState = Assigned(assignee),
             ),
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
                 status = Status.DONE,
-                assignee = "다이노",
+                assigneeState = Assigned(assignee),
             ),
         ),
     )

@@ -14,34 +14,28 @@ import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.ui.KanbanTypography
 
 @Composable
 fun StatusOptionCard(
-    status: Status,
+    statusTitle: String,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val text = when (status) {
-        Status.TO_DO -> "To Do"
-        Status.IN_PROGRESS -> "In Progress"
-        Status.DONE -> "Done"
-    }
-
     TaskOptionCard(
         isSelected = isSelected,
         onClick = onClick,
         modifier = modifier,
+        width = 147,
     ) {
         Text(
-            text = text,
-            color = if (isSelected) Color.Blue else Black,
-            fontSize = 16.sp,
+            text = statusTitle,
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(vertical = 14.dp, horizontal = 16.dp),
+                .padding(vertical = 14.dp),
+            color = if (isSelected) Color.Blue else Black,
+            style = KanbanTypography.label16Medium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -54,7 +48,7 @@ private fun StatusOptionCardPreview() {
     var isSelected by remember { mutableStateOf(false) }
 
     StatusOptionCard(
-        status = Status.TO_DO,
+        statusTitle = "To Do",
         isSelected = isSelected,
         onClick = { isSelected = !isSelected },
     )

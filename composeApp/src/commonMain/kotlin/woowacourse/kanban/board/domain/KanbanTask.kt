@@ -1,17 +1,15 @@
 package woowacourse.kanban.board.domain
 
-import woowacourse.kanban.board.domain.dialog.Status
 import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.fetchAndIncrement
-import kotlin.concurrent.atomics.incrementAndFetch
 
 @OptIn(ExperimentalAtomicApi::class)
 data class KanbanTask(
     val id: Long = generateId(),
     val title: String,
     val status: Status,
-    val assignee: String,
+    val assigneeState: AssigneeState,
     val description: String? = null,
     val tags: List<String> = emptyList(),
 ) {
@@ -22,6 +20,14 @@ data class KanbanTask(
     }
 
     fun changeStatus(newStatus: Status) = copy(status = newStatus)
+
+    fun isValidStatusTransition(targetStatus: Status): Boolean {
+        return this.status.isValidTransition(targetStatus)
+    }
+
+    fun isValidAssigneeRequirement(targetStatus: Status): Boolean {
+        return targetStatus.isValidAssignee(this.assigneeState)
+    }
 
     companion object {
         private val idIndex = AtomicLong(0L)
