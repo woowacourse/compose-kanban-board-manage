@@ -30,11 +30,16 @@ fun KanbanBoardContent(
     kanbanBoard: KanbanBoard,
     onTaskCreateClick: () -> Unit,
     onMoveTask: (KanbanTask, TaskStatus) -> Unit,
+    onCardClick: (KanbanTask) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var draggedTask by remember { mutableStateOf<KanbanTask?>(null) }
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
     val columnBounds = remember { mutableStateMapOf<TaskStatus, Rect>() }
+
+    val completionRate = kanbanBoard.completionRate
+    val completeCount = kanbanBoard.getCountByStatus(TaskStatus.DONE)
+    val totalCount = kanbanBoard.getTaskCountByTotal
 
     Column(
         modifier = modifier
@@ -42,9 +47,10 @@ fun KanbanBoardContent(
             .fillMaxSize(),
     ) {
         KanbanBoardHeader(
-            board = kanbanBoard,
+            projectName = "Compose1",
+            completionText = "완료율: ${(completionRate * 100).toInt()}% ($completeCount/$totalCount)",
+            progress = completionRate,
             onClick = onTaskCreateClick,
-            modifier = Modifier,
         )
 
         Row(
@@ -81,6 +87,7 @@ fun KanbanBoardContent(
                         draggedTask = null
                         currentDragPosition = null
                     },
+                    onCardClick = onCardClick,
                 )
             }
         }
@@ -94,5 +101,6 @@ private fun KanbanBoardScreenPreview() {
         kanbanBoard = KanbanBoard(emptyList()),
         onTaskCreateClick = {},
         onMoveTask = { _, _ -> },
+        onCardClick = {},
     )
 }

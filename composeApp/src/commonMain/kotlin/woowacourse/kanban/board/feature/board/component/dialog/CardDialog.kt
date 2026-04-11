@@ -1,5 +1,7 @@
 package woowacourse.kanban.board.feature.board.component.dialog
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -7,21 +9,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import woowacourse.kanban.board.core.designsystem.theme.KanbanRed
+import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.TaskFormResult
 import woowacourse.kanban.board.domain.TaskStatus
 import woowacourse.kanban.board.domain.TaskStatusRules
 import woowacourse.kanban.board.feature.board.component.dialog.component.TaskDialogButton
 
 @Composable
-fun TaskDialog(onCreateClick: (result: TaskFormResult) -> Unit, onDismissClick: () -> Unit, modifier: Modifier = Modifier) {
-    val formState = rememberTaskFormState()
+fun CardDialog(
+    onDismissClick: () -> Unit,
+    onDeletedClick: (task: KanbanTask) -> Unit,
+    onUpdatedClick: (taskId: String, result: TaskFormResult) -> Unit,
+    initialTask: KanbanTask,
+    modifier: Modifier = Modifier,
+) {
 
-    var selectedStatusIndex by remember { mutableIntStateOf(0) }
-    var selectedAssigneeIndex by remember { mutableIntStateOf(0) }
-    val selectedStatus = TaskStatus.entries[selectedStatusIndex]
-    val assignees = TaskStatusRules.availableAssignees(selectedStatus)
+    val formState = rememberTaskFormState(initialTask)
+    val initialStatusIndex = TaskStatus.entries.indexOf(initialTask.status).takeIf { it >= 0 } ?: 0
+
+    var selectedStatusIndex by remember(initialTask.id) { mutableIntStateOf(initialStatusIndex) }
+    val assignees = TaskStatusRules.availableAssignees(TaskStatus.entries[selectedStatusIndex])
+    var selectedAssigneeIndex by remember(initialTask.id) {
+        mutableIntStateOf(
+            initialTask.crewName.let { assignees.indexOf(it) }.takeIf { it >= 0 } ?: 0,
+        )
+    }
 
     Dialog(
         onDismissRequest = onDismissClick,
@@ -33,7 +49,7 @@ fun TaskDialog(onCreateClick: (result: TaskFormResult) -> Unit, onDismissClick: 
     ) {
         TaskDialogContent(
             modifier = modifier,
-            topAppBarTitle = "새 태스크 생성",
+            topAppBarTitle = "기존 테스크 수정",
             titleValue = formState.title,
             isTitleError = formState.isTitleError,
             onTitleChanged = {
@@ -57,19 +73,28 @@ fun TaskDialog(onCreateClick: (result: TaskFormResult) -> Unit, onDismissClick: 
             onDismissClick = onDismissClick,
         ) {
             TaskDialogButton(
-                text = "생성",
+                text = "삭제",
                 onClick = {
-                    onCreateClick(
+                    onDeletedClick(initialTask)
+                },
+                contentColor = Color.White,
+                containerColor = Color.KanbanRed,
+            )
+            Spacer(Modifier.width(12.dp))
+            TaskDialogButton(
+                text = "수정",
+                onClick = {
+                    onUpdatedClick(
+                        initialTask.id,
                         TaskFormResult(
                             title = formState.title,
                             description = formState.description.takeIf { it.isNotBlank() },
                             tags = formState.tags,
-                            status = selectedStatus,
+                            status = TaskStatus.entries[selectedStatusIndex],
                             assignee = assignees[selectedAssigneeIndex],
                         ),
                     )
                 },
-                enabled = formState.isCreateButtonEnabled,
                 contentColor = Color.White,
                 containerColor = Color.Blue,
             )

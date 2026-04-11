@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import woowacourse.kanban.board.feature.board.component.KanbanBoardContent
 import woowacourse.kanban.board.feature.board.component.KanbanBoardSidebar
+import woowacourse.kanban.board.feature.board.component.dialog.CardDialog
 import woowacourse.kanban.board.feature.board.component.dialog.TaskDialog
 import woowacourse.kanban.board.feature.board.mapper.toSnackbarMessage
 
@@ -23,7 +24,6 @@ fun KanbanBoardScreen(
 
         onShowSnackbar(message)
         boardState.clearSnackbar(event.id)
-
     }
 
     Row(modifier = modifier.fillMaxSize()) {
@@ -33,6 +33,7 @@ fun KanbanBoardScreen(
             kanbanBoard = boardState.kanbanBoard,
             onTaskCreateClick = boardState::showTaskDialog,
             onMoveTask = boardState::moveTask,
+            onCardClick = boardState::showCardDialog,
         )
     }
 
@@ -40,6 +41,17 @@ fun KanbanBoardScreen(
         TaskDialog(
             onCreateClick = boardState::addTask,
             onDismissClick = boardState::hideTaskDialog,
+        )
+    }
+
+    val selectedTask = boardState.selectedTask
+
+    if (boardState.isCardDialogVisible && selectedTask != null) {
+        CardDialog(
+            onDismissClick = boardState::hideCardDialog,
+            onDeletedClick = boardState::deleteTask,
+            onUpdatedClick = boardState::updateTask,
+            initialTask = selectedTask,
         )
     }
 }

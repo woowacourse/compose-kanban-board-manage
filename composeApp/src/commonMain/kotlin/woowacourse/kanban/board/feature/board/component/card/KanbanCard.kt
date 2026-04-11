@@ -2,6 +2,7 @@ package woowacourse.kanban.board.feature.board.component.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.DrawableResource
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.Tag
 import woowacourse.kanban.board.domain.TaskStatus
@@ -43,17 +43,18 @@ fun KanbanCard(
     modifier: Modifier = Modifier,
     tags: List<Tag> = emptyList(),
     description: String? = null,
-    crewImage: DrawableResource? = null,
     onDragStart: () -> Unit = {},
     onDragChange: (Offset) -> Unit = {},
     onDragEnd: () -> Unit = {},
     onDragCancel: () -> Unit = {},
+    onCardClick: () -> Unit = {},
 ) {
     var cardWindowPosition by remember { mutableStateOf(Offset.Zero) }
 
     Column(
         modifier = modifier
             .width(286.dp)
+            .clickable(onClick = onCardClick)
             .onGloballyPositioned { cardWindowPosition = it.positionInWindow() }
             .pointerInput(Unit) {
                 detectDragGestures(
@@ -95,16 +96,9 @@ fun KanbanCard(
 
         HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
 
-        if (crewImage != null) {
-            KanbanCardProfile(
-                crewName = crewName,
-                crewImage = crewImage,
-            )
-        } else {
-            KanbanCardProfile(
-                crewName = crewName,
-            )
-        }
+        KanbanCardProfile(
+            crewName = crewName,
+        )
     }
 }
 
@@ -175,6 +169,7 @@ private fun KanbanCardPreview_Optional() {
             crewName = commonCrewName,
             status = TaskStatus.TODO,
         )
+
         KanbanCard(
             title = minimalTask.title,
             crewName = minimalTask.crewName,

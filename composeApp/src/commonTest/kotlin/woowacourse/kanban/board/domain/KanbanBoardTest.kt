@@ -1,7 +1,7 @@
 package woowacourse.kanban.board.domain
 
-import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
+import org.assertj.core.api.Assertions.assertThat
 
 class KanbanBoardTest {
 
@@ -56,11 +56,13 @@ class KanbanBoardTest {
         val board = KanbanBoard(listOf(task))
 
         // when
-        val updatedBoard = board.moveTask(task.id, TaskStatus.DONE)
+        val result = board.moveTask(task.id, TaskStatus.IN_PROGRESS)
 
         // then
-        assertThat(updatedBoard.tasks.first().status).isEqualTo(TaskStatus.DONE)
-        assertThat(updatedBoard.tasks.first().id).isEqualTo(task.id)
+        assertThat(result).isInstanceOf(MoveResult.MoveSuccess::class.java)
+        val updatedBoard = (result as MoveResult.MoveSuccess).updatedBoard
+        assertThat(updatedBoard.allTasks().first().status).isEqualTo(TaskStatus.IN_PROGRESS)
+        assertThat(updatedBoard.allTasks().first().id).isEqualTo(task.id)
     }
 
     @Test
@@ -70,11 +72,13 @@ class KanbanBoardTest {
         val board = KanbanBoard(listOf(task))
 
         // when
-        val updatedBoard = board.moveTask(task.id, TaskStatus.DONE)
+        val result = board.moveTask(task.id, TaskStatus.IN_PROGRESS)
 
         // then
+        assertThat(result).isInstanceOf(MoveResult.MoveSuccess::class.java)
+        val updatedBoard = (result as MoveResult.MoveSuccess).updatedBoard
         assertThat(updatedBoard).isNotSameAs(board)
-        assertThat(board.tasks.first().status).isEqualTo(TaskStatus.TODO)
+        assertThat(board.allTasks().first().status).isEqualTo(TaskStatus.TODO)
     }
 
     @Test
@@ -85,10 +89,23 @@ class KanbanBoardTest {
         val nonExistentTask = createTask()
 
         // when
-        val updatedBoard = board.moveTask(nonExistentTask.id, TaskStatus.DONE)
+        val result = board.moveTask(nonExistentTask.id, TaskStatus.DONE)
 
         // then
-        assertThat(updatedBoard.tasks).isEqualTo(board.tasks)
+        assertThat(result).isEqualTo(MoveResult.MoveFailed)
+    }
+
+    @Test
+    fun `담당자가 없음인 태스크는 TODO에서 IN_PROGRESS로 이동할 수 없다`() {
+        // given
+        val task = createTask(status = TaskStatus.TODO, crewName = TaskStatusRules.UNASSIGNED)
+        val board = KanbanBoard(listOf(task))
+
+        // when
+        val result = board.moveTask(task.id, TaskStatus.IN_PROGRESS)
+
+        // then
+        assertThat(result).isEqualTo(MoveResult.MoveFailed)
     }
 
     @Test
@@ -112,4 +129,8 @@ class KanbanBoardTest {
             crewName = crewName,
         )
     }
+}
+
+private fun KanbanBoard.allTasks(): List<KanbanTask> = TaskStatus.entries.flatMap { status ->
+    getTasksByStatus(status)
 }

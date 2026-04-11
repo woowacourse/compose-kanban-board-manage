@@ -6,10 +6,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import woowacourse.kanban.board.domain.AddResult
+import woowacourse.kanban.board.domain.CanDeleteResult
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanTask
+import woowacourse.kanban.board.domain.MoveResult
+import woowacourse.kanban.board.domain.TaskFormResult
 import woowacourse.kanban.board.domain.TaskStatus
-import woowacourse.kanban.board.feature.board.component.dialog.model.TaskFormResult
+import woowacourse.kanban.board.domain.UpdateResult
 import woowacourse.kanban.board.feature.board.model.SnackbarEvent
 import woowacourse.kanban.board.feature.board.model.SnackbarMessageType
 
@@ -21,6 +25,12 @@ class KanbanBoardState(initialBoard: KanbanBoard = KanbanBoard()) {
     var isTaskDialogVisible by mutableStateOf(false)
         private set
 
+    var isCardDialogVisible by mutableStateOf(false)
+        private set
+
+    var selectedTask by mutableStateOf<KanbanTask?>(null)
+        private set
+
     var snackbarEvent: SnackbarEvent? by mutableStateOf(null)
         private set
 
@@ -30,8 +40,18 @@ class KanbanBoardState(initialBoard: KanbanBoard = KanbanBoard()) {
         isTaskDialogVisible = true
     }
 
+    fun showCardDialog(task: KanbanTask) {
+        selectedTask = task
+        isCardDialogVisible = true
+    }
+
     fun hideTaskDialog() {
         isTaskDialogVisible = false
+    }
+
+    fun hideCardDialog() {
+        selectedTask = null
+        isCardDialogVisible = false
     }
 
     fun clearSnackbar(consumedId: Long) {
@@ -48,25 +68,59 @@ class KanbanBoardState(initialBoard: KanbanBoard = KanbanBoard()) {
     }
 
     fun moveTask(task: KanbanTask, targetStatus: TaskStatus) {
-        kanbanBoard = kanbanBoard.moveTask(task.id, targetStatus)
-        emitSnackbar(SnackbarMessageType.TaskMoved)
+        when (val result = kanbanBoard.moveTask(task.id, targetStatus)) {
+            is MoveResult.MoveSuccess -> {
+                kanbanBoard = result.updatedBoard
+                emitSnackbar(SnackbarMessageType.TaskMoved)
+            }
+
+            is MoveResult.MoveFailed -> {
+                emitSnackbar(SnackbarMessageType.TaskMoveFailed)
+            }
+        }
     }
 
     fun addTask(result: TaskFormResult) {
-        runCatching {
-            val newTask = KanbanTask(
-                title = result.title,
-                description = result.description,
-                tags = result.tags,
-                status = result.status,
-                crewName = result.assignee,
-            )
-            kanbanBoard = kanbanBoard.copy(tasks = kanbanBoard.tasks + newTask)
-            hideTaskDialog()
-        }.onSuccess {
-            emitSnackbar(SnackbarMessageType.TaskAdded)
-        }.onFailure { e ->
-            emitSnackbar(SnackbarMessageType.TaskAddFailed)
+        when (val addResult = kanbanBoard.addTask(result)) {
+            is AddResult.AddSuccess -> {
+                kanbanBoard = addResult.updatedBoard
+                hideTaskDialog()
+                emitSnackbar(SnackbarMessageType.TaskAdded)
+            }
+
+            is AddResult.AddFailed -> {
+                hideTaskDialog()
+                emitSnackbar(SnackbarMessageType.TaskAddFailed)
+            }
+        }
+    }
+
+    fun deleteTask(task: KanbanTask) {
+        when (val canDelete = kanbanBoard.canDelete(task)) {
+            is CanDeleteResult.DeleteSuccess -> {
+                kanbanBoard = canDelete.updatedBoard
+                hideCardDialog()
+                emitSnackbar(SnackbarMessageType.TaskDeleted)
+            }
+            is CanDeleteResult.DeleteFailed -> {
+                hideCardDialog()
+                emitSnackbar(SnackbarMessageType.TaskDeleteFailed)
+            }
+        }
+    }
+
+    fun updateTask(taskId: String, result: TaskFormResult) {
+        when (val updateResult = kanbanBoard.updateTask(taskId, result)) {
+            is UpdateResult.UpdateSuccess -> {
+                kanbanBoard = updateResult.updatedBoard
+                hideCardDialog()
+                emitSnackbar(SnackbarMessageType.TaskUpdated)
+            }
+
+            is UpdateResult.UpdateFailed -> {
+                hideCardDialog()
+                emitSnackbar(SnackbarMessageType.TaskUpdateFailed)
+            }
         }
     }
 }

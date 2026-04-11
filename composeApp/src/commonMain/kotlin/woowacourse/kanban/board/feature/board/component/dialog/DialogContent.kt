@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.feature.board.component.dialog.component
+package woowacourse.kanban.board.feature.board.component.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,9 +25,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.domain.TaskStatus
+import woowacourse.kanban.board.feature.board.component.dialog.component.AssigneeOptionCard
+import woowacourse.kanban.board.feature.board.component.dialog.component.StatusOptionCard
+import woowacourse.kanban.board.feature.board.component.dialog.component.TaskDialogButton
+import woowacourse.kanban.board.feature.board.component.dialog.component.TaskDialogTextField
+import woowacourse.kanban.board.feature.board.component.dialog.component.TaskDialogTopAppBar
+import woowacourse.kanban.board.feature.board.component.dialog.component.TaskFieldLabel
+import woowacourse.kanban.board.feature.board.mapper.toDisplayText
 
 @Composable
 fun TaskDialogContent(
+    topAppBarTitle: String,
     titleValue: String,
     isTitleError: Boolean,
     onTitleChanged: (String) -> Unit,
@@ -42,10 +51,9 @@ fun TaskDialogContent(
     assignees: List<String>,
     selectedAssigneeIndex: Int,
     onAssigneeChanged: (Int) -> Unit,
-    enabled: Boolean,
     onDismissClick: () -> Unit,
-    onCreateClick: () -> Unit,
     modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit,
 ) {
     val isTagError = isTagCountError || isTagFormatError
     val tagErrorMessage = when {
@@ -63,7 +71,7 @@ fun TaskDialogContent(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         TaskDialogTopAppBar(
-            title = "새 태스크 생성",
+            title = topAppBarTitle,
             onClick = onDismissClick,
             modifier = Modifier.padding(bottom = 4.dp),
         )
@@ -130,18 +138,15 @@ fun TaskDialogContent(
             isRequired = true,
         ) {
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 statuses.forEachIndexed { index, status ->
-                    val statusText = when (status) {
-                        TaskStatus.TODO -> "To Do"
-                        TaskStatus.IN_PROGRESS -> "In Progress"
-                        TaskStatus.DONE -> "Done"
-                    }
                     StatusOptionCard(
-                        text = statusText,
+                        text = status.toDisplayText,
                         isSelected = selectedStatusIndex == index,
                         onClick = { onStatusChanged(index) },
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }
@@ -180,13 +185,8 @@ fun TaskDialogContent(
                 onClick = onDismissClick,
             )
             Spacer(Modifier.width(12.dp))
-            TaskDialogButton(
-                text = "생성",
-                onClick = onCreateClick,
-                enabled = enabled,
-                contentColor = Color.White,
-                containerColor = Color.Blue,
-            )
+
+            content()
         }
     }
 }
@@ -212,10 +212,11 @@ private fun TaskLabelLayout(
     }
 }
 
-@Preview
+@Preview(heightDp = 920)
 @Composable
 private fun TaskDialogContentPreview() {
     TaskDialogContent(
+        topAppBarTitle = "기존 태스크 수정",
         titleValue = "",
         isTitleError = false,
         onTitleChanged = {},
@@ -231,8 +232,7 @@ private fun TaskDialogContentPreview() {
         assignees = listOf("다이노", "페임스"),
         selectedAssigneeIndex = 0,
         onAssigneeChanged = {},
-        enabled = false,
         onDismissClick = {},
-        onCreateClick = {},
+        content = {},
     )
 }
