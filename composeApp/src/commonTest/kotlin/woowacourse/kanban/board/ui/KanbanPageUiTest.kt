@@ -1,14 +1,9 @@
 package woowacourse.kanban.board.ui
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
@@ -16,22 +11,26 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
-import woowacourse.kanban.board.BoardState
 import woowacourse.kanban.board.KanbanPage
-import woowacourse.kanban.board.components.KanbanBoard
 import woowacourse.kanban.board.components.KanbanSidebar
 import woowacourse.kanban.board.constant.MockData
 import woowacourse.kanban.board.constant.SnackBarText
+import woowacourse.kanban.domain.project.KanbanProject
+import woowacourse.kanban.domain.task.Assignee
+import woowacourse.kanban.domain.task.KanbanTask
+import woowacourse.kanban.domain.task.Tags
+import woowacourse.kanban.domain.task.TaskData
 import woowacourse.kanban.domain.task.TaskStatus
+import woowacourse.kanban.domain.task.Title
 
 @OptIn(ExperimentalTestApi::class)
-class KanbanProjectUiTest {
+class KanbanPageUiTest {
 
     @Test
     fun `프로젝트를 선택하면 프로젝트에 저장되어 있는 태스크들이 표시되어야 한다`() = runComposeUiTest {
         // given : 칸반 페이지가 생성된다.
         setContent {
-            KanbanPage(projects = MockData.MOCK_PROJECTS)
+            KanbanPage()
         }
 
         // when : 프로젝트 버튼을 눌렀을 때
@@ -48,7 +47,7 @@ class KanbanProjectUiTest {
     fun `프로젝트를 선택하면 보드의 제목이 변경되어야 한다`() = runComposeUiTest {
         // given : 칸반 페이지가 생성된다.
         setContent {
-            KanbanPage(projects = MockData.MOCK_PROJECTS)
+            KanbanPage()
         }
 
         // when : 가장 처음 프로젝트의 제목이 표시되고 다른 프로젝트 버튼을 눌렀을 때
@@ -84,27 +83,36 @@ class KanbanProjectUiTest {
     @Test
     fun `상태를 변경 했을 때 스낵바가 출력되어야 한다`() = runComposeUiTest {
         // given : snackBarHostState를 설정한 Scaffold와 BoardStateHolder, Mock 데이터가 주어진다.
-        val project = MockData.MOCK_PROJECTS.first()
-
-        lateinit var state: BoardState
-        lateinit var snackbarHostState: SnackbarHostState
+        val project = listOf(
+            KanbanProject(
+                title = "Compose1",
+                tasks = listOf(
+                    KanbanTask(
+                        data = TaskData(
+                            title = Title("제목"),
+                            content = "",
+                            tags = Tags(),
+                            assignee = Assignee.DINO,
+                        ),
+                        status = TaskStatus.TO_DO,
+                    ),
+                ),
+            ),
+        )
 
         setContent {
-            snackbarHostState = remember { SnackbarHostState() }
-            state = remember { BoardState(project.project) }
-
-            Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { paddingValues ->
-                KanbanBoard(
-                    project = project,
-                    boardState = state,
-                    snackbarHostState = snackbarHostState,
-                    modifier = Modifier.padding(paddingValues),
-                )
-            }
+            KanbanPage(
+                inputProjects = project,
+            )
         }
 
         // when : 상태 변경 함수를 호출했을 때
-        state.changeTask(newStatus = TaskStatus.DONE, 0)
+        onNodeWithText("제목").performClick()
+        waitForIdle()
+        onNode(hasText("In Progress") and hasClickAction()).performClick()
+        waitForIdle()
+        onNodeWithText("수정").performClick()
+        waitForIdle()
 
         // then : "태스크가 이동되었습니다" 스낵바가 출력되어야 한다.
         onNodeWithText(SnackBarText.EDIT_TASK, useUnmergedTree = true).assertExists()

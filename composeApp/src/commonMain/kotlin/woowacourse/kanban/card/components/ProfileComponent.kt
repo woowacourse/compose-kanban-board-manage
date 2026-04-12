@@ -17,10 +17,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.core.design.Colors
-import woowacourse.kanban.domain.task.Nickname
 
 @Composable
-fun Profile(nickname: Nickname, modifier: Modifier = Modifier) {
+fun Profile(nickname: String, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -36,7 +35,7 @@ fun Profile(nickname: Nickname, modifier: Modifier = Modifier) {
                 .background(color = Colors.NeutralGray),
         )
         Text(
-            nickname.nickname,
+            nickname,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
         )

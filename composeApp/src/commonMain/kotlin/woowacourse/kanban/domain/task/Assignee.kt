@@ -1,3 +1,7 @@
 package woowacourse.kanban.domain.task
 
-data class Assignee(val nickname: Nickname)
+enum class Assignee {
+    NONE,
+    DINO,
+    FAMES,
+}

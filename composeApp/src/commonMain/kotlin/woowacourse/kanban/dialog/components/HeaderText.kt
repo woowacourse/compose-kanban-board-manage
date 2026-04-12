@@ -1,4 +1,4 @@
-package woowacourse.kanban.create.components
+package woowacourse.kanban.dialog.components
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

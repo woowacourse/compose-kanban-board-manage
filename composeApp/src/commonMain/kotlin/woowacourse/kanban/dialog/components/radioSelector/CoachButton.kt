@@ -1,4 +1,4 @@
-package woowacourse.kanban.create.components.radioSelector
+package woowacourse.kanban.dialog.components.radioSelector
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,6 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.core.design.Colors
 import woowacourse.kanban.domain.task.Assignee
+
+private val Assignee.toNickName: String
+    get() = when (this) {
+        Assignee.NONE -> "없음"
+        Assignee.DINO -> "다이노"
+        Assignee.FAMES -> "페임스"
+    }
 
 @Composable
 fun CoachButton(
@@ -65,14 +72,16 @@ fun CoachButton(
             ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "코치 프로필 아이콘",
-                tint = Colors.IconTertiary,
-            )
-            Spacer(modifier = Modifier.width(12.dp))
+            if (assignee != Assignee.NONE) {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "코치 프로필 아이콘",
+                    tint = Colors.IconTertiary,
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+            }
             Text(
-                assignee.nickname.nickname,
+                assignee.toNickName,
                 fontWeight = FontWeight.W500,
                 fontSize = 14.sp,
                 color = Colors.PrimarySubText,

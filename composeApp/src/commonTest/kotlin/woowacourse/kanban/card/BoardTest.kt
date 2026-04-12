@@ -8,7 +8,7 @@ import kotlin.test.Test
 import woowacourse.kanban.card.constant.DEFAULT_CONTENT
 import woowacourse.kanban.card.constant.DEFAULT_NAME
 import woowacourse.kanban.card.constant.DEFAULT_TITLE
-import woowacourse.kanban.domain.task.Nickname
+import woowacourse.kanban.domain.task.Assignee
 import woowacourse.kanban.domain.task.Tags
 import woowacourse.kanban.domain.task.TaskData
 import woowacourse.kanban.domain.task.Title
@@ -25,7 +25,7 @@ class BoardTest {
         title = Title(title),
         content = content,
         tags = Tags(tags),
-        nickname = Nickname(nickname),
+        assignee = Assignee.DINO,
     )
 
     @Composable
@@ -44,10 +44,10 @@ class BoardTest {
 
         // when
         // then
-        onNodeWithTag("제목").assertExists()
-        onNodeWithTag("중간내용").assertExists()
-        onNodeWithTag("테그목록").assertExists()
-        onNodeWithTag("프로필").assertExists()
+        onNodeWithTag("제목", useUnmergedTree = true).assertExists()
+        onNodeWithTag("중간내용", useUnmergedTree = true).assertExists()
+        onNodeWithTag("테그목록", useUnmergedTree = true).assertExists()
+        onNodeWithTag("프로필", useUnmergedTree = true).assertExists()
     }
 
     @Test
@@ -61,7 +61,7 @@ class BoardTest {
 
         // when
         // then
-        onNodeWithTag("중간내용").assertDoesNotExist()
+        onNodeWithTag("중간내용", useUnmergedTree = true).assertDoesNotExist()
     }
 
     @Test
@@ -75,7 +75,7 @@ class BoardTest {
 
         // when
         // then
-        onNodeWithTag("테그목록").assertDoesNotExist()
+        onNodeWithTag("테그목록", useUnmergedTree = true).assertDoesNotExist()
     }
 
     @Test
@@ -89,7 +89,7 @@ class BoardTest {
 
         // when
         // then
-        onNodeWithTag("중간내용").assertDoesNotExist()
-        onNodeWithTag("테그목록").assertDoesNotExist()
+        onNodeWithTag("중간내용", useUnmergedTree = true).assertDoesNotExist()
+        onNodeWithTag("테그목록", useUnmergedTree = true).assertDoesNotExist()
     }
 }

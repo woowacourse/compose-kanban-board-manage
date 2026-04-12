@@ -1,4 +1,4 @@
-package woowacourse.kanban.create.components
+package woowacourse.kanban.dialog.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,15 +16,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.core.design.Colors
 
-@Preview(showBackground = true)
 @Composable
-fun DialogBar(modifier: Modifier = Modifier) {
+fun DialogBar(text: String, modifier: Modifier = Modifier) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier,
     ) {
-        Text("새 태스크 생성", fontWeight = FontWeight.W600, fontSize = 20.sp, color = Colors.PrimaryText)
+        Text(text, fontWeight = FontWeight.W600, fontSize = 20.sp, color = Colors.PrimaryText)
         Icon(
             imageVector = Icons.Default.Close,
             contentDescription = "닫기 버튼",
@@ -32,4 +31,16 @@ fun DialogBar(modifier: Modifier = Modifier) {
             tint = Colors.IconSecondary,
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NewDialogBarPreview() {
+    DialogBar("새 태스크 생성")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EditDialogBarPreview() {
+    DialogBar("기존 태스크 수정")
 }

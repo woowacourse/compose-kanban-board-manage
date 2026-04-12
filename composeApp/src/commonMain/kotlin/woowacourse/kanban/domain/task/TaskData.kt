@@ -6,6 +6,6 @@ data class TaskData(
     val title: Title,
     val content: String = "",
     val tags: Tags,
-    val nickname: Nickname,
+    val assignee: Assignee,
     val id: UUID = UUID.randomUUID()
 )

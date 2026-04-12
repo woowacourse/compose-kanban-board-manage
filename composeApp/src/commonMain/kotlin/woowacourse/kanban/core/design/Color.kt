@@ -23,9 +23,11 @@ object Colors {
     val TextFieldPlaceholder = Color(0xFFAAAAAA)
     val TextFieldHint = Color(0xFF49454F)
 
-    // 액션 색상
+    // 생성 버튼 색상
     val ActionPrimary = Color(0xFF4F39F6)
     val ActionPrimaryDisabled = Color(0xFFA7A4BC)
+
+    val DeleteButton = Color(0xFFDB6365)
 
     // 아이콘 색상
     val IconSecondary = Color(0xFF6A7282)
@@ -44,16 +46,19 @@ object Colors {
     // 칸반 보드 리스트 - 타이틀 색상
     val StatusBgToDo = Color(0xFF155DFC)
     val StatusBgInProgress = Color(0xFFE17100)
+    val StatusBgReview = Color(0xFF8B5CF6)
     val StatusBgDone = Color(0xFF00A63E)
 
     // 칸반 보드 리스트 - 배경 색상
     val StatusListBgToDo = Color(0xFFEFF6FF)
     val StatusListBgInProgress = Color(0xFFFFFBEB)
+    val StatusListBgReview = Color(0xFFEDE9FE)
     val StatusListBgDone = Color(0xFFF0FDF4)
 
     // 칸반 보드 리스트 - 테두리 색상
     val StatusListBorderToDo = Color(0xFFBEDBFF)
     val StatusListBorderInProgress = Color(0xFFFEE685)
+    val StatusListBorderReview = Color(0xFFD2C7EA)
     val StatusListBorderDone = Color(0xFFB9F8CF)
 
     // 프로젝트 아이템

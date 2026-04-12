@@ -40,6 +40,7 @@ private val TaskStatus.displayName: String
     get() = when (this) {
         TaskStatus.TO_DO -> "To Do"
         TaskStatus.IN_PROGRESS -> "In Progress"
+        TaskStatus.REVIEW -> "Review"
         TaskStatus.DONE -> "Done"
     }
 
@@ -47,6 +48,7 @@ private val TaskStatus.titleColor: Color
     get() = when (this) {
         TaskStatus.TO_DO -> Colors.StatusBgToDo
         TaskStatus.IN_PROGRESS -> Colors.StatusBgInProgress
+        TaskStatus.REVIEW -> Colors.StatusBgReview
         TaskStatus.DONE -> Colors.StatusBgDone
     }
 
@@ -54,6 +56,7 @@ private val TaskStatus.bgColor: Color
     get() = when (this) {
         TaskStatus.TO_DO -> Colors.StatusListBgToDo
         TaskStatus.IN_PROGRESS -> Colors.StatusListBgInProgress
+        TaskStatus.REVIEW -> Colors.StatusListBgReview
         TaskStatus.DONE -> Colors.StatusListBgDone
     }
 
@@ -61,6 +64,7 @@ private val TaskStatus.borderColor: Color
     get() = when (this) {
         TaskStatus.TO_DO -> Colors.StatusListBorderToDo
         TaskStatus.IN_PROGRESS -> Colors.StatusListBorderInProgress
+        TaskStatus.REVIEW -> Colors.StatusListBorderReview
         TaskStatus.DONE -> Colors.StatusListBorderDone
     }
 
@@ -68,6 +72,7 @@ private val TaskStatus.borderColor: Color
 fun StatusCardList(
     tasks: List<KanbanTask>,
     status: TaskStatus,
+    onCardClick: (KanbanTask) -> Unit,
     modifier: Modifier = Modifier,
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = {},
@@ -145,6 +150,7 @@ fun StatusCardList(
             items(count = tasks.size, key = { tasks[it].data.id }) {
                 KanbanCard(
                     tasks[it].data,
+                    onClick = { onCardClick(tasks[it]) },
                     onDragStart = {
                         onTaskDragStart(tasks[it])
                     },
@@ -163,5 +169,6 @@ private fun StatusCardListPreview() {
     StatusCardList(
         tasks = emptyList(),
         status = TaskStatus.TO_DO,
+        onCardClick = {},
     )
 }

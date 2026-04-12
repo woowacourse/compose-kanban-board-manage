@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.core.design.Colors
 import woowacourse.kanban.domain.project.KanbanProject
+import woowacourse.kanban.domain.task.KanbanTask
 
 @Composable
 fun KanbanSidebar(
@@ -59,12 +60,10 @@ fun KanbanSidebarPreview() {
     KanbanSidebar(
         projects = listOf(
             KanbanProject(
-                inputTasks = mutableListOf(),
-
+                tasks = emptyList<KanbanTask>(),
             ),
             KanbanProject(
-                inputTasks = mutableListOf(),
-
+                tasks = emptyList<KanbanTask>(),
             ),
         ),
     )

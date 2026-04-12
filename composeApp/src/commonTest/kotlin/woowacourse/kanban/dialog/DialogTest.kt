@@ -1,4 +1,4 @@
-package woowacourse.kanban.create
+package woowacourse.kanban.dialog
 
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -12,11 +12,11 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
-import woowacourse.kanban.create.components.radioSelector.CoachButton
-import woowacourse.kanban.create.components.radioSelector.RadioSelector
-import woowacourse.kanban.create.components.radioSelector.StatusButton
+import woowacourse.kanban.dialog.components.radioSelector.CoachButton
+import woowacourse.kanban.dialog.components.radioSelector.RadioSelector
+import woowacourse.kanban.dialog.components.radioSelector.StatusButton
+import woowacourse.kanban.dialog.create.TaskCreateDialog
 import woowacourse.kanban.domain.task.Assignee
-import woowacourse.kanban.domain.task.Nickname
 import woowacourse.kanban.domain.task.TaskStatus
 
 @OptIn(ExperimentalTestApi::class)
@@ -26,6 +26,7 @@ class DialogTest {
         get() = when (this) {
             TaskStatus.TO_DO -> "To Do"
             TaskStatus.IN_PROGRESS -> "In Progress"
+            TaskStatus.REVIEW -> "Review"
             TaskStatus.DONE -> "Done"
         }
 
@@ -61,10 +62,7 @@ class DialogTest {
     fun `담당자 버튼을 클릭 했을 때 다른 상태 버튼은 선택되지 않아야 한다`() = runComposeUiTest {
         var selectedCoachIndex = mutableIntStateOf(0)
         // given
-        val assignees = listOf(
-            Assignee(Nickname("다이노")),
-            Assignee(Nickname("페임스")),
-        )
+        val assignees = Assignee.entries
 
         setContent {
             RadioSelector(

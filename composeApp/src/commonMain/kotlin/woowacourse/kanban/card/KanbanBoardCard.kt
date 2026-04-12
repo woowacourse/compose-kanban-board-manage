@@ -2,6 +2,7 @@ package woowacourse.kanban.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,21 +32,27 @@ import woowacourse.kanban.card.components.Content
 import woowacourse.kanban.card.components.Profile
 import woowacourse.kanban.card.components.TagsComponent
 import woowacourse.kanban.card.constant.DEFAULT_CONTENT
-import woowacourse.kanban.card.constant.DEFAULT_NAME
 import woowacourse.kanban.card.constant.DEFAULT_TITLE
 import woowacourse.kanban.card.constant.MAX_CONTENT
-import woowacourse.kanban.card.constant.MAX_NAME
 import woowacourse.kanban.card.constant.MAX_TITLE
 import woowacourse.kanban.core.design.Colors
-import woowacourse.kanban.domain.task.Nickname
+import woowacourse.kanban.domain.task.Assignee
 import woowacourse.kanban.domain.task.Tags
 import woowacourse.kanban.domain.task.TaskData
 import woowacourse.kanban.domain.task.Title
+
+private val Assignee.toNickName: String
+    get() = when (this) {
+        Assignee.NONE -> ""
+        Assignee.DINO -> "다이노"
+        Assignee.FAMES -> "페임스"
+    }
 
 @Composable
 fun KanbanCard(
     board: TaskData,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     onDragStart: () -> Unit = {},
     onDragChange: (Offset) -> Unit = {},
     onDragEnd: () -> Unit = {},
@@ -58,6 +65,7 @@ fun KanbanCard(
             .width(270.dp)
             .clip(shape = RoundedCornerShape(15.dp))
             .background(Color.White)
+            .clickable(onClick = onClick)
             .border(
                 width = 1.dp,
                 color = Colors.PrimaryBorder,
@@ -109,14 +117,16 @@ fun KanbanCard(
                 )
             }
 
-            // 구분선
-            HorizontalDivider(thickness = 2.dp)
+            if (board.assignee != Assignee.NONE) {
+                // 구분선
+                HorizontalDivider(thickness = 2.dp)
 
-            // 작성자
-            Profile(
-                nickname = board.nickname,
-                modifier = Modifier.padding(vertical = 8.dp).testTag("프로필"),
-            )
+                // 작성자
+                Profile(
+                    nickname = board.assignee.toNickName,
+                    modifier = Modifier.padding(vertical = 8.dp).testTag("프로필"),
+                )
+            }
         }
     }
 }
@@ -127,29 +137,29 @@ class BoardPreviewParameterProvider : PreviewParameterProvider<TaskData> {
             title = Title(DEFAULT_TITLE),
             content = DEFAULT_CONTENT,
             tags = Tags(listOf("컴포넌트", "성능")),
-            nickname = Nickname(DEFAULT_NAME),
+            assignee = Assignee.NONE,
         ),
         TaskData(
             title = Title(DEFAULT_TITLE),
             tags = Tags(listOf("컴포넌트", "성능")),
-            nickname = Nickname(DEFAULT_NAME),
+            assignee = Assignee.DINO,
         ),
         TaskData(
             title = Title(DEFAULT_TITLE),
             content = DEFAULT_CONTENT,
             tags = Tags(),
-            nickname = Nickname(DEFAULT_NAME),
+            assignee = Assignee.DINO,
         ),
         TaskData(
             title = Title(DEFAULT_TITLE),
             tags = Tags(),
-            nickname = Nickname(DEFAULT_NAME),
+            assignee = Assignee.DINO,
         ),
         TaskData(
             title = Title(MAX_TITLE),
             content = MAX_CONTENT,
             tags = Tags(listOf("너무너무", "긴 태그", "최대로", "5자까지", "5개제한임")),
-            nickname = Nickname(MAX_NAME),
+            assignee = Assignee.DINO,
         ),
     )
 }

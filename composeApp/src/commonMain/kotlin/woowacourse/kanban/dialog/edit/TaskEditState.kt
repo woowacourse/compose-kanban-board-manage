@@ -1,4 +1,4 @@
-package woowacourse.kanban.create
+package woowacourse.kanban.dialog.edit
 
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -12,12 +12,12 @@ import woowacourse.kanban.domain.task.TaskData
 import woowacourse.kanban.domain.task.TaskStatus
 import woowacourse.kanban.domain.task.Title
 
-class TaskCreateState {
-    var titleInputValue by mutableStateOf("")
+class TaskEditState(task: KanbanTask, assignees: List<Assignee>) {
+    var titleInputValue by mutableStateOf(task.data.title.content)
         private set
-    var contentInputValue by mutableStateOf("")
+    var contentInputValue by mutableStateOf(task.data.content)
         private set
-    var tagInputValue by mutableStateOf("")
+    var tagInputValue by mutableStateOf(task.data.tags.tags.joinToString(", "))
         private set
 
     var isTitleError by mutableStateOf(false)
@@ -26,9 +26,9 @@ class TaskCreateState {
         private set
     val isCreateError by derivedStateOf { isTitleError || isTagError }
 
-    var selectedStatusIndex by mutableIntStateOf(0)
+    var selectedStatusIndex by mutableIntStateOf(TaskStatus.entries.indexOfFirst { it == task.status })
         private set
-    var selectedAssigneeIndex by mutableIntStateOf(0)
+    var selectedAssigneeIndex by mutableIntStateOf(assignees.indexOfFirst { it == task.data.assignee })
         private set
 
     fun onTitleChange(input: String) {
@@ -77,9 +77,10 @@ class TaskCreateState {
                 title = Title(titleInputValue),
                 content = contentInputValue,
                 tags = Tags(
-                    if (tagInputValue.isNotBlank()) tagInputValue.split(",").map { it.trim() } else emptyList(),
+                    if (tagInputValue.isNotBlank()) tagInputValue.split(",")
+                        .map { it.trim() } else emptyList(),
                 ),
-                nickname = assignee.nickname,
+                assignee = assignee,
             ),
             status = TaskStatus.entries[selectedStatusIndex],
         )

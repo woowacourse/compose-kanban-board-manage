@@ -27,8 +27,10 @@ fun KanbanPage(
     inputProjects: List<KanbanProject> = MockData.MOCK_PROJECTS,
     snackbarHostState: SnackbarHostState = SnackbarHostState(),
 ) {
-    var selectedProject by remember { mutableStateOf(inputProjects.first()) }
+    var projects by remember { mutableStateOf(inputProjects) }
     var selectedProjectIndex by remember { mutableIntStateOf(0) }
+
+    val selectedProject = projects[selectedProjectIndex]
 
     Scaffold(
         snackbarHost = {
@@ -40,17 +42,20 @@ fun KanbanPage(
     ) { innerPadding ->
         Row(modifier = Modifier.padding(innerPadding)) {
             KanbanSidebar(
-                inputProjects,
+                projects = projects,
                 selectedProjectIndex = selectedProjectIndex,
                 onClick = { index ->
                     selectedProjectIndex = index
-                    selectedProject = inputProjects[selectedProjectIndex]
                 },
             )
             KanbanBoard(
                 project = selectedProject,
-                boardState = BoardState(selectedProject),
                 snackbarHostState = snackbarHostState,
+                onProjectChanged = { updatedProject ->
+                    val newList = projects.toMutableList()
+                    newList[selectedProjectIndex] = updatedProject
+                    projects = newList
+                },
             )
         }
     }

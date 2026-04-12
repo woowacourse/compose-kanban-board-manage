@@ -18,10 +18,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import java.util.UUID
 import woowacourse.kanban.board.BoardState
-import woowacourse.kanban.board.constant.MockData
-import woowacourse.kanban.create.TaskCreateDialog
+import woowacourse.kanban.dialog.create.TaskCreateDialog
+import woowacourse.kanban.dialog.edit.TaskEditDialog
 import woowacourse.kanban.domain.project.KanbanProject
+import woowacourse.kanban.domain.task.Assignee
 import woowacourse.kanban.domain.task.KanbanTask
 import woowacourse.kanban.domain.task.TaskStatus
 
@@ -29,18 +31,20 @@ import woowacourse.kanban.domain.task.TaskStatus
 @Composable
 fun KanbanBoard(
     project: KanbanProject,
-    boardState: BoardState = BoardState(project),
+    onProjectChanged: (KanbanProject) -> Unit = {},
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = SnackbarHostState(),
 ) {
+    val state = remember(project.title) { BoardState(project) }
 
-    val state = remember(project) { boardState }
+    val currentProject = state.project
 
+    var clickedTaskId by remember { mutableStateOf(null as UUID?) }
     var draggedTask by remember { mutableStateOf<KanbanTask?>(null) }
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
     val columnBounds = remember { mutableStateMapOf<TaskStatus, Rect>() }
 
-    LaunchedEffect(state.snackBarEvent) {
+    LaunchedEffect(state.snackBarEvent?.id) {
         state.snackBarEvent?.let {
             snackbarHostState.showSnackbar(it.message)
         }
@@ -48,11 +52,11 @@ fun KanbanBoard(
 
     Column(modifier = modifier) {
         KanbanBoardHeader(
-            progress = project.getProgress(),
-            doneTaskCount = project.getTasksWithStatus(TaskStatus.DONE).size,
-            totalTaskCount = project.project.size,
+            progress = currentProject.value.getProgress(),
+            doneTaskCount = currentProject.value.getTasksWithStatus(TaskStatus.DONE).size,
+            totalTaskCount = currentProject.value.projectTasks.size,
             onClick = { state.toggleDialog() },
-            headerTitle = project.title,
+            headerTitle = currentProject.value.title,
         )
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -60,29 +64,31 @@ fun KanbanBoard(
         ) {
             TaskStatus.entries.forEach { status ->
                 StatusCardList(
-                    tasks = project.getTasksWithStatus(status),
+                    tasks = currentProject.value.getTasksWithStatus(status),
                     status = status,
+                    onCardClick = {
+                        state.toggleDialog()
+                        state.toggleEditTask()
+                        clickedTaskId = it.data.id
+                    },
                     modifier = Modifier.weight(1f),
                     getIsDropTarget = {
-                        currentDragPosition?.let { columnBounds[status]?.contains(it) }
-                            ?: false
+                        currentDragPosition?.let { columnBounds[status]?.contains(it) } ?: false
                     },
                     onBoundsChanged = { rect -> columnBounds[status] = rect },
-                    onTaskDragStart = { task ->
-                        draggedTask = task
-                    },
+                    onTaskDragStart = { task -> draggedTask = task },
                     onTaskDragChange = { pos -> currentDragPosition = pos },
                     onTaskDragEnd = {
-                        val dropPosition = currentDragPosition
-                            ?: return@StatusCardList
+                        val dropPosition = currentDragPosition ?: return@StatusCardList
                         val targetStatus = columnBounds.entries
                             .firstOrNull { (_, rect) -> rect.contains(dropPosition) }?.key
 
                         draggedTask?.let { task ->
                             if (targetStatus != null && task.status != targetStatus) {
-                                val idx = project.getTaskIndexWithId(task.data.id)
+                                val idx = currentProject.value.getTaskIndexWithId(task.data.id)
                                 if (idx != -1) {
                                     state.changeTaskStatus(idx, targetStatus)
+                                    onProjectChanged(state.project.value)
                                 }
                             }
                         }
@@ -99,19 +105,43 @@ fun KanbanBoard(
     }
 
     if (state.showDialogValue()) {
-        TaskCreateDialog(
-            onDismiss = { state.toggleDialog() },
-            onCreateTask = { task ->
-                state.addTask(task)
-            },
-            assignees = MockData.ASSIGNEES,
-            modifier = Modifier,
-        )
+        if (state.isEditTaskValue()) {
+            TaskEditDialog(
+                targetTask = state.getTaskWithId(clickedTaskId!!),
+                onDismiss = {
+                    state.toggleDialog()
+                    state.toggleEditTask()
+                },
+                onDeleteTask = {
+                    state.deleteTask(clickedTaskId!!)
+                    onProjectChanged(state.project.value)
+                },
+                onEditTask = { taskCreator ->
+                    state.editTask(clickedTaskId!!, taskCreator)
+                    onProjectChanged(state.project.value)
+                },
+                assignees = if (state.getTaskWithId(clickedTaskId!!).status == TaskStatus.TO_DO) Assignee.entries
+                else Assignee.entries - Assignee.NONE,
+            )
+        } else {
+            TaskCreateDialog(
+                onDismiss = { state.toggleDialog() },
+                onCreateTask = { taskCreator ->
+                    state.addTask(taskCreator)
+                    onProjectChanged(state.project.value)
+                },
+                assignees = Assignee.entries,
+                modifier = Modifier,
+            )
+        }
     }
 }
 
 @Preview(widthDp = 1500, heightDp = 800)
 @Composable
 fun KanbanBoardPreview() {
-    KanbanBoard(KanbanProject(mutableListOf()))
+    KanbanBoard(
+        project = KanbanProject(),
+        onProjectChanged = { },
+    )
 }

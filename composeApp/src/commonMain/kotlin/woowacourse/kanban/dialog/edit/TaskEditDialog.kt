@@ -1,4 +1,4 @@
-package woowacourse.kanban.create
+package woowacourse.kanban.dialog.edit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,24 +15,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import woowacourse.kanban.create.components.DialogBar
-import woowacourse.kanban.create.components.FooterRow
-import woowacourse.kanban.create.components.createTextInput.CreateTextInput
-import woowacourse.kanban.create.components.radioSelector.CoachButton
-import woowacourse.kanban.create.components.radioSelector.RadioSelector
-import woowacourse.kanban.create.components.radioSelector.StatusButton
+import woowacourse.kanban.dialog.components.DialogBar
+import woowacourse.kanban.dialog.components.EditFooterRow
+import woowacourse.kanban.dialog.components.createTextInput.CreateTextInput
+import woowacourse.kanban.dialog.components.radioSelector.CoachButton
+import woowacourse.kanban.dialog.components.radioSelector.RadioSelector
+import woowacourse.kanban.dialog.components.radioSelector.StatusButton
 import woowacourse.kanban.domain.task.Assignee
 import woowacourse.kanban.domain.task.KanbanTask
+import woowacourse.kanban.domain.task.Tags
+import woowacourse.kanban.domain.task.TaskData
 import woowacourse.kanban.domain.task.TaskStatus
+import woowacourse.kanban.domain.task.Title
 
 @Composable
-fun TaskCreateDialog(
+fun TaskEditDialog(
+    targetTask: KanbanTask,
     onDismiss: () -> Unit,
-    onCreateTask: (task: KanbanTask) -> Unit,
+    onDeleteTask: (KanbanTask) -> Unit,
+    onEditTask: (() -> KanbanTask) -> Unit,
     modifier: Modifier = Modifier,
     assignees: List<Assignee> = emptyList(),
 ) {
-    val state = remember { TaskCreateState() }
+    val state = remember {
+        TaskEditState(
+            task = targetTask,
+            assignees = assignees,
+        )
+    }
 
     Dialog(
         onDismissRequest = {
@@ -47,6 +57,7 @@ fun TaskCreateDialog(
                 ),
         ) {
             DialogBar(
+                text = "기존 태스크 수정",
                 modifier = Modifier.padding(
                     vertical = 28.dp,
                     horizontal = 24.dp,
@@ -110,15 +121,20 @@ fun TaskCreateDialog(
                     )
                 }
                 HorizontalDivider()
-                FooterRow(
+                EditFooterRow(
                     onCancel = { onDismiss() },
-                    onCreate = {
+                    onDelete = {
+                        onDeleteTask(targetTask)
+                        onDismiss()
+                    },
+                    onEdit = {
                         val isError = state.onCreateValidate()
                         if (isError.not()) {
-                            val task = state.taskCreate(
-                                assignee = assignees[state.selectedAssigneeIndex],
-                            )
-                            onCreateTask(task)
+                            onEditTask {
+                                state.taskCreate(
+                                    assignee = assignees[state.selectedAssigneeIndex],
+                                )
+                            }
                             onDismiss()
                         }
                     },
@@ -129,11 +145,42 @@ fun TaskCreateDialog(
     }
 }
 
-@Preview
+@Preview(widthDp = 1000, heightDp = 1000)
 @Composable
-fun TaskCreateDialogPreview() {
-    TaskCreateDialog(
+fun TodoTaskEditDialogPreview() {
+    TaskEditDialog(
+        targetTask = KanbanTask(
+            data = TaskData(
+                title = Title("제목"),
+                content = "",
+                tags = Tags(listOf("1", "2", "3")),
+                assignee = Assignee.DINO,
+            ),
+            status = TaskStatus.REVIEW,
+        ),
         onDismiss = { },
-        onCreateTask = { },
+        onDeleteTask = { },
+        onEditTask = { },
+        assignees = Assignee.entries,
+    )
+}
+
+@Preview(widthDp = 1000, heightDp = 1000)
+@Composable
+fun TaskEditDialogPreview() {
+    TaskEditDialog(
+        targetTask = KanbanTask(
+            data = TaskData(
+                title = Title("제목"),
+                content = "",
+                tags = Tags(listOf("1", "2", "3")),
+                assignee = Assignee.DINO,
+            ),
+            status = TaskStatus.TO_DO,
+        ),
+        onDismiss = { },
+        onDeleteTask = { },
+        onEditTask = { },
+        assignees = listOf(Assignee.DINO, Assignee.FAMES),
     )
 }

@@ -1,4 +1,4 @@
-package woowacourse.kanban.create.components.radioSelector
+package woowacourse.kanban.dialog.components.radioSelector
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +23,7 @@ private val TaskStatus.displayName: String
     get() = when (this) {
         TaskStatus.TO_DO -> "To Do"
         TaskStatus.IN_PROGRESS -> "In Progress"
+        TaskStatus.REVIEW -> "Review"
         TaskStatus.DONE -> "Done"
     }
 
