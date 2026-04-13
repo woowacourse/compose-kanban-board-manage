@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,7 +24,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kanbanboard.composeapp.generated.resources.Res
+import kanbanboard.composeapp.generated.resources.author_label
+import kanbanboard.composeapp.generated.resources.none
+import kanbanboard.composeapp.generated.resources.state_label
+import org.jetbrains.compose.resources.stringResource
+import woowacourse.kanban.board.domain.Author
 import woowacourse.kanban.board.domain.TaskState
 import woowacourse.kanban.board.ui.board.components.toText
 import woowacourse.kanban.board.ui.theme.AccountCircle
@@ -38,7 +46,7 @@ import woowacourse.kanban.board.ui.theme.TextPrimary
 
 @Composable
 fun TaskStateSelectField(selectedState: TaskState, onStateChanged: (TaskState) -> Unit) {
-    LabelText("상태 *")
+    LabelText(stringResource(Res.string.state_label))
     TaskStateContent(
         selectedState = selectedState,
         onStateChanged = onStateChanged,
@@ -46,8 +54,8 @@ fun TaskStateSelectField(selectedState: TaskState, onStateChanged: (TaskState) -
 }
 
 @Composable
-fun AuthorSelectField(authors: List<String>, selectedAuthor: String, onAuthorSelected: (String) -> Unit) {
-    LabelText("담당자 *")
+fun AuthorSelectField(authors: List<Author>, selectedAuthor: Author, onAuthorSelected: (Author) -> Unit) {
+    LabelText(stringResource(Res.string.author_label))
     AuthorsContent(
         selectedAuthor = selectedAuthor,
         onAuthorSelected = onAuthorSelected,
@@ -70,7 +78,7 @@ private fun TaskStateContent(selectedState: TaskState, onStateChanged: (TaskStat
                     Text(
                         text = it.toText(),
                         color = if (selectedState == it) TaskStateSelected else TaskStateText,
-                        modifier = Modifier.width(180.dp).padding(vertical = 16.dp),
+                        modifier = Modifier.width(130.dp).padding(vertical = 16.dp),
                         textAlign = TextAlign.Center,
                     )
                 },
@@ -82,9 +90,9 @@ private fun TaskStateContent(selectedState: TaskState, onStateChanged: (TaskStat
 
 @Composable
 private fun AuthorsContent(
-    selectedAuthor: String,
-    onAuthorSelected: (String) -> Unit,
-    authors: List<String>,
+    selectedAuthor: Author,
+    onAuthorSelected: (Author) -> Unit,
+    authors: List<Author>,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -99,21 +107,30 @@ private fun AuthorsContent(
                 content = {
                     Row(
                         modifier = Modifier
-                            .width(200.dp)
-                            .padding(vertical = 16.dp),
+                            .width(if (it == Author.NONE) 72.dp else 200.dp)
+                            .height(68.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Icon(
-                            modifier = Modifier.padding(horizontal = 12.dp),
-                            imageVector = Icons.Default.AccountCircle,
-                            tint = AccountCircle,
-                            contentDescription = "기본 프로필 이미지",
-                        )
-                        Text(
-                            text = it,
-                            color = TextPrimary,
-                            textAlign = TextAlign.Center,
-                        )
+                        if (it == Author.NONE) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = stringResource(Res.string.none),
+                                color = TextPrimary,
+                                textAlign = TextAlign.Center,
+                            )
+                        } else {
+                            Icon(
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                                imageVector = Icons.Default.AccountCircle,
+                                tint = AccountCircle,
+                                contentDescription = "기본 프로필 이미지",
+                            )
+                            Text(
+                                text = it.toText(),
+                                color = TextPrimary,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
                     }
                 },
                 modifier = Modifier.semantics { selected = selectedAuthor == it },
@@ -141,4 +158,27 @@ private fun CustomButton(
     ) {
         content()
     }
+}
+
+fun Author.toText(): String = when (this) {
+    Author.NONE -> "없음"
+    is Author.User -> name
+}
+
+@Preview
+@Composable
+private fun TaskStateSelectFieldPreview() {
+    TaskStateSelectField(selectedState = TaskState.TO_DO, onStateChanged = {})
+}
+
+@Preview
+@Composable
+private fun AuthorSelectFieldPreview() {
+    AuthorSelectField(
+        authors = listOf(
+            Author.NONE, Author.User("다이노"), Author.User("페임스"),
+        ),
+        selectedAuthor = Author.NONE,
+        onAuthorSelected = {},
+    )
 }

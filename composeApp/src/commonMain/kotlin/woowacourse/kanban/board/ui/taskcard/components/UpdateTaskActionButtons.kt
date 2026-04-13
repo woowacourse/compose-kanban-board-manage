@@ -17,23 +17,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.cancel
-import kanbanboard.composeapp.generated.resources.create
+import kanbanboard.composeapp.generated.resources.delete
+import kanbanboard.composeapp.generated.resources.update
 import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.ui.theme.DisabledContainer
 import woowacourse.kanban.board.ui.theme.OnSurface
 import woowacourse.kanban.board.ui.theme.OnSurfaceVariant
 import woowacourse.kanban.board.ui.theme.PrimaryContainer
 import woowacourse.kanban.board.ui.theme.TextSecondary
+import woowacourse.kanban.board.ui.theme.delete
 
 @Composable
-fun CreateTaskActionButtons(isNewTaskEnabled: Boolean, onDismissRequest: () -> Unit, onCreateClick: () -> Unit) {
+fun UpdateTaskActionButtons(
+    isUpdateTaskEnabled: Boolean,
+    onDismissRequest: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onUpdateClick: () -> Unit,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Button(
-            onClick = { onDismissRequest() },
+            onClick = onDismissRequest,
             colors = ButtonDefaults.buttonColors(
                 containerColor = PrimaryContainer,
                 contentColor = TextSecondary,
@@ -43,8 +50,21 @@ fun CreateTaskActionButtons(isNewTaskEnabled: Boolean, onDismissRequest: () -> U
         }
         Spacer(modifier = Modifier.width(12.dp))
         Button(
-            onClick = { onCreateClick() },
-            enabled = isNewTaskEnabled,
+            onClick = onDeleteClick,
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = delete,
+                contentColor = OnSurfaceVariant,
+                disabledContainerColor = DisabledContainer,
+                disabledContentColor = OnSurfaceVariant,
+            ),
+        ) {
+            Text(text = stringResource(Res.string.delete), textAlign = TextAlign.Center)
+        }
+        Spacer(modifier = Modifier.width(12.dp))
+        Button(
+            onClick = onUpdateClick,
+            enabled = isUpdateTaskEnabled,
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = OnSurface,
@@ -53,13 +73,18 @@ fun CreateTaskActionButtons(isNewTaskEnabled: Boolean, onDismissRequest: () -> U
                 disabledContentColor = OnSurfaceVariant,
             ),
         ) {
-            Text(text = stringResource(Res.string.create), textAlign = TextAlign.Center)
+            Text(text = stringResource(Res.string.update), textAlign = TextAlign.Center)
         }
     }
 }
 
 @Preview
 @Composable
-private fun CreateTaskActionButtonsPreview() {
-    CreateTaskActionButtons(isNewTaskEnabled = true, onDismissRequest = {}, onCreateClick = {})
+private fun PreviewUpdateTaskActionButtons() {
+    UpdateTaskActionButtons(
+        isUpdateTaskEnabled = true,
+        onDismissRequest = {},
+        onDeleteClick = {},
+        onUpdateClick = {},
+    )
 }

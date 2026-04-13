@@ -12,18 +12,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import kanbanboard.composeapp.generated.resources.Res
+import kanbanboard.composeapp.generated.resources.exist_task_edit
+import kanbanboard.composeapp.generated.resources.new_task_create
+import org.jetbrains.compose.resources.stringResource
+import woowacourse.kanban.board.ui.taskcard.state.TaskInputMode
 import woowacourse.kanban.board.ui.theme.TextPrimary
 
 @Composable
-fun CreateTaskHeader(onDismissRequest: () -> Unit) {
+fun CreateTaskHeader(taskInputMode: TaskInputMode, onDismissRequest: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "새 태스크 생성",
+            text = if (taskInputMode ==
+                TaskInputMode.CREATE
+            ) stringResource(Res.string.new_task_create) else stringResource(Res.string.exist_task_edit),
             fontSize = 20.sp,
             color = TextPrimary,
             fontWeight = FontWeight.W600,
@@ -37,4 +45,10 @@ fun CreateTaskHeader(onDismissRequest: () -> Unit) {
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun CreateTaskHeaderPreview() {
+    CreateTaskHeader(taskInputMode = TaskInputMode.CREATE, onDismissRequest = {})
 }

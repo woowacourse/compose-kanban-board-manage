@@ -21,27 +21,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import java.util.UUID
+import kanbanboard.composeapp.generated.resources.Res
+import kanbanboard.composeapp.generated.resources.add_task_message
+import kanbanboard.composeapp.generated.resources.author_not_exists
+import kanbanboard.composeapp.generated.resources.change_task_state_message
+import kanbanboard.composeapp.generated.resources.delete_task_message
+import kanbanboard.composeapp.generated.resources.invalid_state_transition_message
+import kanbanboard.composeapp.generated.resources.not_delete_task_message
+import kanbanboard.composeapp.generated.resources.update_task_message
+import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
-import woowacourse.kanban.board.domain.Tasks
 import woowacourse.kanban.board.ui.board.components.BoardHeader
 import woowacourse.kanban.board.ui.board.components.CreateTaskModalDialog
 import woowacourse.kanban.board.ui.board.components.KanbanBoardContent
+import woowacourse.kanban.board.ui.board.state.ProjectState
 import woowacourse.kanban.board.ui.theme.OutlineVariant
 import woowacourse.kanban.board.ui.theme.Primary
 
 @Composable
 fun Board(
-    projectName: String,
-    tasks: Tasks,
+    project: ProjectState,
     onTaskCreated: (Task) -> Unit,
-    authors: List<String>,
+    onTaskUpdated: (UUID, Task) -> Unit,
+    onTaskDeleted: (UUID) -> Unit,
     onTaskStateChange: (UUID, TaskState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var openDialog by remember { mutableStateOf(false) }
+    var editTask by remember { mutableStateOf<Task?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     var snackbarMessage by remember { mutableStateOf<String?>(null) }
+    val changeTaskStateMessage = stringResource(Res.string.change_task_state_message)
+    val addTaskMessage = stringResource(Res.string.add_task_message)
+    val updateTaskMessage = stringResource(Res.string.update_task_message)
+    val deleteTaskMessage = stringResource(Res.string.delete_task_message)
+    val notDeleteTaskMessage = stringResource(Res.string.not_delete_task_message)
+    val invalidStateTransitionMessage = stringResource(Res.string.invalid_state_transition_message)
+    val authorNotExists = stringResource(Res.string.author_not_exists)
 
     LaunchedEffect(snackbarMessage) {
         snackbarMessage?.let { message ->
@@ -62,10 +79,10 @@ fun Board(
         ) {
             Column {
                 BoardHeader(
-                    projectName = projectName,
-                    completedRate = tasks.completedRate,
-                    doneCount = tasks.countByState(TaskState.DONE),
-                    totalCount = tasks.totalCount,
+                    projectName = project.name,
+                    completedRate = project.completedRate,
+                    doneCount = project.countByState(TaskState.DONE),
+                    totalCount = project.totalCount,
                     onClick = { openDialog = true },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -75,10 +92,22 @@ fun Board(
                 HorizontalDivider(color = OutlineVariant)
 
                 KanbanBoardContent(
-                    tasks = tasks,
-                    onTaskStateChange = { id, targetStatus ->
-                        onTaskStateChange(id, targetStatus)
-                        snackbarMessage = "태스크가 이동되었습니다."
+                    project = project,
+                    onTaskStateChange = { task, targetState ->
+                        if (task.canChangeTaskState(targetState)) {
+                            if (TaskState.isAvailableTransition(task.taskState, targetState)) {
+                                onTaskStateChange(task.id, targetState)
+                                snackbarMessage = changeTaskStateMessage
+                            } else {
+                                snackbarMessage = invalidStateTransitionMessage
+                            }
+                        } else {
+                            snackbarMessage = authorNotExists
+                        }
+                    },
+                    onClick = { task ->
+                        openDialog = true
+                        editTask = task
                     },
                     modifier = Modifier
                         .fillMaxSize()
@@ -88,18 +117,37 @@ fun Board(
 
             if (openDialog) {
                 CreateTaskModalDialog(
-                    authors = authors,
                     onDismissRequest = {
+                        editTask = null
                         openDialog = false
                     },
                     onConfirmation = {
                         onTaskCreated(it)
-                        snackbarMessage = "새로운 태스크가 추가되었습니다."
+                        snackbarMessage = addTaskMessage
                         openDialog = false
+                    },
+                    onDeleteClick = { id ->
+                        if (id != null) {
+                            onTaskDeleted(id)
+                            snackbarMessage = deleteTaskMessage
+                        } else {
+                            snackbarMessage = notDeleteTaskMessage
+                        }
+                        openDialog = false
+                        editTask = null
+                    },
+                    onUpdateClick = { id, task ->
+                        if (id != null) {
+                            onTaskUpdated(id, task)
+                            snackbarMessage = updateTaskMessage
+                        }
+                        openDialog = false
+                        editTask = null
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.Center),
+                    editTask = editTask,
                 )
             }
         }
@@ -110,10 +158,10 @@ fun Board(
 @Composable
 private fun BoardPreview() {
     Board(
-        projectName = "Compose Desktop 칸반보드",
-        tasks = Tasks(emptyList()),
+        project = ProjectState(name = "Compose Desktop 칸반보드"),
         onTaskCreated = {},
-        authors = listOf("다이노", "페임스"),
+        onTaskUpdated = { _, _ -> },
+        onTaskDeleted = {},
         onTaskStateChange = { _, _ -> },
     )
 }

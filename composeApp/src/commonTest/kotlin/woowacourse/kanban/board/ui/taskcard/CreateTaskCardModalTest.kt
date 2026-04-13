@@ -15,6 +15,8 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
+import woowacourse.kanban.board.domain.Author
+import woowacourse.kanban.board.domain.TaskState
 import woowacourse.kanban.board.ui.taskcard.state.TaskInputState
 
 @OptIn(ExperimentalTestApi::class)
@@ -24,13 +26,14 @@ class CreateTaskCardModalTest {
     @Test
     fun `제목을 입력하지 않으면 에러 문구가 노출된다`() = runComposeUiTest {
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(title = "지워질 제목입니다", selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(title = "지워질 제목입니다", selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
         onNodeWithText("지워질 제목입니다").performTextClearance()
@@ -40,13 +43,14 @@ class CreateTaskCardModalTest {
     @Test
     fun `제목을 입력하지 않으면 생성 버튼이 활성화되지 않는다`() = runComposeUiTest {
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
 
@@ -60,13 +64,14 @@ class CreateTaskCardModalTest {
     @Test
     fun `태그가 쉼표로 시작하면 형식 에러가 노출되고 생성 버튼이 활성화되지 않는다`() = runComposeUiTest {
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
         onNodeWithText("생성").assertIsEnabled()
@@ -80,13 +85,14 @@ class CreateTaskCardModalTest {
     @Test
     fun `태그가 쉼표로 끝나면 형식 에러가 노출되고 생성 버튼이 활성화되지 않는다`() = runComposeUiTest {
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
         onNodeWithText("생성").assertIsEnabled()
@@ -100,13 +106,14 @@ class CreateTaskCardModalTest {
     @Test
     fun `쉼표가 연달아 나오면 형식 에러가 노출되고 생성 버튼이 활성화되지 않는다`() = runComposeUiTest {
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
         onNodeWithText("생성").assertIsEnabled()
@@ -120,13 +127,14 @@ class CreateTaskCardModalTest {
     @Test
     fun `태그가 5자 이내가 아니라면 태그 규칙 위반 에러가 노출되고 생성 버튼이 활성화되지 않는다`() = runComposeUiTest {
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
         onNodeWithText("생성").assertIsEnabled()
@@ -140,13 +148,14 @@ class CreateTaskCardModalTest {
     @Test
     fun `태그가 5개를 초과하면 태그 규칙 위반 에러가 노출되고 생성 버튼이 활성화되지 않는다`() = runComposeUiTest {
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
         onNodeWithText("생성").assertIsEnabled()
@@ -160,13 +169,14 @@ class CreateTaskCardModalTest {
     @Test
     fun `태스크 상태로 첫 번째 요소가 기본으로 선택된다`() = runComposeUiTest {
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
 
@@ -177,13 +187,14 @@ class CreateTaskCardModalTest {
     fun `태스크 상태는 한 항목만 선택 가능하다`() = runComposeUiTest {
         // when
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
         onNodeWithText("To Do").performClick()
@@ -199,13 +210,14 @@ class CreateTaskCardModalTest {
     @Test
     fun `담당자는 첫 번째 요소가 기본으로 선택된다`() = runComposeUiTest {
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
 
@@ -215,13 +227,14 @@ class CreateTaskCardModalTest {
     @Test
     fun `담당자는 한 항목만 선택 가능하다`() = runComposeUiTest {
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
 
@@ -236,18 +249,99 @@ class CreateTaskCardModalTest {
     @Test
     fun `제목과 태그가 규칙에 맞게 입력되면 생성 버튼을 누를 수 있다`() = runComposeUiTest {
         setContent {
-            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = authors.first())) }
+            var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = Author.User("다이노"))) }
             CreateTaskCardModal(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
-                authors = authors,
                 onDismissRequest = {},
-                onConfirmation = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
             )
         }
         onNodeWithText("생성").assertIsNotEnabled()
         onNodeWithText("태스크 제목을 입력하세요").performTextInput("제목")
         onNodeWithText("태그를 쉼표로 구분하여 입력하세요 (예: 버그, 긴급)").performTextInput("   \n태그의 \t,  앞뒤공백은   , 무시  , 됩니다  ")
         onNodeWithText("생성").assertIsEnabled()
+    }
+
+    @Test
+    fun `상태가 TODO일 때 담당자는 없음, 다이노, 페임스가 존재한다`() = runComposeUiTest {
+        setContent {
+            var taskInputState by remember {
+                mutableStateOf(TaskInputState(selectedState = TaskState.TO_DO, selectedAuthor = Author.User("다이노")))
+            }
+            CreateTaskCardModal(
+                taskInputState = taskInputState,
+                onStateChange = { taskInputState = it },
+                onDismissRequest = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
+            )
+        }
+        onNodeWithText("없음").assertExists()
+        onNodeWithText("다이노").assertExists()
+        onNodeWithText("페임스").assertExists()
+    }
+
+    @Test
+    fun `상태가 InProgress일 때 담당자는 다이노, 페임스가 존재한다`() = runComposeUiTest {
+        setContent {
+            var taskInputState by remember {
+                mutableStateOf(TaskInputState(selectedState = TaskState.IN_PROGRESS, selectedAuthor = Author.User("다이노")))
+            }
+            CreateTaskCardModal(
+                taskInputState = taskInputState,
+                onStateChange = { taskInputState = it },
+                onDismissRequest = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
+            )
+        }
+        onNodeWithText("없음").assertDoesNotExist()
+        onNodeWithText("다이노").assertExists()
+        onNodeWithText("페임스").assertExists()
+    }
+
+    @Test
+    fun `상태가 Review일 때 담당자는 다이노, 페임스가 존재한다`() = runComposeUiTest {
+        setContent {
+            var taskInputState by remember {
+                mutableStateOf(TaskInputState(selectedState = TaskState.REVIEW, selectedAuthor = Author.User("다이노")))
+            }
+            CreateTaskCardModal(
+                taskInputState = taskInputState,
+                onStateChange = { taskInputState = it },
+                onDismissRequest = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
+            )
+        }
+        onNodeWithText("없음").assertDoesNotExist()
+        onNodeWithText("다이노").assertExists()
+        onNodeWithText("페임스").assertExists()
+    }
+
+    @Test
+    fun `상태가 Done일 때 담당자는 다이노, 페임스가 존재한다`() = runComposeUiTest {
+        setContent {
+            var taskInputState by remember {
+                mutableStateOf(TaskInputState(selectedState = TaskState.DONE, selectedAuthor = Author.User("다이노")))
+            }
+            CreateTaskCardModal(
+                taskInputState = taskInputState,
+                onStateChange = { taskInputState = it },
+                onDismissRequest = {},
+                onConfirmation = { _ -> },
+                onDeleteClick = {},
+                onUpdateClick = { _, _ -> },
+            )
+        }
+        onNodeWithText("없음").assertDoesNotExist()
+        onNodeWithText("다이노").assertExists()
+        onNodeWithText("페임스").assertExists()
     }
 }

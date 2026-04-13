@@ -20,10 +20,15 @@ import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.kanban_board_subtitle
 import kanbanboard.composeapp.generated.resources.kanban_board_title
 import org.jetbrains.compose.resources.stringResource
-import woowacourse.kanban.board.domain.Project
+import woowacourse.kanban.board.ui.board.state.ProjectState
 
 @Composable
-fun Sidebar(projects: List<Project>, selectedProject: Project?, modifier: Modifier = Modifier, onProjectChange: (Project) -> Unit) {
+fun Sidebar(
+    projects: List<ProjectState>,
+    selectedProject: ProjectState?,
+    modifier: Modifier = Modifier,
+    onProjectChange: (ProjectState) -> Unit,
+) {
     Column(
         modifier = modifier,
     ) {
@@ -58,7 +63,7 @@ private fun SidebarHeader(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun NavigationBar(projects: List<Project>, selectedProject: Project, onProjectChange: (Project) -> Unit) {
+private fun NavigationBar(projects: List<ProjectState>, selectedProject: ProjectState, onProjectChange: (ProjectState) -> Unit) {
     Column(
         modifier = Modifier,
     ) {
@@ -74,7 +79,7 @@ private fun NavigationBar(projects: List<Project>, selectedProject: Project, onP
 }
 
 @Composable
-private fun BoardSelectButton(onClick: () -> Unit, project: Project, backgroundColor: Color, textColor: Color) {
+private fun BoardSelectButton(onClick: () -> Unit, project: ProjectState, backgroundColor: Color, textColor: Color) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,9 +105,9 @@ private fun BoardSelectButton(onClick: () -> Unit, project: Project, backgroundC
 private fun SidebarPreview() {
     Sidebar(
         projects = listOf(
-            Project(name = "Compose Desktop 칸반보드"),
+            ProjectState(name = "Compose Desktop 칸반보드"),
         ),
-        selectedProject = Project(name = "Compose Desktop 칸반보드"),
+        selectedProject = ProjectState(name = "Compose Desktop 칸반보드"),
         onProjectChange = {},
     )
 }

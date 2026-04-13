@@ -10,29 +10,27 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.runComposeUiTest
 import org.junit.Test
-import woowacourse.kanban.board.domain.Project
+import woowacourse.kanban.board.domain.Author
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
-import woowacourse.kanban.board.domain.Tasks
+import woowacourse.kanban.board.ui.board.state.ProjectState
 import woowacourse.kanban.board.ui.board.state.ProjectsStateHolder
 
 @OptIn(ExperimentalTestApi::class)
 class ProjectScreenTest {
     val projects = listOf(
-        Project(name = "Compose1"),
-        Project(
+        ProjectState(name = "Compose1"),
+        ProjectState(
             name = "Compose2",
-            tasks = Tasks(
-                listOf(
-                    Task(
-                        title = "test_title",
-                        taskState = TaskState.TO_DO,
-                        author = "다이노",
-                    ),
+            initialTasks = mutableListOf(
+                Task(
+                    title = "test_title",
+                    taskState = TaskState.TO_DO,
+                    author = Author.User("다이노"),
                 ),
             ),
         ),
-        Project(name = "Compose3너무너무길다란이름"),
+        ProjectState(name = "Compose3너무너무길다란이름"),
     )
 
     @Test
@@ -43,9 +41,15 @@ class ProjectScreenTest {
             ProjectScreen(
                 stateHolder = stateHolder,
                 onProjectChange = { projectId -> stateHolder.selectProject(projectId) },
-                onTaskCreated = { projectId, task -> stateHolder.addTask(projectId, task) },
-                onTaskStateChange = { projectId, taskIdx, taskState ->
-                    stateHolder.changeTaskState(projectId, taskIdx, taskState)
+                onTaskCreated = { task -> stateHolder.selectedProject?.addTask(task) },
+                onTaskUpdated = { taskIdx, task ->
+                    stateHolder.selectedProject?.updateTask(taskIdx, task)
+                },
+                onTaskDeleted = { taskIdx ->
+                    stateHolder.selectedProject?.deleteTask(taskIdx)
+                },
+                onTaskStateChange = { taskIdx, taskState ->
+                    stateHolder.selectedProject?.changeTaskState(taskIdx, taskState)
                 },
                 modifier = Modifier.fillMaxSize(),
             )
@@ -64,9 +68,15 @@ class ProjectScreenTest {
             ProjectScreen(
                 stateHolder = stateHolder,
                 onProjectChange = { projectId -> stateHolder.selectProject(projectId) },
-                onTaskCreated = { projectId, task -> stateHolder.addTask(projectId, task) },
-                onTaskStateChange = { projectId, taskIdx, taskState ->
-                    stateHolder.changeTaskState(projectId, taskIdx, taskState)
+                onTaskCreated = { task -> stateHolder.selectedProject?.addTask(task) },
+                onTaskUpdated = { taskIdx, task ->
+                    stateHolder.selectedProject?.updateTask(taskIdx, task)
+                },
+                onTaskDeleted = { taskIdx ->
+                    stateHolder.selectedProject?.deleteTask(taskIdx)
+                },
+                onTaskStateChange = { taskIdx, taskState ->
+                    stateHolder.selectedProject?.changeTaskState(taskIdx, taskState)
                 },
                 modifier = Modifier.fillMaxSize(),
             )

@@ -16,8 +16,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kanbanboard.composeapp.generated.resources.Res
+import kanbanboard.composeapp.generated.resources.content_label
+import kanbanboard.composeapp.generated.resources.content_place_holder
+import kanbanboard.composeapp.generated.resources.invalid_format_tag
+import kanbanboard.composeapp.generated.resources.tag_info_message
+import kanbanboard.composeapp.generated.resources.tag_label
+import kanbanboard.composeapp.generated.resources.tag_place_holder
+import kanbanboard.composeapp.generated.resources.title_blank_error
+import kanbanboard.composeapp.generated.resources.title_label
+import kanbanboard.composeapp.generated.resources.title_place_holder
+import kanbanboard.composeapp.generated.resources.too_long_or_too_many_tag
+import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.exception.TagError
 import woowacourse.kanban.board.exception.TitleError
 import woowacourse.kanban.board.ui.theme.OnError
@@ -29,28 +42,28 @@ import woowacourse.kanban.board.ui.theme.TextTertiary
 @Composable
 fun TitleInputField(title: String, titleError: TitleError, onValueChange: (String) -> Unit) {
     val isError = titleError != TitleError.NONE
-    LabelText("제목 *")
+    LabelText(stringResource(Res.string.title_label))
     TextInputField(
         value = title,
         onValueChange = onValueChange,
-        placeholder = "태스크 제목을 입력하세요",
+        placeholder = stringResource(Res.string.title_place_holder),
         singleLine = true,
         modifier = Modifier.fillMaxWidth(),
         borderColor = if (isError) OnError else Outline,
         isError = isError,
-        infoContent = if (titleError == TitleError.BLANK) "제목을 입력해주세요." else "",
+        infoContent = if (titleError == TitleError.BLANK) stringResource(Res.string.title_blank_error) else "",
         infoTextColor = OnError,
     )
 }
 
 @Composable
 fun ContentInputField(content: String, onValueChange: (String) -> Unit) {
-    LabelText("설명")
+    LabelText(stringResource(Res.string.content_label))
     TextInputField(
         value = content,
         onValueChange = onValueChange,
         borderColor = Outline,
-        placeholder = "태스크에 대한 자세한 설명을 입력하세요",
+        placeholder = stringResource(Res.string.content_place_holder),
         singleLine = false,
         modifier = Modifier.heightIn(min = 100.dp),
     )
@@ -59,19 +72,19 @@ fun ContentInputField(content: String, onValueChange: (String) -> Unit) {
 @Composable
 fun TagsInputField(tags: String, tagError: TagError, onValueChange: (String) -> Unit) {
     val isError = tagError != TagError.NONE
-    LabelText("태그")
+    LabelText(stringResource(Res.string.tag_label))
     TextInputField(
         value = tags,
         onValueChange = onValueChange,
-        placeholder = "태그를 쉼표로 구분하여 입력하세요 (예: 버그, 긴급)",
+        placeholder = stringResource(Res.string.tag_place_holder),
         singleLine = true,
         borderColor = if (isError) OnError else Outline,
         modifier = Modifier.fillMaxWidth(),
         isError = isError,
         infoContent = when (tagError) {
-            TagError.INVALID_FORMAT -> "태그 형식이 올바르지 않습니다."
-            TagError.TOO_LONG, TagError.TOO_MANY -> "태그는 5자 이내로 5개까지만 등록할 수 있습니다."
-            TagError.NONE -> "5자 이내의 태그를 최대 5개까지 등록할 수 있습니다."
+            TagError.INVALID_FORMAT -> stringResource(Res.string.invalid_format_tag)
+            TagError.TOO_LONG, TagError.TOO_MANY -> stringResource(Res.string.too_long_or_too_many_tag)
+            TagError.NONE -> stringResource(Res.string.tag_info_message)
         },
         infoTextColor = if (isError) OnError else TextTertiary,
     )
@@ -130,4 +143,22 @@ private fun TextInputField(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun TitleInputFieldPreview() {
+    TitleInputField(title = "제목", titleError = TitleError.NONE, onValueChange = {})
+}
+
+@Preview
+@Composable
+private fun ContentInputFieldPreview() {
+    ContentInputField(content = "내용", onValueChange = {})
+}
+
+@Preview
+@Composable
+private fun TagsInputFieldPreview() {
+    TagsInputField(tags = "태그1, 태그2", tagError = TagError.NONE, onValueChange = {})
 }

@@ -1,5 +1,6 @@
 package woowacourse.kanban.board.ui.taskcard.state
 
+import woowacourse.kanban.board.domain.Author
 import woowacourse.kanban.board.domain.TaskState
 import woowacourse.kanban.board.exception.TagError
 import woowacourse.kanban.board.exception.TitleError
@@ -11,10 +12,16 @@ data class TaskInputState(
     val tags: String = "",
     val tagError: TagError = TagError.NONE,
     val selectedState: TaskState = TaskState.TO_DO,
-    val selectedAuthor: String = "",
+    val selectedAuthor: Author = Author.NONE,
+    val taskInputMode: TaskInputMode = TaskInputMode.CREATE,
 ) {
     val init: Boolean
         get() = title.isEmpty() && content.isEmpty() && tags.isEmpty()
     val isNewTaskEnabled: Boolean
         get() = titleError == TitleError.NONE && tagError == TagError.NONE
+}
+
+enum class TaskInputMode {
+    CREATE,
+    EDIT,
 }

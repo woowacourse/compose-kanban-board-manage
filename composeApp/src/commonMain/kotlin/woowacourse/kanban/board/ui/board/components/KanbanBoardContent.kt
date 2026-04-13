@@ -33,10 +33,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.util.UUID
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
-import woowacourse.kanban.board.domain.Tasks
+import woowacourse.kanban.board.ui.board.state.ProjectState
 import woowacourse.kanban.board.ui.taskcard.TaskCards
 import woowacourse.kanban.board.ui.theme.DoneBorder
 import woowacourse.kanban.board.ui.theme.DoneContent
@@ -44,12 +43,20 @@ import woowacourse.kanban.board.ui.theme.DoneTitle
 import woowacourse.kanban.board.ui.theme.InProgressBorder
 import woowacourse.kanban.board.ui.theme.InProgressContent
 import woowacourse.kanban.board.ui.theme.InProgressTitle
+import woowacourse.kanban.board.ui.theme.ReviewBorder
+import woowacourse.kanban.board.ui.theme.ReviewContent
+import woowacourse.kanban.board.ui.theme.ReviewTitle
 import woowacourse.kanban.board.ui.theme.ToDoBorder
 import woowacourse.kanban.board.ui.theme.ToDoContent
 import woowacourse.kanban.board.ui.theme.ToDoTitle
 
 @Composable
-fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (UUID, TaskState) -> Unit, modifier: Modifier = Modifier) {
+fun KanbanBoardContent(
+    project: ProjectState,
+    onTaskStateChange: (Task, TaskState) -> Unit,
+    onClick: (Task) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var draggedTask by remember { mutableStateOf<Task?>(null) }
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
     val columnBounds = remember { mutableStateMapOf<TaskState, Rect>() }
@@ -65,11 +72,12 @@ fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (UUID, TaskState) -> Uni
     ) {
         TaskState.entries.forEach { taskState ->
             StateTasks(
-                tasks,
+                project,
                 taskState,
                 taskState.titleColor(),
                 taskState.contentColor(),
                 taskState.borderColor(),
+                onClick = onClick,
                 modifier = Modifier.testTag(taskState.name),
                 getIsDropTarget = {
                     currentDragPosition?.let { columnBounds[taskState]?.contains(it) } ?: false
@@ -83,7 +91,7 @@ fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (UUID, TaskState) -> Uni
 
                     draggedTask?.let { task ->
                         if (targetStatus != null && task.taskState != targetStatus) {
-                            onTaskStateChange(task.id, targetStatus)
+                            onTaskStateChange(task, targetStatus)
                         }
                     }
 
@@ -99,11 +107,12 @@ fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (UUID, TaskState) -> Uni
 
 @Composable
 private fun StateTasks(
-    tasks: Tasks,
+    project: ProjectState,
     taskState: TaskState,
     titleColor: Color,
     contentColor: Color,
     borderColor: Color,
+    onClick: (Task) -> Unit,
     modifier: Modifier = Modifier,
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = {},
@@ -122,7 +131,7 @@ private fun StateTasks(
         ),
         border = BorderStroke(0.5.dp, borderColor),
         modifier = modifier
-            .size(width = 320.dp, height = 748.dp)
+            .size(width = 310.dp, height = 748.dp)
             .onGloballyPositioned {
                 val newBounds = it.boundsInWindow()
                 if (newBounds != lastBoundsHolder.value) {
@@ -135,9 +144,10 @@ private fun StateTasks(
             ),
 
     ) {
-        StateTasksTitle(titleColor, taskState, tasks)
+        StateTasksTitle(titleColor, taskState, project)
         TaskCards(
-            tasks.getTasksByState(taskState),
+            project.getTasksByState(taskState),
+            onClick = onClick,
             onTaskDragStart = onTaskDragStart,
             onTaskDragChange = onTaskDragChange,
             onTaskDragEnd = onTaskDragEnd,
@@ -150,7 +160,7 @@ private fun StateTasks(
 }
 
 @Composable
-private fun StateTasksTitle(titleColor: Color, taskState: TaskState, tasks: Tasks, modifier: Modifier = Modifier) {
+private fun StateTasksTitle(titleColor: Color, taskState: TaskState, project: ProjectState, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -171,7 +181,7 @@ private fun StateTasksTitle(titleColor: Color, taskState: TaskState, tasks: Task
                 .background(Color.White),
         ) {
             Text(
-                text = tasks.countByState(taskState).toString(),
+                text = project.countByState(taskState).toString(),
                 fontWeight = FontWeight.W500,
                 fontSize = 14.sp,
                 modifier = Modifier.align(Alignment.Center),
@@ -183,23 +193,27 @@ private fun StateTasksTitle(titleColor: Color, taskState: TaskState, tasks: Task
 fun TaskState.toText(): String = when (this) {
     TaskState.TO_DO -> "To Do"
     TaskState.IN_PROGRESS -> "In Progress"
+    TaskState.REVIEW -> "Review"
     TaskState.DONE -> "Done"
 }
 
 private fun TaskState.titleColor(): Color = when (this) {
     TaskState.TO_DO -> ToDoTitle
     TaskState.IN_PROGRESS -> InProgressTitle
+    TaskState.REVIEW -> ReviewTitle
     TaskState.DONE -> DoneTitle
 }
 
 private fun TaskState.contentColor(): Color = when (this) {
     TaskState.TO_DO -> ToDoContent
     TaskState.IN_PROGRESS -> InProgressContent
+    TaskState.REVIEW -> ReviewContent
     TaskState.DONE -> DoneContent
 }
 
 private fun TaskState.borderColor(): Color = when (this) {
     TaskState.TO_DO -> ToDoBorder
     TaskState.IN_PROGRESS -> InProgressBorder
+    TaskState.REVIEW -> ReviewBorder
     TaskState.DONE -> DoneBorder
 }

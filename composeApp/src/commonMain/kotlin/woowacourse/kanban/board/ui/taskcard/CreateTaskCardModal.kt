@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import java.util.UUID
+import woowacourse.kanban.board.domain.AuthorPolicy
 import woowacourse.kanban.board.domain.Tags
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.Title
@@ -25,6 +27,8 @@ import woowacourse.kanban.board.ui.taskcard.components.CreateTaskHeader
 import woowacourse.kanban.board.ui.taskcard.components.TagsInputField
 import woowacourse.kanban.board.ui.taskcard.components.TaskStateSelectField
 import woowacourse.kanban.board.ui.taskcard.components.TitleInputField
+import woowacourse.kanban.board.ui.taskcard.components.UpdateTaskActionButtons
+import woowacourse.kanban.board.ui.taskcard.state.TaskInputMode
 import woowacourse.kanban.board.ui.taskcard.state.TaskInputState
 import woowacourse.kanban.board.util.splitByComma
 
@@ -32,16 +36,18 @@ import woowacourse.kanban.board.util.splitByComma
 fun CreateTaskCardModal(
     taskInputState: TaskInputState,
     onStateChange: (TaskInputState) -> Unit,
-    authors: List<String>,
     onDismissRequest: () -> Unit,
     onConfirmation: (Task) -> Unit,
+    onDeleteClick: (UUID?) -> Unit,
+    onUpdateClick: (UUID?, Task) -> Unit,
     modifier: Modifier = Modifier,
+    editTask: Task? = null,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        CreateTaskHeader(onDismissRequest)
+        CreateTaskHeader(taskInputState.taskInputMode, onDismissRequest)
         HorizontalDivider()
         TitleInputField(taskInputState.title, taskInputState.titleError) {
             onStateChange(
@@ -71,27 +77,56 @@ fun CreateTaskCardModal(
             }
         }
         TaskStateSelectField(taskInputState.selectedState) { newTaskState ->
-            onStateChange(taskInputState.copy(selectedState = newTaskState))
+            onStateChange(
+                taskInputState.copy(
+                    selectedState = newTaskState,
+                    selectedAuthor = AuthorPolicy.selectableAuthors(newTaskState.inAuthorRequired).first(),
+                ),
+            )
         }
-        AuthorSelectField(authors, taskInputState.selectedAuthor) { newAuthor ->
+
+        AuthorSelectField(
+            AuthorPolicy.selectableAuthors(taskInputState.selectedState.inAuthorRequired),
+            taskInputState.selectedAuthor,
+        ) { newAuthor ->
             onStateChange(taskInputState.copy(selectedAuthor = newAuthor))
         }
 
         HorizontalDivider()
 
-        CreateTaskActionButtons(
-            taskInputState.init.not() && taskInputState.isNewTaskEnabled,
-            onDismissRequest,
-        ) {
-            onConfirmation(
-                Task(
-                    title = taskInputState.title,
-                    content = taskInputState.content,
-                    tags = splitByComma(taskInputState.tags),
-                    taskState = taskInputState.selectedState,
-                    author = taskInputState.selectedAuthor,
-                ),
+        if (taskInputState.taskInputMode == TaskInputMode.EDIT) {
+            UpdateTaskActionButtons(
+                taskInputState.init.not() && taskInputState.isNewTaskEnabled,
+                onDismissRequest = onDismissRequest,
+                onDeleteClick = { onDeleteClick(if (taskInputState.selectedState.isDeletable && editTask != null) editTask.id else null) },
+                onUpdateClick = {
+                    onUpdateClick(
+                        editTask?.id,
+                        Task(
+                            title = taskInputState.title,
+                            content = taskInputState.content,
+                            tags = splitByComma(taskInputState.tags),
+                            taskState = taskInputState.selectedState,
+                            author = taskInputState.selectedAuthor,
+                        ),
+                    )
+                },
             )
+        } else {
+            CreateTaskActionButtons(
+                taskInputState.init.not() && taskInputState.isNewTaskEnabled,
+                onDismissRequest,
+            ) {
+                onConfirmation(
+                    Task(
+                        title = taskInputState.title,
+                        content = taskInputState.content,
+                        tags = splitByComma(taskInputState.tags),
+                        taskState = taskInputState.selectedState,
+                        author = taskInputState.selectedAuthor,
+                    ),
+                )
+            }
         }
     }
 }
@@ -102,9 +137,10 @@ private fun PreviewCreateTaskCardModal() {
     CreateTaskCardModal(
         taskInputState = TaskInputState(),
         onStateChange = {},
-        authors = listOf("다이노", "페임스"),
         onDismissRequest = {},
-        onConfirmation = {},
+        onConfirmation = { _ -> },
+        onDeleteClick = {},
+        onUpdateClick = { _, _ -> },
         modifier = Modifier
             .background(Color.White).padding(16.dp),
     )

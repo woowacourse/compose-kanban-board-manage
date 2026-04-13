@@ -8,7 +8,11 @@ data class Task(
     val content: String = "",
     val tags: List<String> = emptyList(),
     val taskState: TaskState,
-    val author: String,
+    val author: Author,
 ) {
     fun changeTaskState(taskState: TaskState): Task = copy(taskState = taskState)
+
+    fun canChangeTaskState(taskState: TaskState): Boolean {
+        return !(taskState != TaskState.TO_DO && author == Author.NONE)
+    }
 }

@@ -12,31 +12,28 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
-import java.util.UUID
 import kotlin.test.Test
-import woowacourse.kanban.board.domain.Project
+import woowacourse.kanban.board.domain.Author
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
-import woowacourse.kanban.board.domain.Tasks
+import woowacourse.kanban.board.ui.board.state.ProjectState
 import woowacourse.kanban.board.ui.board.state.ProjectsStateHolder
 
 @OptIn(ExperimentalTestApi::class)
 class BoardTest {
     val projects = listOf(
-        Project(
+        ProjectState(
             name = "Compose1",
-            tasks = Tasks(
-                listOf(
-                    Task(
-                        title = "title",
-                        taskState = TaskState.TO_DO,
-                        author = "다이노",
-                    ),
+            initialTasks = mutableListOf(
+                Task(
+                    title = "title",
+                    taskState = TaskState.TO_DO,
+                    author = Author.User("다이노"),
                 ),
             ),
         ),
-        Project(name = "Compose2"),
-        Project(name = "Compose3너무너무길다란이름"),
+        ProjectState(name = "Compose2"),
+        ProjectState(name = "Compose3너무너무길다란이름"),
     )
 
     @Test
@@ -44,10 +41,10 @@ class BoardTest {
         // given
         setContent {
             Board(
-                projectName = projects.first().name,
-                tasks = projects.first().tasks,
+                project = projects.first(),
                 onTaskCreated = {},
-                authors = listOf("다이노", "페임스"),
+                onTaskUpdated = { _, _ -> },
+                onTaskDeleted = { },
                 onTaskStateChange = { _, _ -> },
             )
         }
@@ -64,10 +61,10 @@ class BoardTest {
         // given
         setContent {
             Board(
-                projectName = projects.first().name,
-                tasks = projects.first().tasks,
+                project = projects.first(),
                 onTaskCreated = {},
-                authors = listOf("다이노", "페임스"),
+                onTaskUpdated = { _, _ -> },
+                onTaskDeleted = { },
                 onTaskStateChange = { _, _ -> },
             )
         }
@@ -88,11 +85,11 @@ class BoardTest {
             val selectedProject = stateHolder.selectedProject
 
             Board(
-                projectName = selectedProject?.name ?: "",
-                tasks = selectedProject?.tasks ?: Tasks(emptyList()),
-                onTaskCreated = { stateHolder.addTask(selectedProject?.id ?: UUID.randomUUID(), it) },
+                project = selectedProject ?: projects.first(),
+                onTaskCreated = { stateHolder.selectedProject?.addTask(it) },
+                onTaskUpdated = { _, _ -> },
+                onTaskDeleted = { },
                 onTaskStateChange = { _, _ -> },
-                authors = listOf("다이노", "페임스"),
             )
         }
 
@@ -110,10 +107,10 @@ class BoardTest {
         // given
         setContent {
             Board(
-                projectName = projects.first().name,
-                tasks = projects.first().tasks,
+                project = projects.first(),
                 onTaskCreated = {},
-                authors = listOf("다이노", "페임스"),
+                onTaskUpdated = { _, _ -> },
+                onTaskDeleted = { },
                 onTaskStateChange = { _, _ -> },
             )
         }
@@ -135,11 +132,11 @@ class BoardTest {
             val selectedProject = stateHolder.selectedProject
 
             Board(
-                projectName = selectedProject?.name ?: "",
-                tasks = selectedProject?.tasks ?: Tasks(emptyList()),
-                onTaskCreated = { stateHolder.addTask(selectedProject?.id ?: UUID.randomUUID(), it) },
+                project = selectedProject ?: projects.first(),
+                onTaskCreated = { stateHolder.selectedProject?.addTask(it) },
+                onTaskUpdated = { _, _ -> },
+                onTaskDeleted = { },
                 onTaskStateChange = { _, _ -> },
-                authors = listOf("다이노", "페임스"),
             )
         }
 
@@ -161,13 +158,13 @@ class BoardTest {
             val stateHolder = remember { ProjectsStateHolder(projects) }
 
             Board(
-                projectName = projects.first().name,
-                tasks = projects.first().tasks,
-                onTaskCreated = { stateHolder.addTask(projects.first().id, it) },
+                project = projects.first(),
+                onTaskCreated = { stateHolder.selectedProject?.addTask(it) },
+                onTaskUpdated = { _, _ -> },
+                onTaskDeleted = { },
                 onTaskStateChange = { idx, targetStatus ->
-                    stateHolder.changeTaskState(projects.first().id, idx, targetStatus)
+                    stateHolder.selectedProject?.changeTaskState(idx, targetStatus)
                 },
-                authors = listOf("다이노", "페임스"),
             )
         }
 
@@ -183,5 +180,63 @@ class BoardTest {
 
         // then
         onNodeWithText("태스크가 이동되었습니다.").assertIsDisplayed()
+    }
+
+    @Test
+    fun `태스크를 수정하면 Snackbar를 노출한다`() = runComposeUiTest {
+        // given
+        setContent {
+            val stateHolder = remember { ProjectsStateHolder(projects) }
+
+            Board(
+                project = projects.first(),
+                onTaskCreated = { stateHolder.selectedProject?.addTask(it) },
+                onTaskUpdated = { taskId, task ->
+                    stateHolder.selectedProject?.updateTask(taskId, task)
+                },
+                onTaskDeleted = { taskId ->
+                    stateHolder.selectedProject?.deleteTask(taskId)
+                },
+                onTaskStateChange = { idx, targetStatus ->
+                    stateHolder.selectedProject?.changeTaskState(idx, targetStatus)
+                },
+            )
+        }
+
+        // when
+        onNodeWithText("title").performClick()
+        onNode(hasText("수정") and hasClickAction()).performClick()
+
+        // then
+        onNodeWithText("태스크가 수정되었습니다.").assertIsDisplayed()
+    }
+
+    @Test
+    fun `태스크를 삭제하면 Snackbar를 노출한다`() = runComposeUiTest {
+        // given
+        setContent {
+            val stateHolder = remember { ProjectsStateHolder(projects) }
+
+            Board(
+                project = projects.first(),
+                onTaskCreated = { stateHolder.selectedProject?.addTask(it) },
+                onTaskUpdated = { taskId, task ->
+                    stateHolder.selectedProject?.updateTask(taskId, task)
+                },
+                onTaskDeleted = { taskId ->
+                    stateHolder.selectedProject?.deleteTask(taskId)
+                },
+                onTaskStateChange = { idx, targetStatus ->
+                    stateHolder.selectedProject?.changeTaskState(idx, targetStatus)
+                },
+            )
+        }
+
+        // when
+        onNodeWithText("title").performClick()
+        onNodeWithText("삭제").performClick()
+
+        // then
+        onNodeWithText("태스크가 삭제되었습니다.").assertIsDisplayed()
     }
 }

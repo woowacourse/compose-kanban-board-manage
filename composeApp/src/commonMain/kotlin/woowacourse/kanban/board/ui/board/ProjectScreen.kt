@@ -18,13 +18,14 @@ import woowacourse.kanban.board.ui.board.state.ProjectsStateHolder
 fun ProjectScreen(
     stateHolder: ProjectsStateHolder,
     onProjectChange: (UUID) -> Unit,
-    onTaskCreated: (UUID, Task) -> Unit,
-    onTaskStateChange: (UUID, UUID, TaskState) -> Unit,
+    onTaskCreated: (Task) -> Unit,
+    onTaskUpdated: (UUID, Task) -> Unit,
+    onTaskDeleted: (UUID) -> Unit,
+    onTaskStateChange: (UUID, TaskState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val projects = stateHolder.projects
     val selectedProject = stateHolder.selectedProject
-    val authors = listOf("다이노", "페임스")
 
     Row(
         modifier = modifier,
@@ -38,13 +39,11 @@ fun ProjectScreen(
 
         if (selectedProject != null) {
             Board(
-                projectName = selectedProject.name,
-                tasks = selectedProject.tasks,
-                onTaskCreated = { onTaskCreated(selectedProject.id, it) },
-                onTaskStateChange = { taskId, targetState ->
-                    onTaskStateChange(selectedProject.id, taskId, targetState)
-                },
-                authors = authors,
+                project = selectedProject,
+                onTaskCreated = onTaskCreated,
+                onTaskUpdated = onTaskUpdated,
+                onTaskDeleted = onTaskDeleted,
+                onTaskStateChange = onTaskStateChange,
                 modifier = Modifier.size(width = 1295.dp, height = 909.dp),
             )
         }
@@ -57,7 +56,9 @@ private fun ProjectScreenPreview() {
     ProjectScreen(
         stateHolder = remember { ProjectsStateHolder() },
         onProjectChange = { },
-        onTaskCreated = { _, _ -> },
-        onTaskStateChange = { _, _, _ -> },
+        onTaskCreated = { _ -> },
+        onTaskUpdated = { _, _ -> },
+        onTaskDeleted = { _ -> },
+        onTaskStateChange = { _, _ -> },
     )
 }

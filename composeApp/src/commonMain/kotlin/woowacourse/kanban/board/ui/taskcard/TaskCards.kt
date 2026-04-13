@@ -13,6 +13,7 @@ import woowacourse.kanban.board.domain.Task
 @Composable
 fun TaskCards(
     tasks: List<Task>,
+    onClick: (Task) -> Unit,
     modifier: Modifier = Modifier,
     onTaskDragStart: (Task) -> Unit,
     onTaskDragChange: (Offset) -> Unit,
@@ -26,6 +27,7 @@ fun TaskCards(
         items(items = tasks, key = { it }) { task ->
             TaskCard(
                 task = task,
+                onClick = onClick,
                 modifier = Modifier,
                 onDragStart = { onTaskDragStart(task) },
                 onDragChange = onTaskDragChange,
@@ -41,6 +43,7 @@ fun TaskCards(
 private fun TaskCardsPreview() {
     TaskCards(
         emptyList(),
+        onClick = {},
         onTaskDragStart = {},
         onTaskDragChange = {},
         onTaskDragEnd = {},

@@ -38,8 +38,10 @@ import androidx.compose.ui.unit.sp
 import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.profile_image
 import org.jetbrains.compose.resources.painterResource
+import woowacourse.kanban.board.domain.Author
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
+import woowacourse.kanban.board.ui.taskcard.components.toText
 import woowacourse.kanban.board.ui.theme.OutlineVariant
 import woowacourse.kanban.board.ui.theme.TagBackground
 import woowacourse.kanban.board.ui.theme.TaskCardContent
@@ -49,6 +51,7 @@ import woowacourse.kanban.board.ui.theme.TextSecondary
 @Composable
 fun TaskCard(
     task: Task,
+    onClick: (Task) -> Unit,
     modifier: Modifier = Modifier,
     onDragStart: () -> Unit = {},
     onDragChange: (Offset) -> Unit,
@@ -58,6 +61,7 @@ fun TaskCard(
     var cardWindowPosition by remember { mutableStateOf(Offset.Zero) }
 
     Card(
+        onClick = { onClick(task) },
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
         ),
@@ -90,8 +94,10 @@ fun TaskCard(
             Title(title = task.title)
             if (task.content.isNotEmpty()) Content(content = task.content)
             if (task.tags.isNotEmpty()) Tags(tags = task.tags)
-            HorizontalDivider(color = OutlineVariant)
-            Profile(author = task.author)
+            if (task.author != Author.NONE) {
+                HorizontalDivider(color = OutlineVariant)
+                Profile(author = task.author)
+            }
         }
     }
 }
@@ -148,7 +154,7 @@ private fun Tags(tags: List<String>) {
 }
 
 @Composable
-private fun Profile(author: String) {
+private fun Profile(author: Author) {
     Row {
         Image(
             painter = painterResource(Res.drawable.profile_image),
@@ -157,7 +163,7 @@ private fun Profile(author: String) {
         )
         Spacer(modifier = Modifier.width(2.dp))
         Text(
-            text = author,
+            text = author.toText(),
             style = MaterialTheme.typography.bodyMedium,
             color = TextSecondary,
             fontSize = 14.sp,
@@ -176,8 +182,9 @@ private fun TaskCardPreview() {
             content = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
             tags = listOf("컴포넌트", "성능"),
             taskState = TaskState.TO_DO,
-            author = "다이노",
+            author = Author.User("다이노"),
         ),
+        onClick = {},
         onDragChange = {},
         modifier = Modifier.padding(16.dp),
     )
