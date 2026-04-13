@@ -1,6 +1,7 @@
 package woowacourse.kanban.board.component.taskcard
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -24,39 +26,47 @@ import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.toImmutableList
-import woowacourse.kanban.board.Gray70
-import woowacourse.kanban.board.Gray80
 import woowacourse.kanban.board.component.sample.TaskCardPreviewData
+import woowacourse.kanban.board.component.util.Gray70
+import woowacourse.kanban.board.component.util.Gray80
 import woowacourse.kanban.board.model.taskcard.Description
 import woowacourse.kanban.board.model.taskcard.Profile
 import woowacourse.kanban.board.model.taskcard.Status
 import woowacourse.kanban.board.model.taskcard.Tag
 import woowacourse.kanban.board.model.taskcard.Tags
-import woowacourse.kanban.board.model.taskcard.TaskCardData
+import woowacourse.kanban.board.model.taskcard.TaskCard
 import woowacourse.kanban.board.model.taskcard.Title
 
 @Composable
 fun TaskCard(
-    data: TaskCardData,
+    data: TaskCard,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     onDragStart: () -> Unit = {},
     onDragChange: (Offset) -> Unit = {},
     onDragEnd: () -> Unit = {},
     onDragCancel: () -> Unit = {},
 ) {
     var cardWindowPosition by remember { mutableStateOf(Offset.Zero) }
+    val latestCardWindowPosition by rememberUpdatedState(cardWindowPosition)
+    val latestOnDragStart by rememberUpdatedState(onDragStart)
+    val latestOnDragChange by rememberUpdatedState(onDragChange)
+    val latestOnDragEnd by rememberUpdatedState(onDragEnd)
+    val latestOnDragCancel by rememberUpdatedState(onDragCancel)
+
     Card(
         modifier = modifier
             .onGloballyPositioned { cardWindowPosition = it.positionInWindow() }
+            .clickable { onClick() }
             .pointerInput(Unit) {
                 detectDragGestures(
-                    onDragStart = { onDragStart() },
+                    onDragStart = { latestOnDragStart() },
                     onDrag = { change, _ ->
                         change.consume()
-                        onDragChange(cardWindowPosition + change.position)
+                        latestOnDragChange(latestCardWindowPosition + change.position)
                     },
-                    onDragEnd = { onDragEnd() },
-                    onDragCancel = { onDragCancel() },
+                    onDragEnd = { latestOnDragEnd() },
+                    onDragCancel = { latestOnDragCancel() },
                 )
             }
             .width(286.dp),
@@ -74,11 +84,13 @@ fun TaskCard(
             Title(title = data.title.value)
             Description(description = data.description.value)
             Tags(tags = data.tags)
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = Gray80,
-            )
-            Profile(profile = data.profile)
+            if (data.profile.isAssigned) {
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = Gray80,
+                )
+                Profile(profile = data.profile)
+            }
         }
     }
 }
@@ -95,7 +107,8 @@ private fun TaskCardPreview() {
 @Composable
 private fun TaskCardEmptyDescriptionPreview() {
     TaskCard(
-        data = TaskCardData(
+        data = TaskCard(
+            id = "preview-task-empty-description",
             title = Title(value = "LazyColumn 컴포넌트 구현"),
             description = Description(value = ""),
             tags = Tags(value = listOf(Tag(value = "컴포넌트")).toImmutableList()),
@@ -109,7 +122,8 @@ private fun TaskCardEmptyDescriptionPreview() {
 @Composable
 private fun TaskCardEmptyTagPreview() {
     TaskCard(
-        data = TaskCardData(
+        data = TaskCard(
+            id = "preview-task-empty-tag",
             title = Title(value = "LazyColumn 컴포넌트 구현"),
             description = Description(value = "세로 스크롤"),
             tags = Tags(value = listOf<Tag>().toImmutableList()),
@@ -123,7 +137,8 @@ private fun TaskCardEmptyTagPreview() {
 @Composable
 private fun TaskCardEmptyTagAndDescriptionPreview() {
     TaskCard(
-        data = TaskCardData(
+        data = TaskCard(
+            id = "preview-task-empty-tag-description",
             title = Title(value = "LazyColumn 컴포넌트 구현"),
             description = Description(value = ""),
             tags = Tags(value = listOf<Tag>().toImmutableList()),
@@ -137,7 +152,8 @@ private fun TaskCardEmptyTagAndDescriptionPreview() {
 @Composable
 private fun TaskCardLongTitlePreview() {
     TaskCard(
-        data = TaskCardData(
+        data = TaskCard(
+            id = "preview-task-long-title",
             title = Title(value = "LazyColumn 컴포넌트 구현LazyColumn 컴포넌트 구현"),
             description = Description(value = ""),
             tags = Tags(value = listOf<Tag>().toImmutableList()),
@@ -151,7 +167,8 @@ private fun TaskCardLongTitlePreview() {
 @Composable
 private fun TaskCardLongDescriptionPreview() {
     TaskCard(
-        data = TaskCardData(
+        data = TaskCard(
+            id = "preview-task-long-description",
             title = Title(value = "LazyColumn 컴포넌트 구현"),
             description = Description(
                 value = "세로 스크롤  세로 스크롤" +

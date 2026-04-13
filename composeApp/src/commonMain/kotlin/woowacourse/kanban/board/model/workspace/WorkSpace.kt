@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.model.state
+package woowacourse.kanban.board.model.workspace
 
 import kotlinx.collections.immutable.ImmutableList
 import woowacourse.kanban.board.model.project.Project

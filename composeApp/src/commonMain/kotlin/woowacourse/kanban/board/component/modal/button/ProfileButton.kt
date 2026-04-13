@@ -26,10 +26,10 @@ import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.profile
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-import woowacourse.kanban.board.Blue50
-import woowacourse.kanban.board.Blue80
-import woowacourse.kanban.board.Gray20
-import woowacourse.kanban.board.Gray70
+import woowacourse.kanban.board.component.util.Blue50
+import woowacourse.kanban.board.component.util.Blue80
+import woowacourse.kanban.board.component.util.Gray20
+import woowacourse.kanban.board.component.util.Gray70
 import woowacourse.kanban.board.model.taskcard.Profile
 
 @Composable
@@ -55,11 +55,13 @@ fun ProfileButton(
         Row(
             horizontalArrangement = Arrangement.Start,
         ) {
-            Image(
-                painter = painterResource(myState.icon.toDrawableResource()),
-                contentDescription = "프로필 이미지",
-                modifier = Modifier.size(24.dp),
-            )
+            myState.icon.toDrawableResource()?.let {
+                Image(
+                    painter = painterResource(it),
+                    contentDescription = "프로필 이미지",
+                    modifier = Modifier.size(24.dp),
+                )
+            }
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = myState.nickname,
@@ -92,7 +94,7 @@ private fun ProfileButtonChoicePreview() {
     )
 }
 
-private fun String.toDrawableResource(): DrawableResource = when (this) {
+private fun String.toDrawableResource(): DrawableResource? = when (this) {
     "DEFAULT" -> Res.drawable.profile
-    else -> Res.drawable.profile
+    else -> null
 }

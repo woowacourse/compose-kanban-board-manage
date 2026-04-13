@@ -2,7 +2,6 @@ package woowacourse.kanban.board.model
 
 import kotlin.test.Test
 import kotlin.test.assertTrue
-import kotlinx.collections.immutable.immutableListOf
 import kotlinx.collections.immutable.persistentListOf
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.model.project.Project
@@ -11,16 +10,17 @@ import woowacourse.kanban.board.model.taskcard.Profile
 import woowacourse.kanban.board.model.taskcard.Status
 import woowacourse.kanban.board.model.taskcard.Tag
 import woowacourse.kanban.board.model.taskcard.Tags
-import woowacourse.kanban.board.model.taskcard.TaskCardData
+import woowacourse.kanban.board.model.taskcard.TaskCard
 import woowacourse.kanban.board.model.taskcard.Title
 
 class ProjectTest {
     @Test
     fun `입력한 id를 가진 태스크 카드가 변경값으로 입력한 status로 변경된다`() {
         val project = Project(
+            id = "project-1",
             title = "테스트 프로젝트",
             tasks = persistentListOf(
-                TaskCardData(
+                TaskCard(
                     id = "테스트",
                     title = Title("제목"),
                     description = Description("설명"),
@@ -36,8 +36,8 @@ class ProjectTest {
     }
 
     @Test
-    fun `찾고자 하는 태스크 카드의 id값을 넣었을 때 해당 id 값을 가진 TaskCardData를 찾을 수 있다`() {
-        val task = TaskCardData(
+    fun `찾고자 하는 태스크 카드의 id값을 넣었을 때 해당 id 값을 가진 TaskCard를 찾을 수 있다`() {
+        val task = TaskCard(
             id = "테스트",
             title = Title("제목"),
             description = Description("설명"),
@@ -46,6 +46,7 @@ class ProjectTest {
             profile = Profile("다이노"),
         )
         val project = Project(
+            id = "project-2",
             title = "테스트 프로젝트",
             tasks = persistentListOf(
                 task

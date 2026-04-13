@@ -9,7 +9,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import woowacourse.kanban.board.component.modal.action.ModalButtonActionFactory
 import woowacourse.kanban.board.component.modal.input.TextInputState
 import woowacourse.kanban.board.component.modal.section.ButtonSection
 import woowacourse.kanban.board.component.modal.section.Footer
@@ -24,34 +28,80 @@ import woowacourse.kanban.board.component.modal.section.Header
 import woowacourse.kanban.board.component.modal.section.TextInputSection
 import woowacourse.kanban.board.component.modal.state.ModalState
 import woowacourse.kanban.board.component.sample.ProfilePreviewData
+import woowacourse.kanban.board.component.sample.TaskCardPreviewData
+import woowacourse.kanban.board.model.identifier.UuidIdentifierGenerator
 import woowacourse.kanban.board.model.taskcard.Description
 import woowacourse.kanban.board.model.taskcard.Profile
 import woowacourse.kanban.board.model.taskcard.Tag
 import woowacourse.kanban.board.model.taskcard.Tags
-import woowacourse.kanban.board.model.taskcard.TaskCardData
+import woowacourse.kanban.board.model.taskcard.TaskCard
+import woowacourse.kanban.board.model.taskcard.TaskCardFactory
 import woowacourse.kanban.board.model.taskcard.Title
 
 @Composable
 fun Modal(
     profiles: ImmutableList<Profile>,
+    initialTask: TaskCard?,
     onClickClose: () -> Unit,
-    onClickTaskCreate: (TaskCardData) -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    onCreateTask: (TaskCard) -> Unit,
+    onUpdateTask: (String, TaskCard) -> Unit,
+    onDeleteTask: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val modalState = remember { ModalState(profiles) }
+    var modalState by remember(profiles, initialTask) {
+        mutableStateOf(ModalState(profiles, initialTask))
+    }
+    val taskCardFactory = remember { TaskCardFactory(UuidIdentifierGenerator()) }
     val titleInputState = TextInputState(
         value = modalState.title,
-        onChange = { modalState.title = it },
+        onChange = { modalState = modalState.copy(title = it) },
         isError = modalState.isTitleValid.not(),
     )
     val descriptionInputState = TextInputState(
         value = modalState.description,
-        onChange = { modalState.description = it },
+        onChange = { modalState = modalState.copy(description = it) },
     )
     val tagsInputState = TextInputState(
         value = modalState.tags,
-        onChange = { modalState.tags = it },
+        onChange = { modalState = modalState.copy(tags = it) },
         isError = modalState.isTagsValid.not(),
+    )
+    val buildTaskCard: (String?) -> TaskCard = { id ->
+        val title = Title(value = modalState.title)
+        val description = Description(value = modalState.description)
+        val tags = Tags(Tag.parseAll(modalState.tags).toImmutableList())
+        val status = modalState.status
+        val profile = modalState.profile
+
+        if (id == null) {
+            taskCardFactory.create(
+                title = title,
+                description = description,
+                tags = tags,
+                status = status,
+                profile = profile,
+            )
+        } else {
+            TaskCard(
+                id = id,
+                title = title,
+                description = description,
+                tags = tags,
+                status = status,
+                profile = profile,
+            )
+        }
+    }
+    val buttonActionFactory = ModalButtonActionFactory(
+        modalState = modalState,
+        initialTask = initialTask,
+        onModalStateChange = { modalState = it },
+        buildTaskCard = buildTaskCard,
+        onShowSnackbar = onShowSnackbar,
+        onCreateTask = onCreateTask,
+        onUpdateTask = onUpdateTask,
+        onDeleteTask = onDeleteTask,
     )
 
     Card(
@@ -82,22 +132,24 @@ fun Modal(
                 state = modalState.status,
                 currentProfile = modalState.profile,
                 profiles = profiles,
-                onStateClick = { modalState.status = it },
-                onProfileClick = { modalState.profile = it },
+                onStateClick = { nextStatus ->
+                    buttonActionFactory.createStatusChangeAction(nextStatus).execute()
+                },
+                onProfileClick = { modalState = modalState.copy(profile = it) },
             )
             Footer(
                 onClickClose = onClickClose,
                 onClickTaskCreate = {
-                    val data = TaskCardData(
-                        title = Title(value = modalState.title),
-                        description = Description(value = modalState.description),
-                        tags = Tags(Tag.parseAll(modalState.tags).toImmutableList()),
-                        status = modalState.status,
-                        profile = modalState.profile,
-                    )
-                    onClickTaskCreate(data)
+                    buttonActionFactory.createTaskCreateAction().execute()
                 },
-                isButtonEnabled = modalState.isTitleValid && modalState.isTagsValid,
+                onClickTaskDelete = {
+                    buttonActionFactory.createTaskDeleteAction().execute()
+                },
+                onClickTaskModify = {
+                    buttonActionFactory.createTaskModifyAction().execute()
+                },
+                isButtonEnabled = modalState.isSubmittable,
+                isCreateMode = initialTask == null,
             )
         }
     }
@@ -107,9 +159,14 @@ fun Modal(
 @Composable
 private fun ModalPreview() {
     val profiles = ProfilePreviewData().values.toImmutableList()
+    val task = TaskCardPreviewData().values.toImmutableList()[0]
     Modal(
         profiles = profiles,
+        initialTask = task,
         onClickClose = {},
-        onClickTaskCreate = {},
+        onCreateTask = {},
+        onUpdateTask = { _, _ -> },
+        onDeleteTask = {},
+        onShowSnackbar = {},
     )
 }

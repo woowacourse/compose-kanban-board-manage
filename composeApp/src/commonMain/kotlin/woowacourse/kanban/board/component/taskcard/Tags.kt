@@ -15,8 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.toImmutableList
-import woowacourse.kanban.board.Gray20
-import woowacourse.kanban.board.Gray80
+import woowacourse.kanban.board.component.util.Gray20
+import woowacourse.kanban.board.component.util.Gray80
 import woowacourse.kanban.board.model.taskcard.Tag
 import woowacourse.kanban.board.model.taskcard.Tags
 

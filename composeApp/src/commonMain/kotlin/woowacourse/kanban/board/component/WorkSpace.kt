@@ -15,6 +15,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -25,25 +29,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import woowacourse.kanban.board.Blue80
-import woowacourse.kanban.board.Gray10
-import woowacourse.kanban.board.Gray20
-import woowacourse.kanban.board.Gray40
-import woowacourse.kanban.board.Purple50
 import woowacourse.kanban.board.component.board.Board
 import woowacourse.kanban.board.component.sample.ProfilePreviewData
 import woowacourse.kanban.board.component.sample.ProjectPreviewData
-import woowacourse.kanban.board.component.state.rememberWorkSpaceStateHolder
+import woowacourse.kanban.board.component.state.WorkSpaceStateHolder
+import woowacourse.kanban.board.component.util.Blue80
+import woowacourse.kanban.board.component.util.Gray10
+import woowacourse.kanban.board.component.util.Gray20
+import woowacourse.kanban.board.component.util.Gray40
+import woowacourse.kanban.board.component.util.Purple80
 import woowacourse.kanban.board.model.project.Project
-import woowacourse.kanban.board.model.state.WorkSpace as WorkSpaceModel
 import woowacourse.kanban.board.model.taskcard.Profile
+import woowacourse.kanban.board.model.workspace.WorkSpace as WorkSpaceModel
+
 @Composable
 fun WorkSpace(
     workSpace: WorkSpaceModel,
     profiles: ImmutableList<Profile>,
     modifier: Modifier = Modifier
 ) {
-    val stateHolder = rememberWorkSpaceStateHolder(workSpace)
+    var stateHolder by remember(workSpace) {
+        mutableStateOf(WorkSpaceStateHolder(workSpace))
+    }
+
     Row(
         modifier = modifier
     ) {
@@ -51,15 +59,27 @@ fun WorkSpace(
             SideBar(
                 workSpace = stateHolder.workSpace,
                 selectedProject = currentProject,
-                onChangeProject = stateHolder::selectProject,
+                onChangeProject = { project ->
+                    stateHolder = stateHolder.selectProject(project)
+                },
             )
         }
         stateHolder.selectedProject?.let {
             Board(
                 project = it,
                 profiles = profiles,
-                onCreateTask = stateHolder::addTask,
-                onUpdateTaskStatus = stateHolder::updateTaskStatus,
+                onCreateTask = { task ->
+                    stateHolder = stateHolder.addTask(task)
+                },
+                onUpdateTask = { id, task ->
+                    stateHolder = stateHolder.updateTask(id, task)
+                },
+                onDeleteTask = { id ->
+                    stateHolder = stateHolder.deleteTask(id)
+                },
+                onUpdateTaskStatus = { id, status ->
+                    stateHolder = stateHolder.updateTaskStatus(id, status)
+                },
             )
         }
     }
@@ -70,10 +90,9 @@ private fun SideBar(
     workSpace: WorkSpaceModel,
     selectedProject: Project,
     onChangeProject: (Project) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxHeight()
             .width(255.dp)
             .background(Color.White),
@@ -104,7 +123,7 @@ private fun SideBar(
                 if (project == selectedProject) Blue80
                 else Color.Transparent
             val textColor =
-                if (project == selectedProject) Purple50
+                if (project == selectedProject) Purple80
                 else Gray20
             Button(
                 onClick = { onChangeProject(project) },

@@ -31,10 +31,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
-import woowacourse.kanban.board.Gray10
-import woowacourse.kanban.board.Gray30
-import woowacourse.kanban.board.component.ComponentText
 import woowacourse.kanban.board.component.sample.ProjectPreviewData
+import woowacourse.kanban.board.component.util.ComponentText
+import woowacourse.kanban.board.component.util.Gray10
+import woowacourse.kanban.board.component.util.Gray30
 import woowacourse.kanban.board.model.taskcard.Status
 
 @Composable
@@ -71,13 +71,12 @@ fun BoardHeader(
 @Composable
 private fun ProgressBar(
     progress: Float,
-    modifier: Modifier = Modifier,
 ) {
     LinearProgressIndicator(
         gapSize = 0.dp,
         strokeCap = StrokeCap.Square,
         progress = { progress },
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .height(8.dp)
             .clip(RoundedCornerShape(15.dp)),
@@ -120,7 +119,6 @@ private fun BoardHeaderTitle(
         }
         TaskCreateButton(
             onClickCreateTask = onClickCreateTask,
-            modifier = Modifier,
         )
     }
 }
@@ -128,11 +126,9 @@ private fun BoardHeaderTitle(
 @Composable
 private fun TaskCreateButton(
     onClickCreateTask: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = { onClickCreateTask() },
-        modifier = modifier,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Blue,
         ),

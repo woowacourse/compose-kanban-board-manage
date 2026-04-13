@@ -1,4 +1,4 @@
-package woowacourse.kanban.board
+package woowacourse.kanban.board.component.util
 
 import androidx.compose.ui.graphics.Color
 
@@ -18,7 +18,12 @@ val Yellow60 = Color(0xFFE17100)
 val Yellow70 = Color(0xFFFEE685)
 val Yellow90 = Color(0xFFFFFBEB)
 val Red50 = Color(0xFFB3261E)
+val Red20 = Color(0xFFDB6365)
 val Green60 = Color(0xFF00A63E)
 val Green70 = Color(0xFFB9F8CF)
 val Green90 = Color(0xFFF0FDF4)
-val Purple50 = Color(0xFF432DD7)
+val Purple80 = Color(0xFF432DD7)
+val Purple70 = Color(0xFF4F39F6)
+val Purple60 = Color(0xFF8B5CF6)
+val Purple40 = Color(0xFFD2C7EA)
+val Purple20 = Color(0xFFEDE9FE)

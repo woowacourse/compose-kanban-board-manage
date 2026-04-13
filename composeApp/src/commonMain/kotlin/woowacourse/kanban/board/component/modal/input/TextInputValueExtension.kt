@@ -1,6 +1,6 @@
 package woowacourse.kanban.board.component.modal.input
 
-import woowacourse.kanban.board.component.ComponentText
+import woowacourse.kanban.board.component.util.ComponentText
 
 fun TextInputValue.toLabel(): String = when (this) {
     TextInputValue.TITLE -> ComponentText.TITLE_LABEL

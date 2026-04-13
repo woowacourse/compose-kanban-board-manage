@@ -8,7 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
-import woowacourse.kanban.board.component.ComponentText
+import woowacourse.kanban.board.component.util.ComponentText
 
 @OptIn(ExperimentalTestApi::class)
 class BoardHeaderTest {

@@ -12,21 +12,12 @@ import woowacourse.kanban.board.model.taskcard.Profile
 import woowacourse.kanban.board.model.taskcard.Status
 import woowacourse.kanban.board.model.taskcard.Tag
 import woowacourse.kanban.board.model.taskcard.Tags
-import woowacourse.kanban.board.model.taskcard.TaskCardData
+import woowacourse.kanban.board.model.taskcard.TaskCard
 import woowacourse.kanban.board.model.taskcard.Title
 
 @OptIn(ExperimentalTestApi::class)
 class TaskColumnSectionTest {
-
-    fun createData(status: Status): TaskCardData {
-        return TaskCardData(
-            title = Title(value = "업무1"),
-            description = Description(""),
-            tags = Tags(value = listOf(Tag("컴포넌트")).toImmutableList()),
-            status = status,
-            profile = Profile("다이노")
-        )
-    }
+    private var taskSequence = 0
 
     @Test
     fun `todoTasks에 등록된 태스크가 3개면 3이 출력된다`() = runComposeUiTest {
@@ -35,6 +26,7 @@ class TaskColumnSectionTest {
         val data3 = createData(Status.TODO)
         val todoTasks = listOf(data1, data2, data3)
         val project = Project(
+            id = "project-todo",
             title = "title",
             tasks = todoTasks.toImmutableList()
         )
@@ -42,7 +34,10 @@ class TaskColumnSectionTest {
             TaskColumnSection(
                 project = project,
                 onMoveSnackBar = {},
+                onInvalidStatusMove = {},
+                onRequireProfileMove = {},
                 onUpdateTaskStatus = { _, _ -> },
+                onTaskClick = {},
             )
         }
 
@@ -59,6 +54,7 @@ class TaskColumnSectionTest {
 
         val progressTasks = listOf(data1, data2, data3, data4, data5)
         val project = Project(
+            id = "project-progress",
             title = "title",
             tasks = progressTasks.toImmutableList()
         )
@@ -66,7 +62,10 @@ class TaskColumnSectionTest {
             TaskColumnSection(
                 project = project,
                 onMoveSnackBar = {},
+                onInvalidStatusMove = {},
+                onRequireProfileMove = {},
                 onUpdateTaskStatus = { _, _ -> },
+                onTaskClick = {},
             )
         }
 
@@ -82,6 +81,7 @@ class TaskColumnSectionTest {
 
         val doneTasks = listOf(data1, data2, data3, data4)
         val project = Project(
+            id = "project-done",
             title = "title",
             tasks = doneTasks.toImmutableList()
         )
@@ -89,10 +89,50 @@ class TaskColumnSectionTest {
             TaskColumnSection(
                 project = project,
                 onMoveSnackBar = {},
+                onInvalidStatusMove = {},
+                onRequireProfileMove = {},
                 onUpdateTaskStatus = { _, _ -> },
+                onTaskClick = {},
             )
         }
 
         onNodeWithText("4").assertIsDisplayed()
+    }
+
+    @Test
+    fun `reviewTasks에 등록된 태스크가 2개면 2가 출력된다`() = runComposeUiTest {
+        val data1 = createData(Status.REVIEW)
+        val data2 = createData(Status.REVIEW)
+
+        val reviewTasks = listOf(data1, data2)
+        val project = Project(
+            id = "project-review",
+            title = "title",
+            tasks = reviewTasks.toImmutableList()
+        )
+        setContent {
+            TaskColumnSection(
+                project = project,
+                onMoveSnackBar = {},
+                onInvalidStatusMove = {},
+                onRequireProfileMove = {},
+                onUpdateTaskStatus = { _, _ -> },
+                onTaskClick = {},
+            )
+        }
+
+        onNodeWithText("2").assertIsDisplayed()
+    }
+
+    private fun createData(status: Status): TaskCard {
+        taskSequence += 1
+        return TaskCard(
+            id = "task-$status-$taskSequence",
+            title = Title(value = "업무1"),
+            description = Description(""),
+            tags = Tags(value = listOf(Tag("컴포넌트")).toImmutableList()),
+            status = status,
+            profile = Profile("다이노")
+        )
     }
 }

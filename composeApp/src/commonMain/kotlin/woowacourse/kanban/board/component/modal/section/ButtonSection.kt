@@ -3,12 +3,11 @@ package woowacourse.kanban.board.component.modal.section
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,11 +15,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import woowacourse.kanban.board.Gray20
-import woowacourse.kanban.board.component.ComponentText
 import woowacourse.kanban.board.component.modal.button.ProfileButton
 import woowacourse.kanban.board.component.modal.button.StateButton
 import woowacourse.kanban.board.component.sample.ProfilePreviewData
+import woowacourse.kanban.board.component.util.ComponentText
+import woowacourse.kanban.board.component.util.Gray20
 import woowacourse.kanban.board.model.taskcard.Profile
 import woowacourse.kanban.board.model.taskcard.Status
 
@@ -45,14 +44,18 @@ fun ButtonSection(
             fontWeight = FontWeight.SemiBold,
             color = Gray20,
         )
-        FlowRow(
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            StateButton(currentState = state, myState = Status.TODO, onClick = { onStateClick(Status.TODO) })
-            StateButton(currentState = state, myState = Status.PROGRESS, onClick = { onStateClick(Status.PROGRESS) })
-            StateButton(currentState = state, myState = Status.DONE, onClick = { onStateClick(Status.DONE) })
+            Status.entries.forEach { status ->
+                StateButton(
+                    currentState = state,
+                    myState = status,
+                    onClick = { onStateClick(status) },
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
         Text(
             text = ComponentText.PROFILE_BUTTON_LABEL,
@@ -65,6 +68,11 @@ fun ButtonSection(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            if (state == Status.TODO) ProfileButton(
+                currentState = currentProfile,
+                myState = Profile.NONE,
+                onClick = { onProfileClick(Profile.NONE) }
+            )
             profiles.forEach { profile ->
                 ProfileButton(
                     currentState = currentProfile,

@@ -15,12 +15,12 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import org.junit.Before
-import woowacourse.kanban.board.component.ComponentText
 import woowacourse.kanban.board.component.sample.ProjectPreviewData
+import woowacourse.kanban.board.component.util.ComponentText
 import woowacourse.kanban.board.model.project.Project
 import woowacourse.kanban.board.model.taskcard.Profile
 
@@ -29,7 +29,7 @@ class BoardTest {
     private lateinit var project: Project
     private lateinit var profiles: ImmutableList<Profile>
 
-    @Before
+    @BeforeTest
     fun setUp() {
         project = ProjectPreviewData().values.toImmutableList()[0]
         profiles = listOf(
@@ -37,6 +37,7 @@ class BoardTest {
             Profile("페임스")
         ).toImmutableList()
     }
+
     @Test
     fun `새 태스크 생성 버튼을 누르면 다이얼로그가 열린다`() = runComposeUiTest {
         setContent {
@@ -45,6 +46,8 @@ class BoardTest {
                 project = currentProject,
                 profiles = profiles,
                 onCreateTask = { task -> currentProject = currentProject.addCard(task) },
+                onUpdateTask = { id, task -> currentProject = currentProject.updateTask(id, task) },
+                onDeleteTask = { id -> currentProject = currentProject.deleteTask(id) },
                 onUpdateTaskStatus = { id, status -> currentProject = currentProject.updateTaskStatus(id, status) },
             )
         }
@@ -60,6 +63,8 @@ class BoardTest {
                 project = currentProject,
                 profiles = profiles,
                 onCreateTask = { task -> currentProject = currentProject.addCard(task) },
+                onUpdateTask = { id, task -> currentProject = currentProject.updateTask(id, task) },
+                onDeleteTask = { id -> currentProject = currentProject.deleteTask(id) },
                 onUpdateTaskStatus = { id, status -> currentProject = currentProject.updateTaskStatus(id, status) },
             )
         }
@@ -77,6 +82,8 @@ class BoardTest {
                 project = currentProject,
                 profiles = profiles,
                 onCreateTask = { task -> currentProject = currentProject.addCard(task) },
+                onUpdateTask = { id, task -> currentProject = currentProject.updateTask(id, task) },
+                onDeleteTask = { id -> currentProject = currentProject.deleteTask(id) },
                 onUpdateTaskStatus = { id, status -> currentProject = currentProject.updateTaskStatus(id, status) },
             )
         }
@@ -94,6 +101,8 @@ class BoardTest {
                 project = currentProject,
                 profiles = profiles,
                 onCreateTask = { task -> currentProject = currentProject.addCard(task) },
+                onUpdateTask = { id, task -> currentProject = currentProject.updateTask(id, task) },
+                onDeleteTask = { id -> currentProject = currentProject.deleteTask(id) },
                 onUpdateTaskStatus = { id, status -> currentProject = currentProject.updateTaskStatus(id, status) },
             )
         }
@@ -112,6 +121,8 @@ class BoardTest {
                 project = currentProject,
                 profiles = profiles,
                 onCreateTask = { task -> currentProject = currentProject.addCard(task) },
+                onUpdateTask = { id, task -> currentProject = currentProject.updateTask(id, task) },
+                onDeleteTask = { id -> currentProject = currentProject.deleteTask(id) },
                 onUpdateTaskStatus = { id, status -> currentProject = currentProject.updateTaskStatus(id, status) },
             )
         }

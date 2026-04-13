@@ -22,10 +22,10 @@ import androidx.compose.ui.unit.sp
 import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.icon
 import org.jetbrains.compose.resources.painterResource
-import woowacourse.kanban.board.Gray20
-import woowacourse.kanban.board.Gray50
-import woowacourse.kanban.board.Gray70
-import woowacourse.kanban.board.Red50
+import woowacourse.kanban.board.component.util.Gray20
+import woowacourse.kanban.board.component.util.Gray50
+import woowacourse.kanban.board.component.util.Gray70
+import woowacourse.kanban.board.component.util.Red50
 import woowacourse.kanban.board.model.taskcard.Tags
 import woowacourse.kanban.board.model.taskcard.Title
 

@@ -42,21 +42,25 @@ import woowacourse.kanban.board.component.extension.toFilterTask
 import woowacourse.kanban.board.component.extension.toHeaderColor
 import woowacourse.kanban.board.component.extension.toText
 import woowacourse.kanban.board.component.sample.ProjectPreviewData
-import woowacourse.kanban.board.component.taskcard.TaskCard
+import woowacourse.kanban.board.component.taskcard.TaskCard as TaskCardItem
 import woowacourse.kanban.board.model.project.Project
 import woowacourse.kanban.board.model.taskcard.Description
 import woowacourse.kanban.board.model.taskcard.Profile
 import woowacourse.kanban.board.model.taskcard.Status
 import woowacourse.kanban.board.model.taskcard.Tag
 import woowacourse.kanban.board.model.taskcard.Tags
-import woowacourse.kanban.board.model.taskcard.TaskCardData
+import woowacourse.kanban.board.model.taskcard.TaskCard
+import woowacourse.kanban.board.model.taskcard.TaskCardPolicy
 import woowacourse.kanban.board.model.taskcard.Title
 
 @Composable
 fun TaskColumnSection(
     project: Project,
     onMoveSnackBar: () -> Unit,
+    onInvalidStatusMove: () -> Unit,
+    onRequireProfileMove: () -> Unit,
     onUpdateTaskStatus: (String, Status) -> Unit,
+    onTaskClick: (TaskCard) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
@@ -87,9 +91,18 @@ fun TaskColumnSection(
 
                     draggedTaskId?.let { id ->
                         val task = project.findTaskById(id)
-                        if (task != null && targetStatus != null && task.status != targetStatus) {
-                            onUpdateTaskStatus(id, targetStatus)
-                            onMoveSnackBar()
+                        when {
+                            task == null || targetStatus == null || task.status == targetStatus -> Unit
+                            !TaskCardPolicy.canModifyStatus(task.status, targetStatus) -> {
+                                onInvalidStatusMove()
+                            }
+                            TaskCardPolicy.requireProfile(targetStatus) && !task.profile.isAssigned -> {
+                                onRequireProfileMove()
+                            }
+                            else -> {
+                                onUpdateTaskStatus(id, targetStatus)
+                                onMoveSnackBar()
+                            }
                         }
                     }
 
@@ -100,6 +113,7 @@ fun TaskColumnSection(
                     currentDragPosition = null
                     draggedTaskId = null
                 },
+                onTaskClick = onTaskClick
             )
         }
         Spacer(
@@ -111,14 +125,15 @@ fun TaskColumnSection(
 @Composable
 private fun TaskColumn(
     status: Status,
-    tasks: ImmutableList<TaskCardData>,
+    tasks: ImmutableList<TaskCard>,
     modifier: Modifier = Modifier,
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = {},
-    onTaskDragStart: (TaskCardData) -> Unit = {},
+    onTaskDragStart: (TaskCard) -> Unit = {},
     onTaskDragChange: (Offset) -> Unit = {},
     onTaskDragEnd: () -> Unit = {},
     onTaskDragCancel: () -> Unit = {},
+    onTaskClick: (TaskCard) -> Unit,
 ) {
     val isDropTarget by remember { derivedStateOf { getIsDropTarget() } }
     val lastBoundsHolder = remember { mutableStateOf<Rect?>(null) }
@@ -154,9 +169,10 @@ private fun TaskColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(tasks, key = { it.id }) { task ->
-                    TaskCard(
+                    TaskCardItem(
                         data = task,
                         modifier = Modifier.fillMaxWidth(),
+                        onClick = { onTaskClick(task) },
                         onDragStart = { onTaskDragStart(task) },
                         onDragChange = onTaskDragChange,
                         onDragEnd = onTaskDragEnd,
@@ -235,7 +251,8 @@ private fun TaskColumnTodoHeaderPreview() {
 @Composable
 private fun TaskColumnTodoPreview() {
     val tasks = listOf(
-        TaskCardData(
+        TaskCard(
+            id = "preview-todo-task",
             title = Title(value = "제목"),
             description = Description(value = "설명"),
             tags = Tags(value = listOf(Tag(value = "컴포넌트")).toImmutableList()),
@@ -243,9 +260,11 @@ private fun TaskColumnTodoPreview() {
             profile = Profile("다이노"),
         ),
     ).toImmutableList()
+
     TaskColumn(
         tasks = tasks,
         status = Status.TODO,
+        onTaskClick = {},
     )
 }
 
@@ -253,7 +272,8 @@ private fun TaskColumnTodoPreview() {
 @Composable
 private fun TaskColumnProgressPreview() {
     val tasks = listOf(
-        TaskCardData(
+        TaskCard(
+            id = "preview-progress-task",
             title = Title(value = "제목"),
             description = Description(value = "설명"),
             tags = Tags(value = listOf(Tag(value = "컴포넌트"), Tag("zjavh")).toImmutableList()),
@@ -261,9 +281,11 @@ private fun TaskColumnProgressPreview() {
             profile = Profile("다이노"),
         ),
     ).toImmutableList()
+
     TaskColumn(
         tasks = tasks,
         status = Status.PROGRESS,
+        onTaskClick = {},
     )
 }
 
@@ -271,7 +293,8 @@ private fun TaskColumnProgressPreview() {
 @Composable
 private fun TaskColumnDonePreview() {
     val tasks = listOf(
-        TaskCardData(
+        TaskCard(
+            id = "preview-done-task",
             title = Title(value = "제목"),
             description = Description(value = "설명"),
             tags = Tags(value = listOf(Tag(value = "컴포넌트")).toImmutableList()),
@@ -279,23 +302,27 @@ private fun TaskColumnDonePreview() {
             profile = Profile("다이노"),
         ),
     ).toImmutableList()
+
     TaskColumn(
         tasks = tasks,
         status = Status.DONE,
+        onTaskClick = {},
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun TaskColumnSectionPreview() {
-    val project = ProjectPreviewData().values.toMutableList()
-    project.forEach { project ->
-        MaterialTheme {
-            TaskColumnSection(
-                project = project,
-                onMoveSnackBar = {},
-                onUpdateTaskStatus = { _, _ -> },
-            )
-        }
+    val project = ProjectPreviewData().values.first()
+
+    MaterialTheme {
+        TaskColumnSection(
+            project = project,
+            onMoveSnackBar = {},
+            onInvalidStatusMove = {},
+            onRequireProfileMove = {},
+            onUpdateTaskStatus = { _, _ -> },
+            onTaskClick = {},
+        )
     }
 }
