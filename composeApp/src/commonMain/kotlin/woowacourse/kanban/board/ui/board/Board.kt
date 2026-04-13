@@ -34,6 +34,7 @@ import woowacourse.kanban.board.ui.board.components.BoardHeader
 import woowacourse.kanban.board.ui.board.components.CreateTaskModalDialog
 import woowacourse.kanban.board.ui.board.components.KanbanBoardContent
 import woowacourse.kanban.board.ui.board.components.UpdateTaskModalDialog
+import woowacourse.kanban.board.ui.taskcard.state.TaskInputState
 import woowacourse.kanban.board.ui.theme.OutlineVariant
 import woowacourse.kanban.board.ui.theme.Primary
 
@@ -53,6 +54,19 @@ fun Board(
     updatingTask: Task? = null,
 ) {
     var openCreateDialog by remember { mutableStateOf(false) }
+    var taskInputState by remember { mutableStateOf(TaskInputState(selectedAuthor = authors.first())) }
+    var updateTaskInputState by remember(updatingTask) {
+        mutableStateOf(
+            TaskInputState(
+                title = updatingTask?.title ?: "",
+                content = updatingTask?.content ?: "",
+                tags = updatingTask?.tags?.joinToString(",") ?: "",
+                selectedState = updatingTask?.taskState ?: TaskState.ToDo,
+                selectedAuthor = updatingTask?.author?.takeIf { it.isNotBlank() } ?: authors.first(),
+            ),
+        )
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -92,7 +106,6 @@ fun Board(
                                             TasksError.INVALID_AUTHOR -> "담당자를 지정해야 상태를 옮길 수 있습니다."
                                             else -> "상태 변경에 실패했습니다."
                                         }
-
                                         else -> "알 수 없는 에러가 발생했습니다."
                                     }
                                     snackbarHostState.currentSnackbarData?.dismiss()
@@ -109,6 +122,7 @@ fun Board(
 
             if (openCreateDialog) {
                 CreateTaskModalDialog(
+                    taskInputState = taskInputState,
                     authors = authors,
                     onDismissRequest = {
                         openCreateDialog = false
@@ -123,7 +137,9 @@ fun Board(
                                 withDismissAction = true,
                             )
                         }
+                        taskInputState = TaskInputState(selectedAuthor = authors.first())
                     },
+                    onStateChange = { taskInputState = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.Center),
@@ -132,7 +148,8 @@ fun Board(
 
             if (openUpdateDialog && updatingTask != null) {
                 UpdateTaskModalDialog(
-                    task = updatingTask,
+                    taskInputState = updateTaskInputState,
+                    onStateChange = { updateTaskInputState = it },
                     authors = authors,
                     onDismissRequest = { closeUpdateDialog() },
                     onUpdateRequest = {
@@ -146,11 +163,6 @@ fun Board(
                                         taskState = it.taskState,
                                         author = it.author,
                                     ),
-                                )
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                                snackbarHostState.showSnackbar(
-                                    message = "태스크가 수정되었습니다.",
-                                    withDismissAction = true,
                                 )
                             }.onSuccess {
                                 snackbarHostState.currentSnackbarData?.dismiss()
