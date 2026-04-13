@@ -47,7 +47,7 @@ sealed class TaskState {
 
     object Done : TaskState() {
         override val isDeletable: Boolean = false
-        override val isNeedProfile: Boolean = false
+        override val isNeedProfile: Boolean = true
 
         override fun transferTo(state: TaskState): TaskState = when(state) {
             ToDo -> ToDo
