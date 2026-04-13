@@ -2,16 +2,13 @@ package woowacourse.kanban.board.ui.taskcard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.board.domain.Tags
-import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.Title
 import woowacourse.kanban.board.exception.TagError
 import woowacourse.kanban.board.exception.TagException
@@ -19,9 +16,9 @@ import woowacourse.kanban.board.exception.TitleError
 import woowacourse.kanban.board.exception.TitleException
 import woowacourse.kanban.board.ui.taskcard.components.AuthorSelectField
 import woowacourse.kanban.board.ui.taskcard.components.ContentInputField
-import woowacourse.kanban.board.ui.taskcard.components.CreateTaskHeader
-import woowacourse.kanban.board.ui.taskcard.components.RoundedBottomButtons
+import woowacourse.kanban.board.ui.taskcard.components.TaskHeader
 import woowacourse.kanban.board.ui.taskcard.components.TagsInputField
+import woowacourse.kanban.board.ui.taskcard.components.TaskCardModalBottomButtons
 import woowacourse.kanban.board.ui.taskcard.components.TaskStateSelectField
 import woowacourse.kanban.board.ui.taskcard.components.TitleInputField
 import woowacourse.kanban.board.ui.taskcard.state.TaskInputState
@@ -34,42 +31,23 @@ fun TaskCardModal(
     onStateChange: (TaskInputState) -> Unit,
     authors: List<String>,
     onDismissRequest: () -> Unit,
-    formContent: @Composable () -> Unit,
     bottomButtonsContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    onCreateRequest: (Task) -> Unit = {},
-    onDeleteRequest: () -> Unit = {},
-    onUpdateRequest: (Task) -> Unit = {},
-    ) {
+) {
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        CreateTaskHeader(titleText = titleText/*"기존 태스크 수정"*/, onDismissRequest = onDismissRequest)
+        TaskHeader(titleText = titleText, onDismissRequest = onDismissRequest)
         HorizontalDivider()
         TaskCardModalForm(
             taskInputState = taskInputState,
             modifier = Modifier.weight(1f),
             onStateChange = onStateChange,
             authors = authors
-        ) {
-            formContent()
-        }
+        )
         HorizontalDivider()
         TaskCardModalBottomButtons(
-            isUpdateTaskEnabled = taskInputState.isUpdateTaskEnabled,
-            isDeletedEnabled = taskInputState.isDeleteEnabled,
-            onDismissRequest = onDismissRequest,
-            onDeleteRequest = { onDeleteRequest() },
-            onUpdateRequest = { onUpdateRequest(
-                Task(
-                    title = taskInputState.title,
-                    content = taskInputState.content,
-                    tags = splitByComma(taskInputState.tags),
-                    taskState = taskInputState.selectedState,
-                    author = taskInputState.selectedAuthor,
-                ),
-            )},
             modifier = Modifier,
         ) {
             bottomButtonsContent()
@@ -83,14 +61,11 @@ private fun TaskCardModalForm(
     onStateChange: (TaskInputState) -> Unit,
     authors: List<String>,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
 ) {
-    LazyColumn(
+    Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        item{ content() }
-        item {
             TitleInputField(taskInputState.title, taskInputState.titleError) {
                 onStateChange(
                     taskInputState.copy(
@@ -102,11 +77,7 @@ private fun TaskCardModalForm(
                     ),
                 )
             }
-        }
-        item {
             ContentInputField(taskInputState.content) { onStateChange(taskInputState.copy(content = it)) }
-        }
-        item {
             TagsInputField(taskInputState.tags, taskInputState.tagError) {
                 if (it.isEmpty()) {
                     onStateChange(taskInputState.copy(tags = it, tagError = TagError.NONE))
@@ -122,36 +93,22 @@ private fun TaskCardModalForm(
                     )
                 }
             }
-        }
-        item {
             TaskStateSelectField(taskInputState.selectedState) { newTaskState ->
                 onStateChange(taskInputState.copy(selectedState = newTaskState))
             }
-        }
-        item {
             AuthorSelectField(isNecessary = taskInputState.needProfile, authors, taskInputState.selectedAuthor) { newAuthor ->
                 onStateChange(taskInputState.copy(selectedAuthor = newAuthor))
             }
-        }
     }
 }
 
+@Preview
 @Composable
-private fun TaskCardModalBottomButtons(
-    isUpdateTaskEnabled: Boolean,
-    isDeletedEnabled: Boolean,
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-    onCreateRequest: (Task) -> Unit = {},
-    onDeleteRequest: () -> Unit = {},
-    onUpdateRequest: () -> Unit = {},
-    content: @Composable () -> Unit
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        content()
-    }
+private fun TaskCardModalFormPreview() {
+    TaskCardModalForm(
+        taskInputState = TaskInputState(),
+        onStateChange = {  },
+        authors = listOf("다이노", "제임스"),
+        modifier = Modifier,
+    )
 }

@@ -1,4 +1,4 @@
-package woowacourse.kanban.board.ui.taskcard
+package woowacourse.kanban.board.ui.board
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,10 +14,11 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import org.junit.Test
 import woowacourse.kanban.board.domain.TaskState
+import woowacourse.kanban.board.ui.board.components.UpdateTaskModalDialog
 import woowacourse.kanban.board.ui.taskcard.state.TaskInputState
 
 @OptIn(ExperimentalTestApi::class)
-class UpdateTaskCardModalTest {
+class UpdateTaskModalDialogTest {
     @Test
     fun `제목과 태그가 규칙에 맞게 입력되면 수정 버튼이 활성화 된다`() = runComposeUiTest {
         setContent {
@@ -30,7 +31,7 @@ class UpdateTaskCardModalTest {
                     ),
                 )
             }
-            UpdateTaskCardModal(
+            UpdateTaskModalDialog(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
                 onDismissRequest = {},
@@ -55,7 +56,7 @@ class UpdateTaskCardModalTest {
                     ),
                 )
             }
-            UpdateTaskCardModal(
+            UpdateTaskModalDialog(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
                 onDismissRequest = {},
@@ -81,7 +82,7 @@ class UpdateTaskCardModalTest {
                     ),
                 )
             }
-            UpdateTaskCardModal(
+            UpdateTaskModalDialog(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
                 onDismissRequest = {},
@@ -99,7 +100,7 @@ class UpdateTaskCardModalTest {
     fun `태그가 5개를 초과하면 태그 규칙 위반 에러가 노출되고 수정 버튼이 활성화되지 않는다`() = runComposeUiTest {
         setContent {
             var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = authors.first())) }
-            UpdateTaskCardModal(
+            UpdateTaskModalDialog(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
                 onDismissRequest = {},
@@ -120,7 +121,7 @@ class UpdateTaskCardModalTest {
     fun `태그가 5자를 초과하면 태그 규칙 위반 에러가 노출되고 수정 버튼이 활성화되지 않는다`() = runComposeUiTest {
         setContent {
             var taskInputState by remember { mutableStateOf(TaskInputState(title = "제목", selectedAuthor = authors.first())) }
-            UpdateTaskCardModal(
+            UpdateTaskModalDialog(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
                 onDismissRequest = {},
@@ -149,7 +150,7 @@ class UpdateTaskCardModalTest {
                     ),
                 )
             }
-            UpdateTaskCardModal(
+            UpdateTaskModalDialog(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
                 onDismissRequest = {},
@@ -176,7 +177,7 @@ class UpdateTaskCardModalTest {
                     ),
                 )
             }
-            UpdateTaskCardModal(
+            UpdateTaskModalDialog(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
                 onDismissRequest = {},
@@ -202,7 +203,7 @@ class UpdateTaskCardModalTest {
                     ),
                 )
             }
-            UpdateTaskCardModal(
+            UpdateTaskModalDialog(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
                 onDismissRequest = {},
@@ -228,7 +229,7 @@ class UpdateTaskCardModalTest {
                     ),
                 )
             }
-            UpdateTaskCardModal(
+            UpdateTaskModalDialog(
                 taskInputState = taskInputState,
                 onStateChange = { taskInputState = it },
                 onDismissRequest = {},
