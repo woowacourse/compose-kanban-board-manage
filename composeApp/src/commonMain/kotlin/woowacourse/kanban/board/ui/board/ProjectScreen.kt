@@ -26,9 +26,15 @@ fun ProjectScreen(state: ProjectScreenState, authors: List<String>, modifier: Mo
         Board(
             projectName = state.selectedProject.name,
             tasks = state.selectedProject.tasks,
+            openUpdateDialog = state.openUpdateDialog,
+            updatingTask = state.updatingTask,
+            closeUpdateDialog = { state.closeUpdateDialog() },
+            onClickCard = { state.onClickCard(task = it) },
             onTaskCreated = { state.onTaskCreated(it) },
-            onTaskStateChange = { idx, taskState -> state.onTaskStateChange(idx, taskState) },
+            onTaskUpdated = { state.onTaskUpdated(it) },
+            onTaskDeleted = { state.onTaskDeleted(it) },
             authors = authors,
+            onTaskStateChange = { id, taskState -> state.onTaskStateChange(id, taskState) },
             modifier = Modifier.size(width = 1295.dp, height = 909.dp),
         )
     }

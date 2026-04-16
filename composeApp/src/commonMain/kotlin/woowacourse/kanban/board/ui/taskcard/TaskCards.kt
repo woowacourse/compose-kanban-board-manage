@@ -18,6 +18,7 @@ fun TaskCards(
     onTaskDragChange: (Offset) -> Unit,
     onTaskDragEnd: () -> Unit,
     onTaskDragCancel: () -> Unit,
+    onClickCard: (Task) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -31,6 +32,7 @@ fun TaskCards(
                 onDragChange = onTaskDragChange,
                 onDragEnd = onTaskDragEnd,
                 onDragCancel = onTaskDragCancel,
+                onClickCard = onClickCard,
             )
         }
     }
@@ -45,5 +47,6 @@ private fun TaskCardsPreview() {
         onTaskDragChange = {},
         onTaskDragEnd = {},
         onTaskDragCancel = {},
+        onClickCard = {},
     )
 }

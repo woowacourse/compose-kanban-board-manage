@@ -16,10 +16,12 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
+import woowacourse.kanban.board.domain.DomainResult
 import woowacourse.kanban.board.domain.Project
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
 import woowacourse.kanban.board.domain.Tasks
+import woowacourse.kanban.board.ui.board.components.toText
 
 @OptIn(ExperimentalTestApi::class)
 class BoardTest {
@@ -33,7 +35,12 @@ class BoardTest {
                 tasks = Tasks(emptyList()),
                 onTaskCreated = {},
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { _, _ -> },
+                onTaskStateChange = { _, _ -> DomainResult.Success(Project("", Tasks())) },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = { DomainResult.Success(Project("", Tasks())) },
+                onTaskDeleted = { DomainResult.Success(Project("", Tasks())) },
             )
         }
 
@@ -53,7 +60,12 @@ class BoardTest {
                 tasks = Tasks(emptyList()),
                 onTaskCreated = {},
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { _, _ -> },
+                onTaskStateChange = { _, _ -> DomainResult.Success(Project("", Tasks())) },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = { DomainResult.Success(Project("", Tasks())) },
+                onTaskDeleted = { DomainResult.Success(Project("", Tasks())) },
             )
         }
 
@@ -76,7 +88,12 @@ class BoardTest {
                 tasks = tasks,
                 onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { _, _ -> },
+                onTaskStateChange = { _, _ -> DomainResult.Success(Project("", tasks)) },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = { DomainResult.Success(Project("", tasks)) },
+                onTaskDeleted = { DomainResult.Success(Project("", tasks)) },
             )
         }
 
@@ -100,7 +117,12 @@ class BoardTest {
                 tasks = tasks,
                 onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { _, _ -> },
+                onTaskStateChange = { _, _ -> DomainResult.Success(Project("", tasks)) },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = { DomainResult.Success(Project("", tasks)) },
+                onTaskDeleted = { DomainResult.Success(Project("", tasks)) },
             )
         }
 
@@ -124,7 +146,12 @@ class BoardTest {
                 tasks = tasks,
                 onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { _, _ -> },
+                onTaskStateChange = { _, _ -> DomainResult.Success(Project("", tasks)) },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = { DomainResult.Success(Project("", tasks)) },
+                onTaskDeleted = { DomainResult.Success(Project("", tasks)) },
             )
         }
 
@@ -142,28 +169,12 @@ class BoardTest {
     @Test
     fun `태스크의 상태를 변경하면 Snackbar를 노출한다`() = runComposeUiTest {
         // given
-        val projects =
-            listOf(
-                Project(
-                    name = "Compose1",
-                    tasks = Tasks(emptyList()),
-                ),
-                Project(
-                    name = "Compose2",
-                    tasks = Tasks(emptyList()),
-                ),
-                Project(
-                    name = "Compose3너무너무길다란이름",
-                    tasks = Tasks(emptyList()),
-                ),
-            )
-
         setContent {
             var tasks by remember {
                 mutableStateOf(
                     Tasks(
                         listOf(
-                            Task(title = "title", taskState = TaskState.TO_DO),
+                            Task(title = "title", taskState = TaskState.ToDo),
                         ),
                     ),
                 )
@@ -174,14 +185,22 @@ class BoardTest {
                 tasks = tasks,
                 onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { idx, targetStatus ->
-                    val newTask = tasks.items[idx].copy(taskState = targetStatus)
-                    tasks.fixStatus(newTask)
+                onTaskStateChange = { id, targetStatus ->
+                    val task = tasks.items.first { it.id == id }
+                    val newTask = task.copy(taskState = targetStatus)
+                    val result = tasks.updateTask(newTask) as DomainResult.Success
+                    tasks = result.data
+                    DomainResult.Success(Project("Compose Desktop 칸반 보드", tasks))
                 },
+                openUpdateDialog = false,
+                closeUpdateDialog = { },
+                onClickCard = {},
+                onTaskUpdated = { DomainResult.Success(Project("", tasks)) },
+                onTaskDeleted = { DomainResult.Success(Project("", tasks)) },
             )
         }
 
-        val targetColumnBounds = onNodeWithTag(TaskState.IN_PROGRESS.name).fetchSemanticsNode().boundsInRoot
+        val targetColumnBounds = onNodeWithTag(TaskState.InProgress.toText()).fetchSemanticsNode().boundsInRoot
 
         // when
         onNodeWithText("title").performTouchInput {
@@ -193,5 +212,47 @@ class BoardTest {
 
         // then
         onNodeWithText("태스크가 이동되었습니다.").assertIsDisplayed()
+    }
+
+    @Test
+    fun `올바르지 않은 상태 전이를 시도할 경우 Snackbar를 노출한다`() = runComposeUiTest {
+        // given
+        setContent {
+            val state = ProjectScreenState(
+                initialProjects = listOf(
+                    Project(
+                        "Compose Desktop 칸반 보드",
+                        Tasks(listOf(Task(title = "title", taskState = TaskState.ToDo, author = "페임스"))),
+                    ),
+                ),
+            )
+
+            Board(
+                projectName = state.selectedProject.name,
+                tasks = state.selectedProject.tasks,
+                onTaskCreated = { state.onTaskCreated(it) },
+                authors = listOf("다이노", "페임스"),
+                onTaskStateChange = { id, taskState -> state.onTaskStateChange(id, taskState) },
+                openUpdateDialog = state.openUpdateDialog,
+                updatingTask = state.updatingTask,
+                closeUpdateDialog = { state.closeUpdateDialog() },
+                onClickCard = { state.onClickCard(task = it) },
+                onTaskUpdated = { state.onTaskUpdated(it) },
+                onTaskDeleted = { state.onTaskDeleted(it) },
+            )
+        }
+
+        val targetColumnBounds = onNodeWithText("Review").fetchSemanticsNode().boundsInRoot
+
+        // when
+        onNodeWithText("title").performTouchInput {
+            down(center)
+            advanceEventTime(1000)
+            moveTo(targetColumnBounds.center)
+            up()
+        }
+
+        // then
+        onNodeWithText("해당 상태로 옮길 수 없습니다.").assertIsDisplayed()
     }
 }

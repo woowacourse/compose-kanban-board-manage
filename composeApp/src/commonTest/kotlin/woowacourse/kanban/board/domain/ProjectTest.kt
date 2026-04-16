@@ -13,7 +13,7 @@ class ProjectTest {
         )
         val task = Task(
             title = "title",
-            taskState = TaskState.TO_DO,
+            taskState = TaskState.ToDo,
             author = "samuel",
         )
 
@@ -29,12 +29,12 @@ class ProjectTest {
         val project = Project(
             name = "name",
             tasks = Tasks(
-                listOf(Task(title = "title", taskState = TaskState.TO_DO)),
+                listOf(Task(title = "title", taskState = TaskState.ToDo)),
             ),
         )
 
-        val updatedProject = project.changeTaskState(0, TaskState.DONE)
+        val updatedProject = project.changeTaskState(project.tasks.items[0].id, TaskState.InProgress) as DomainResult.Success
 
-        assertThat(updatedProject.tasks.items[0].taskState).isEqualTo(TaskState.DONE)
+        assertThat(updatedProject.data.tasks.items[0].taskState).isEqualTo(TaskState.InProgress)
     }
 }

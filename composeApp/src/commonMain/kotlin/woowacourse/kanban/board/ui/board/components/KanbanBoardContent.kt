@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.UUID
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
 import woowacourse.kanban.board.domain.Tasks
@@ -43,12 +44,20 @@ import woowacourse.kanban.board.ui.theme.DoneTitle
 import woowacourse.kanban.board.ui.theme.InProgressBorder
 import woowacourse.kanban.board.ui.theme.InProgressContent
 import woowacourse.kanban.board.ui.theme.InProgressTitle
+import woowacourse.kanban.board.ui.theme.ReviewBorder
+import woowacourse.kanban.board.ui.theme.ReviewContent
+import woowacourse.kanban.board.ui.theme.ReviewTitle
 import woowacourse.kanban.board.ui.theme.ToDoBorder
 import woowacourse.kanban.board.ui.theme.ToDoContent
 import woowacourse.kanban.board.ui.theme.ToDoTitle
 
 @Composable
-fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (Int, TaskState) -> Unit, modifier: Modifier = Modifier) {
+fun KanbanBoardContent(
+    tasks: Tasks,
+    onTaskStateChange: (UUID, TaskState) -> Unit,
+    onClickCard: (Task) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var draggedTask by remember { mutableStateOf<Task?>(null) }
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
     val columnBounds = remember { mutableStateMapOf<TaskState, Rect>() }
@@ -68,6 +77,7 @@ fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (Int, TaskState) -> Unit
                     currentDragPosition?.let { columnBounds[taskState]?.contains(it) } ?: false
                 },
                 onBoundsChanged = { rect -> columnBounds[taskState] = rect },
+                onClickCard = onClickCard,
                 onTaskDragStart = { task -> draggedTask = task },
                 onTaskDragChange = { pos -> currentDragPosition = pos },
                 onTaskDragEnd = {
@@ -76,8 +86,7 @@ fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (Int, TaskState) -> Unit
 
                     draggedTask?.let { task ->
                         if (targetStatus != null && task.taskState != targetStatus) {
-                            val idx = tasks.items.indexOfFirst { it.id == task.id }
-                            if (idx != -1) onTaskStateChange(idx, targetStatus)
+                            onTaskStateChange(task.id, targetStatus)
                         }
                     }
 
@@ -88,7 +97,7 @@ fun KanbanBoardContent(tasks: Tasks, onTaskStateChange: (Int, TaskState) -> Unit
                     currentDragPosition = null
                     draggedTask = null
                 },
-                modifier = Modifier.testTag(taskState.name),
+                modifier = Modifier.testTag(taskState.toText()),
             )
         }
     }
@@ -101,13 +110,14 @@ private fun StateTasks(
     titleColor: Color,
     contentColor: Color,
     borderColor: Color,
+    modifier: Modifier = Modifier,
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = {},
     onTaskDragStart: (Task) -> Unit = {},
+    onClickCard: (Task) -> Unit = {},
     onTaskDragChange: (Offset) -> Unit = {},
     onTaskDragEnd: () -> Unit = {},
     onTaskDragCancel: () -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     val isDropTarget by remember { derivedStateOf { getIsDropTarget() } }
     val lastBoundsHolder = remember { mutableStateOf<Rect?>(null) }
@@ -115,7 +125,6 @@ private fun StateTasks(
     OutlinedCard(
         colors = CardDefaults.cardColors(
             containerColor = contentColor,
-
         ),
         border = BorderStroke(0.5.dp, borderColor),
         modifier = modifier
@@ -142,6 +151,7 @@ private fun StateTasks(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
+            onClickCard = onClickCard,
         )
     }
 }
@@ -178,25 +188,29 @@ private fun StateTasksTitle(titleColor: Color, taskState: TaskState, tasks: Task
 }
 
 fun TaskState.toText(): String = when (this) {
-    TaskState.TO_DO -> "To Do"
-    TaskState.IN_PROGRESS -> "In Progress"
-    TaskState.DONE -> "Done"
+    TaskState.ToDo -> "To Do"
+    TaskState.InProgress -> "In Progress"
+    TaskState.Review -> "Review"
+    TaskState.Done -> "Done"
 }
 
 private fun TaskState.titleColor(): Color = when (this) {
-    TaskState.TO_DO -> ToDoTitle
-    TaskState.IN_PROGRESS -> InProgressTitle
-    TaskState.DONE -> DoneTitle
+    TaskState.ToDo -> ToDoTitle
+    TaskState.InProgress -> InProgressTitle
+    TaskState.Review -> ReviewTitle
+    TaskState.Done -> DoneTitle
 }
 
 private fun TaskState.contentColor(): Color = when (this) {
-    TaskState.TO_DO -> ToDoContent
-    TaskState.IN_PROGRESS -> InProgressContent
-    TaskState.DONE -> DoneContent
+    TaskState.ToDo -> ToDoContent
+    TaskState.InProgress -> InProgressContent
+    TaskState.Review -> ReviewContent
+    TaskState.Done -> DoneContent
 }
 
 private fun TaskState.borderColor(): Color = when (this) {
-    TaskState.TO_DO -> ToDoBorder
-    TaskState.IN_PROGRESS -> InProgressBorder
-    TaskState.DONE -> DoneBorder
+    TaskState.ToDo -> ToDoBorder
+    TaskState.InProgress -> InProgressBorder
+    TaskState.Review -> ReviewBorder
+    TaskState.Done -> DoneBorder
 }
