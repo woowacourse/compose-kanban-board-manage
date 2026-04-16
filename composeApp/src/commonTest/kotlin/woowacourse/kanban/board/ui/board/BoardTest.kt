@@ -16,6 +16,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
+import woowacourse.kanban.board.domain.DomainResult
 import woowacourse.kanban.board.domain.Project
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
@@ -34,12 +35,12 @@ class BoardTest {
                 tasks = Tasks(emptyList()),
                 onTaskCreated = {},
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { _, _ -> },
+                onTaskStateChange = { _, _ -> DomainResult.Success(Project("", Tasks())) },
                 openUpdateDialog = false,
                 closeUpdateDialog = { },
                 onClickCard = {},
-                onTaskUpdated = {},
-                onTaskDeleted = {},
+                onTaskUpdated = { DomainResult.Success(Project("", Tasks())) },
+                onTaskDeleted = { DomainResult.Success(Project("", Tasks())) },
             )
         }
 
@@ -59,12 +60,12 @@ class BoardTest {
                 tasks = Tasks(emptyList()),
                 onTaskCreated = {},
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { _, _ -> },
+                onTaskStateChange = { _, _ -> DomainResult.Success(Project("", Tasks())) },
                 openUpdateDialog = false,
                 closeUpdateDialog = { },
                 onClickCard = {},
-                onTaskUpdated = {},
-                onTaskDeleted = {},
+                onTaskUpdated = { DomainResult.Success(Project("", Tasks())) },
+                onTaskDeleted = { DomainResult.Success(Project("", Tasks())) },
             )
         }
 
@@ -87,12 +88,12 @@ class BoardTest {
                 tasks = tasks,
                 onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { _, _ -> },
+                onTaskStateChange = { _, _ -> DomainResult.Success(Project("", tasks)) },
                 openUpdateDialog = false,
                 closeUpdateDialog = { },
                 onClickCard = {},
-                onTaskUpdated = {},
-                onTaskDeleted = {},
+                onTaskUpdated = { DomainResult.Success(Project("", tasks)) },
+                onTaskDeleted = { DomainResult.Success(Project("", tasks)) },
             )
         }
 
@@ -116,12 +117,12 @@ class BoardTest {
                 tasks = tasks,
                 onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { _, _ -> },
+                onTaskStateChange = { _, _ -> DomainResult.Success(Project("", tasks)) },
                 openUpdateDialog = false,
                 closeUpdateDialog = { },
                 onClickCard = {},
-                onTaskUpdated = {},
-                onTaskDeleted = {},
+                onTaskUpdated = { DomainResult.Success(Project("", tasks)) },
+                onTaskDeleted = { DomainResult.Success(Project("", tasks)) },
             )
         }
 
@@ -145,12 +146,12 @@ class BoardTest {
                 tasks = tasks,
                 onTaskCreated = { tasks = tasks.addTask(it) },
                 authors = listOf("다이노", "페임스"),
-                onTaskStateChange = { _, _ -> },
+                onTaskStateChange = { _, _ -> DomainResult.Success(Project("", tasks)) },
                 openUpdateDialog = false,
                 closeUpdateDialog = { },
                 onClickCard = {},
-                onTaskUpdated = {},
-                onTaskDeleted = {},
+                onTaskUpdated = { DomainResult.Success(Project("", tasks)) },
+                onTaskDeleted = { DomainResult.Success(Project("", tasks)) },
             )
         }
 
@@ -187,13 +188,15 @@ class BoardTest {
                 onTaskStateChange = { id, targetStatus ->
                     val task = tasks.items.first { it.id == id }
                     val newTask = task.copy(taskState = targetStatus)
-                    tasks = tasks.updateTask(newTask)
+                    val result = tasks.updateTask(newTask) as DomainResult.Success
+                    tasks = result.data
+                    DomainResult.Success(Project("Compose Desktop 칸반 보드", tasks))
                 },
                 openUpdateDialog = false,
                 closeUpdateDialog = { },
                 onClickCard = {},
-                onTaskUpdated = {},
-                onTaskDeleted = {},
+                onTaskUpdated = { DomainResult.Success(Project("", tasks)) },
+                onTaskDeleted = { DomainResult.Success(Project("", tasks)) },
             )
         }
 

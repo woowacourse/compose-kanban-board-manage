@@ -1,23 +1,21 @@
 package woowacourse.kanban.board.domain
 
-import woowacourse.kanban.board.exception.TransStateError
-import woowacourse.kanban.board.exception.TransStateException
-
+import woowacourse.kanban.board.exception.TasksError
 
 sealed class TaskState {
     abstract val isDeletable: Boolean
     abstract val isNeedProfile: Boolean
-    abstract fun transferTo(state: TaskState): TaskState
+    abstract fun transferTo(state: TaskState): DomainResult<TaskState>
 
     object ToDo : TaskState() {
         override val isDeletable: Boolean = true
         override val isNeedProfile: Boolean = false
 
-        override fun transferTo(state: TaskState): TaskState = when(state) {
-            ToDo -> ToDo
-            InProgress -> InProgress
-            Review -> throw TransStateException(TransStateError.CANT_TRANSFER)
-            Done -> throw TransStateException(TransStateError.CANT_TRANSFER)
+        override fun transferTo(state: TaskState) = when(state) {
+            ToDo -> DomainResult.Success(ToDo)
+            InProgress -> DomainResult.Success(InProgress)
+            Review -> DomainResult.Failure(TasksError.INVALID_STATE_CHANGE)
+            Done -> DomainResult.Failure(TasksError.INVALID_STATE_CHANGE)
         }
     }
 
@@ -25,11 +23,11 @@ sealed class TaskState {
         override val isDeletable: Boolean = true
         override val isNeedProfile: Boolean = true
 
-        override fun transferTo(state: TaskState): TaskState = when (state) {
-            ToDo -> ToDo
-            InProgress -> InProgress
-            Review -> Review
-            Done -> throw TransStateException(TransStateError.CANT_TRANSFER)
+        override fun transferTo(state: TaskState) = when (state) {
+            ToDo -> DomainResult.Success(ToDo)
+            InProgress -> DomainResult.Success(InProgress)
+            Review -> DomainResult.Success(Review)
+            Done -> DomainResult.Failure(TasksError.INVALID_STATE_CHANGE)
         }
     }
 
@@ -37,11 +35,11 @@ sealed class TaskState {
         override val isDeletable: Boolean = false
         override val isNeedProfile: Boolean = true
 
-        override fun transferTo(state: TaskState): TaskState = when (state) {
-            ToDo -> throw TransStateException(TransStateError.CANT_TRANSFER)
-            InProgress -> InProgress
-            Review -> Review
-            Done -> Done
+        override fun transferTo(state: TaskState) = when (state) {
+            ToDo -> DomainResult.Failure(TasksError.INVALID_STATE_CHANGE)
+            InProgress -> DomainResult.Success(InProgress)
+            Review -> DomainResult.Success(Review)
+            Done -> DomainResult.Success(Done)
         }
     }
 
@@ -49,11 +47,11 @@ sealed class TaskState {
         override val isDeletable: Boolean = false
         override val isNeedProfile: Boolean = true
 
-        override fun transferTo(state: TaskState): TaskState = when(state) {
-            ToDo -> ToDo
-            InProgress -> throw TransStateException(TransStateError.CANT_TRANSFER)
-            Review -> throw TransStateException(TransStateError.CANT_TRANSFER)
-            Done -> Done
+        override fun transferTo(state: TaskState): DomainResult<TaskState> = when(state) {
+            ToDo -> DomainResult.Success(ToDo)
+            InProgress -> DomainResult.Failure(TasksError.INVALID_STATE_CHANGE)
+            Review -> DomainResult.Failure(TasksError.INVALID_STATE_CHANGE)
+            Done -> DomainResult.Success(Done)
         }
     }
     companion object {

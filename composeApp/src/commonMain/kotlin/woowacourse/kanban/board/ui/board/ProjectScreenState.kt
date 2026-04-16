@@ -7,6 +7,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import woowacourse.kanban.board.domain.DomainResult
 import java.util.UUID
 import woowacourse.kanban.board.domain.Project
 import woowacourse.kanban.board.domain.Task
@@ -28,14 +29,19 @@ class ProjectScreenState(private val initialProjects: List<Project>) {
         selectedProject = project
     }
 
-    fun onTaskCreated(task: Task) = updateSelectedProject(selectedProject.createNewTask(task))
+    fun onTaskCreated(task: Task): DomainResult<Project> {
+        val updatedProject = selectedProject.createNewTask(task)
+        return updateSelectedProject(DomainResult.Success(updatedProject))
+    }
 
-    fun onTaskStateChange(taskId: UUID, fixedTaskState: TaskState) =
+    fun onTaskStateChange(taskId: UUID, fixedTaskState: TaskState): DomainResult<Project> =
         updateSelectedProject(selectedProject.changeTaskState(taskId, fixedTaskState))
 
-    fun onTaskUpdated(task: Task) = updateSelectedProject(selectedProject.copy(tasks = selectedProject.tasks.updateTask(task)))
+    fun onTaskUpdated(task: Task): DomainResult<Project> =
+        updateSelectedProject(selectedProject.updateTask(task))
 
-    fun onTaskDeleted(task: Task) = updateSelectedProject(selectedProject.copy(tasks = selectedProject.tasks.deleteTask(task)))
+    fun onTaskDeleted(task: Task): DomainResult<Project> =
+        updateSelectedProject(selectedProject.deleteTask(task))
 
     fun onClickCard(task: Task) {
         updatingTask = task
@@ -47,11 +53,15 @@ class ProjectScreenState(private val initialProjects: List<Project>) {
         updatingTask = null
     }
 
-    private fun updateSelectedProject(updatedProject: Project) {
-        selectedProject = updatedProject
-        projects = projects.map {
-            if (it.name == updatedProject.name) updatedProject else it
+    private fun updateSelectedProject(result: DomainResult<Project>): DomainResult<Project> {
+        if (result is DomainResult.Success) {
+            val updatedProject = result.data
+            selectedProject = updatedProject
+            projects = projects.map {
+                if (it.name == updatedProject.name) updatedProject else it
+            }
         }
+        return result
     }
 
     companion object {

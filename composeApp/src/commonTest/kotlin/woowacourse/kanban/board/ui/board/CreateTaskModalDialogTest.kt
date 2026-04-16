@@ -14,9 +14,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
+import kotlin.test.Test
 import woowacourse.kanban.board.ui.board.components.CreateTaskModalDialog
 import woowacourse.kanban.board.ui.taskcard.state.TaskInputState
-import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class CreateTaskModalDialogTest {

@@ -1,7 +1,7 @@
 package woowacourse.kanban.board.exception
 
 enum class TasksError {
-    NONE,
+    UNKNOWN,
     INVALID_AUTHOR,
     INVALID_STATE_CHANGE,
     INVALID_DELETE,

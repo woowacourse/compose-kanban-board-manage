@@ -17,19 +17,27 @@ data class Task(
     val isEditable: Boolean
         get() = checkEditable(taskState, author)
 
-    fun transState(state: TaskState): Task = copy(taskState = taskState.transferTo(state))
+    fun transState(state: TaskState): DomainResult<Task> {
+        return when (val newStateResult = taskState.transferTo(state)) {
+            is DomainResult.Success -> DomainResult.Success(copy(taskState = newStateResult.data))
+            is DomainResult.Failure -> DomainResult.Failure(newStateResult.error)
+        }
+    }
+
     fun editTask(
         updatedTask: Task,
-    ): Task {
-        if(checkNeedProfile(updatedTask.taskState) && updatedTask.author.isBlank()) throw TasksException(TasksError.INVALID_AUTHOR)
-        return if (isEditable) copy(
-            title = updatedTask.title,
-            content = updatedTask.content,
-            tags = updatedTask.tags,
-            author = updatedTask.author,
-            taskState = updatedTask.taskState
+    ): DomainResult<Task> {
+        if (checkNeedProfile(updatedTask.taskState) && updatedTask.author.isBlank()) return DomainResult.Failure(TasksError.INVALID_AUTHOR)
+        return if (isEditable) DomainResult.Success(
+            copy(
+                title = updatedTask.title,
+                content = updatedTask.content,
+                tags = updatedTask.tags,
+                author = updatedTask.author,
+                taskState = updatedTask.taskState,
+            ),
         )
-        else this
+        else DomainResult.Success(this)
     }
 
     companion object {

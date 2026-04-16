@@ -33,8 +33,8 @@ class ProjectTest {
             ),
         )
 
-        val updatedProject = project.changeTaskState(project.tasks.items[0].id, TaskState.InProgress)
+        val updatedProject = project.changeTaskState(project.tasks.items[0].id, TaskState.InProgress) as DomainResult.Success
 
-        assertThat(updatedProject.tasks.items[0].taskState).isEqualTo(TaskState.InProgress)
+        assertThat(updatedProject.data.tasks.items[0].taskState).isEqualTo(TaskState.InProgress)
     }
 }

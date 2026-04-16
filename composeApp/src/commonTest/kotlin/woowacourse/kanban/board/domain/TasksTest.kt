@@ -3,8 +3,6 @@ package woowacourse.kanban.board.domain
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
-import woowacourse.kanban.board.exception.TasksException
 
 class TasksTest {
 
@@ -130,7 +128,8 @@ class TasksTest {
         val updatedTask1 = task1.copy(taskState = TaskState.InProgress)
 
         // when
-        val resultTasks = tasks.updateTask(updatedTask1)
+        val result = tasks.updateTask(updatedTask1) as DomainResult.Success
+        val resultTasks = result.data
 
         // then
         assertThat(resultTasks.getTasksByState(TaskState.InProgress)).containsExactly(updatedTask1)
@@ -144,7 +143,8 @@ class TasksTest {
         val tasks = Tasks(listOf(task1))
 
         // when
-        val resultTasks = tasks.deleteTask(task1)
+        val result = tasks.deleteTask(task1) as DomainResult.Success
+        val resultTasks = result.data
 
         // then
         assertThat(resultTasks.items).isEmpty()
@@ -159,8 +159,8 @@ class TasksTest {
         val tasks = Tasks(listOf(task2))
         val tasks2 = Tasks()
 
-        assertThat(tasks.deleteTask(task1)).isEqualTo(tasks)
-        assertThat(tasks2.deleteTask(task1)).isEqualTo(tasks2)
+        assertEquals(DomainResult.Success(tasks), tasks.deleteTask(task1))
+        assertEquals(DomainResult.Success(tasks2), tasks2.deleteTask(task1))
     }
 
     @Test
@@ -171,7 +171,8 @@ class TasksTest {
 
         // when
         val tasks = Tasks(listOf(task1))
-        val resultTasks = tasks.updateTask(updatedTask)
+        val result = tasks.updateTask(updatedTask) as DomainResult.Success
+        val resultTasks = result.data
 
         // then
         assertThat(resultTasks.items).containsExactly(updatedTask)
@@ -186,7 +187,7 @@ class TasksTest {
         // when
         val tasks = Tasks(listOf(task1))
 
-        assertEquals(tasks, tasks.deleteTask(task2))
+        assertEquals(DomainResult.Success(tasks), tasks.deleteTask(task2))
     }
 
     @Test
@@ -194,9 +195,7 @@ class TasksTest {
         val tasks = Tasks(listOf(Task(title = "test1", taskState = TaskState.Review)))
         val tasks2 = Tasks(listOf(Task(title = "test2", taskState = TaskState.Done)))
 
-        assertThatThrownBy { tasks.deleteTask(tasks.items[0]) }
-            .isInstanceOf(TasksException::class.java)
-        assertThatThrownBy { tasks2.deleteTask(tasks2.items[0]) }
-            .isInstanceOf(TasksException::class.java)
+        assertThat(tasks.deleteTask(tasks.items[0])).isInstanceOf(DomainResult.Failure::class.java)
+        assertThat(tasks2.deleteTask(tasks2.items[0])).isInstanceOf(DomainResult.Failure::class.java)
     }
 }

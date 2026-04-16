@@ -22,14 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import java.util.UUID
 import kotlinx.coroutines.launch
+import woowacourse.kanban.board.domain.DomainResult
+import woowacourse.kanban.board.domain.Project
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
 import woowacourse.kanban.board.domain.Tasks
 import woowacourse.kanban.board.exception.TasksError
-import woowacourse.kanban.board.exception.TasksException
-import woowacourse.kanban.board.exception.TransStateException
 import woowacourse.kanban.board.ui.board.components.BoardHeader
 import woowacourse.kanban.board.ui.board.components.CreateTaskModalDialog
 import woowacourse.kanban.board.ui.board.components.KanbanBoardContent
@@ -37,6 +36,7 @@ import woowacourse.kanban.board.ui.board.components.UpdateTaskModalDialog
 import woowacourse.kanban.board.ui.taskcard.state.TaskInputState
 import woowacourse.kanban.board.ui.theme.OutlineVariant
 import woowacourse.kanban.board.ui.theme.Primary
+import java.util.UUID
 
 @Composable
 fun Board(
@@ -46,10 +46,10 @@ fun Board(
     closeUpdateDialog: () -> Unit,
     onClickCard: (Task) -> Unit,
     onTaskCreated: (Task) -> Unit,
-    onTaskUpdated: (Task) -> Unit,
-    onTaskDeleted: (Task) -> Unit,
+    onTaskUpdated: (Task) -> DomainResult<Project>,
+    onTaskDeleted: (Task) -> DomainResult<Project>,
     authors: List<String>,
-    onTaskStateChange: (UUID, TaskState) -> Unit,
+    onTaskStateChange: (UUID, TaskState) -> DomainResult<Project>,
     modifier: Modifier = Modifier,
     updatingTask: Task? = null,
 ) {
@@ -92,25 +92,13 @@ fun Board(
                     tasks,
                     onTaskStateChange = { idx, targetStatus ->
                         scope.launch {
-                            runCatching { onTaskStateChange(idx, targetStatus) }
-                                .onSuccess {
-                                    snackbarHostState.currentSnackbarData?.dismiss()
-                                    snackbarHostState.showSnackbar(
-                                        message = "태스크가 이동되었습니다.",
-                                        withDismissAction = true,
-                                    )
-                                }.onFailure { e ->
-                                    val message = when (e) {
-                                        is TransStateException -> "해당 상태로 옮길 수 없습니다."
-                                        is TasksException -> when (e.error) {
-                                            TasksError.INVALID_AUTHOR -> "담당자를 지정해야 상태를 옮길 수 있습니다."
-                                            else -> "상태 변경에 실패했습니다."
-                                        }
-                                        else -> "알 수 없는 에러가 발생했습니다."
-                                    }
-                                    snackbarHostState.currentSnackbarData?.dismiss()
-                                    snackbarHostState.showSnackbar(message = message, withDismissAction = true)
-                                }
+                            val message = when (val result = onTaskStateChange(idx, targetStatus)) {
+                                is DomainResult.Success -> "태스크가 이동되었습니다."
+                                is DomainResult.Failure -> result.error.errorMessage
+                            }
+
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar(message = message, withDismissAction = true)
                         }
                     },
                     onClickCard = onClickCard,
@@ -154,55 +142,34 @@ fun Board(
                     onDismissRequest = { closeUpdateDialog() },
                     onUpdateRequest = {
                         scope.launch {
-                            runCatching {
-                                onTaskUpdated(
-                                    updatingTask.copy(
-                                        title = it.title,
-                                        content = it.content,
-                                        tags = it.tags,
-                                        taskState = it.taskState,
-                                        author = it.author,
-                                    ),
-                                )
-                            }.onSuccess {
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                                snackbarHostState.showSnackbar(message = "태스크가 수정되었습니다.", withDismissAction = true)
-                            }.onFailure { e ->
-                                val message = when (e) {
-                                    is TransStateException -> "해당 상태로 옮길 수 없습니다"
-                                    is TasksException -> when (e.error) {
-                                        TasksError.INVALID_AUTHOR -> "담당자를 지정해야 상태를 옮길 수 있습니다."
-                                        else -> "수정에 실패했습니다."
-                                    }
+                            val updatedTask = updatingTask.copy(
+                                title = it.title,
+                                content = it.content,
+                                tags = it.tags,
+                                taskState = it.taskState,
+                                author = it.author,
+                            )
 
-                                    else -> "알 수 없는 오류가 발생했습니다."
-                                }
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                                snackbarHostState.showSnackbar(message = message, withDismissAction = true)
+                            val message = when (val result = onTaskUpdated(updatedTask)) {
+                                is DomainResult.Failure -> result.error.errorMessage
+                                is DomainResult.Success<Project> -> "태스크가 수정되었습니다."
                             }
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar(message = "태스크가 수정되었습니다.", withDismissAction = true)
                         }
                         closeUpdateDialog()
                     },
                     onDeleteRequest = {
                         scope.launch {
-                            runCatching {
-                                onTaskDeleted(updatingTask)
-                            }.onSuccess {
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                                snackbarHostState.showSnackbar(
-                                    message = "태스크가 삭제되었습니다.",
-                                    withDismissAction = true,
-                                )
-                                closeUpdateDialog()
-                            }.onFailure { e ->
-                                val message = if (e is TasksException && e.error == TasksError.INVALID_DELETE) {
-                                    "해당 상태에서는 태스크 삭제가 불가합니다."
-                                } else {
-                                    "삭제에 실패했습니다."
-                                }
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                                snackbarHostState.showSnackbar(message = message, withDismissAction = true)
+                            val message = when (val result = onTaskDeleted(updatingTask)) {
+                                is DomainResult.Failure -> result.error.errorMessage
+                                is DomainResult.Success<Project> -> "태스크가 삭제되었습니다."
                             }
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar(
+                                message = message,
+                                withDismissAction = true,
+                            )
                         }
                         closeUpdateDialog()
                     },
@@ -222,9 +189,9 @@ private fun BoardPreview() {
         onTaskCreated = {},
         authors = listOf("다이노", "페임스"),
         modifier = Modifier.size(width = 1295.dp, height = 909.dp),
-        onTaskStateChange = { _, _ -> },
-        onTaskDeleted = {},
-        onTaskUpdated = {},
+        onTaskStateChange = { _, _ -> DomainResult.Failure(TasksError.UNKNOWN) },
+        onTaskDeleted = { _ -> DomainResult.Failure(TasksError.UNKNOWN) },
+        onTaskUpdated = { _ -> DomainResult.Failure(TasksError.UNKNOWN)},
         updatingTask = Task(title = "test"),
         onClickCard = {},
         openUpdateDialog = true,
