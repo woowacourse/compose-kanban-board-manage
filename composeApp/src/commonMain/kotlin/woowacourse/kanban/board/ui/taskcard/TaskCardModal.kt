@@ -16,9 +16,9 @@ import woowacourse.kanban.board.exception.TitleError
 import woowacourse.kanban.board.exception.TitleException
 import woowacourse.kanban.board.ui.taskcard.components.AuthorSelectField
 import woowacourse.kanban.board.ui.taskcard.components.ContentInputField
-import woowacourse.kanban.board.ui.taskcard.components.TaskHeader
 import woowacourse.kanban.board.ui.taskcard.components.TagsInputField
 import woowacourse.kanban.board.ui.taskcard.components.TaskCardModalBottomButtons
+import woowacourse.kanban.board.ui.taskcard.components.TaskHeader
 import woowacourse.kanban.board.ui.taskcard.components.TaskStateSelectField
 import woowacourse.kanban.board.ui.taskcard.components.TitleInputField
 import woowacourse.kanban.board.ui.taskcard.state.TaskInputState
@@ -44,7 +44,7 @@ fun TaskCardModal(
             taskInputState = taskInputState,
             modifier = Modifier.weight(1f),
             onStateChange = onStateChange,
-            authors = authors
+            authors = authors,
         )
         HorizontalDivider()
         TaskCardModalBottomButtons(
@@ -66,39 +66,39 @@ private fun TaskCardModalForm(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-            TitleInputField(taskInputState.title, taskInputState.titleError) {
+        TitleInputField(taskInputState.title, taskInputState.titleError) {
+            onStateChange(
+                taskInputState.copy(
+                    title = it,
+                    titleError = runCatching { Title(it) }.fold(
+                        onSuccess = { TitleError.NONE },
+                        onFailure = { e -> if (e is TitleException) e.error else TitleError.NONE },
+                    ),
+                ),
+            )
+        }
+        ContentInputField(taskInputState.content) { onStateChange(taskInputState.copy(content = it)) }
+        TagsInputField(taskInputState.tags, taskInputState.tagError) {
+            if (it.isEmpty()) {
+                onStateChange(taskInputState.copy(tags = it, tagError = TagError.NONE))
+            } else {
                 onStateChange(
                     taskInputState.copy(
-                        title = it,
-                        titleError = runCatching { Title(it) }.fold(
-                            onSuccess = { TitleError.NONE },
-                            onFailure = { e -> if (e is TitleException) e.error else TitleError.NONE },
+                        tags = it,
+                        tagError = runCatching { Tags(splitByComma(it)) }.fold(
+                            onSuccess = { TagError.NONE },
+                            onFailure = { e -> if (e is TagException) e.error else TagError.NONE },
                         ),
                     ),
                 )
             }
-            ContentInputField(taskInputState.content) { onStateChange(taskInputState.copy(content = it)) }
-            TagsInputField(taskInputState.tags, taskInputState.tagError) {
-                if (it.isEmpty()) {
-                    onStateChange(taskInputState.copy(tags = it, tagError = TagError.NONE))
-                } else {
-                    onStateChange(
-                        taskInputState.copy(
-                            tags = it,
-                            tagError = runCatching { Tags(splitByComma(it)) }.fold(
-                                onSuccess = { TagError.NONE },
-                                onFailure = { e -> if (e is TagException) e.error else TagError.NONE },
-                            ),
-                        ),
-                    )
-                }
-            }
-            TaskStateSelectField(taskInputState.selectedState) { newTaskState ->
-                onStateChange(taskInputState.copy(selectedState = newTaskState))
-            }
-            AuthorSelectField(isNecessary = taskInputState.needProfile, authors, taskInputState.selectedAuthor) { newAuthor ->
-                onStateChange(taskInputState.copy(selectedAuthor = newAuthor))
-            }
+        }
+        TaskStateSelectField(taskInputState.selectedState) { newTaskState ->
+            onStateChange(taskInputState.copy(selectedState = newTaskState))
+        }
+        AuthorSelectField(isNecessary = taskInputState.needProfile, authors, taskInputState.selectedAuthor) { newAuthor ->
+            onStateChange(taskInputState.copy(selectedAuthor = newAuthor))
+        }
     }
 }
 
@@ -107,7 +107,7 @@ private fun TaskCardModalForm(
 private fun TaskCardModalFormPreview() {
     TaskCardModalForm(
         taskInputState = TaskInputState(),
-        onStateChange = {  },
+        onStateChange = { },
         authors = listOf("다이노", "제임스"),
         modifier = Modifier,
     )

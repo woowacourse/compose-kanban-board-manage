@@ -13,10 +13,7 @@ import woowacourse.kanban.board.ui.theme.OnSurface
 import woowacourse.kanban.board.ui.theme.OnSurfaceVariant
 
 @Composable
-fun TaskCardModalBottomButtons(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
+fun TaskCardModalBottomButtons(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
@@ -31,7 +28,7 @@ fun TaskCardModalBottomButtons(
 private fun TaskCardModalBottomButtonsPreview() {
     TaskCardModalBottomButtons(
         modifier = Modifier,
-    ){
+    ) {
         RoundedBottomButtons(
             onClick = { },
             enabled = true,

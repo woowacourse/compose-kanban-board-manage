@@ -11,7 +11,7 @@ sealed class TaskState {
         override val isDeletable: Boolean = true
         override val isNeedProfile: Boolean = false
 
-        override fun transferTo(state: TaskState) = when(state) {
+        override fun transferTo(state: TaskState) = when (state) {
             ToDo -> DomainResult.Success(ToDo)
             InProgress -> DomainResult.Success(InProgress)
             Review -> DomainResult.Failure(TasksError.INVALID_STATE_CHANGE)
@@ -47,7 +47,7 @@ sealed class TaskState {
         override val isDeletable: Boolean = false
         override val isNeedProfile: Boolean = true
 
-        override fun transferTo(state: TaskState): DomainResult<TaskState> = when(state) {
+        override fun transferTo(state: TaskState): DomainResult<TaskState> = when (state) {
             ToDo -> DomainResult.Success(ToDo)
             InProgress -> DomainResult.Failure(TasksError.INVALID_STATE_CHANGE)
             Review -> DomainResult.Failure(TasksError.INVALID_STATE_CHANGE)

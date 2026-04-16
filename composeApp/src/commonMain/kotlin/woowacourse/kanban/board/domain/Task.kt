@@ -1,8 +1,7 @@
 package woowacourse.kanban.board.domain
 
-import woowacourse.kanban.board.exception.TasksError
-import woowacourse.kanban.board.exception.TasksException
 import java.util.UUID
+import woowacourse.kanban.board.exception.TasksError
 
 data class Task(
     val id: UUID = UUID.randomUUID(),
@@ -24,9 +23,7 @@ data class Task(
         }
     }
 
-    fun editTask(
-        updatedTask: Task,
-    ): DomainResult<Task> {
+    fun editTask(updatedTask: Task): DomainResult<Task> {
         if (checkNeedProfile(updatedTask.taskState) && updatedTask.author.isBlank()) return DomainResult.Failure(TasksError.INVALID_AUTHOR)
         return if (isEditable) DomainResult.Success(
             copy(

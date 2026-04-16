@@ -7,8 +7,8 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import woowacourse.kanban.board.domain.DomainResult
 import java.util.UUID
+import woowacourse.kanban.board.domain.DomainResult
 import woowacourse.kanban.board.domain.Project
 import woowacourse.kanban.board.domain.Task
 import woowacourse.kanban.board.domain.TaskState
@@ -37,11 +37,9 @@ class ProjectScreenState(private val initialProjects: List<Project>) {
     fun onTaskStateChange(taskId: UUID, fixedTaskState: TaskState): DomainResult<Project> =
         updateSelectedProject(selectedProject.changeTaskState(taskId, fixedTaskState))
 
-    fun onTaskUpdated(task: Task): DomainResult<Project> =
-        updateSelectedProject(selectedProject.updateTask(task))
+    fun onTaskUpdated(task: Task): DomainResult<Project> = updateSelectedProject(selectedProject.updateTask(task))
 
-    fun onTaskDeleted(task: Task): DomainResult<Project> =
-        updateSelectedProject(selectedProject.deleteTask(task))
+    fun onTaskDeleted(task: Task): DomainResult<Project> = updateSelectedProject(selectedProject.deleteTask(task))
 
     fun onClickCard(task: Task) {
         updatingTask = task

@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import java.util.UUID
 import kotlinx.coroutines.launch
 import woowacourse.kanban.board.domain.DomainResult
 import woowacourse.kanban.board.domain.Project
@@ -36,7 +37,6 @@ import woowacourse.kanban.board.ui.board.components.UpdateTaskModalDialog
 import woowacourse.kanban.board.ui.taskcard.state.TaskInputState
 import woowacourse.kanban.board.ui.theme.OutlineVariant
 import woowacourse.kanban.board.ui.theme.Primary
-import java.util.UUID
 
 @Composable
 fun Board(
@@ -191,7 +191,7 @@ private fun BoardPreview() {
         modifier = Modifier.size(width = 1295.dp, height = 909.dp),
         onTaskStateChange = { _, _ -> DomainResult.Failure(TasksError.UNKNOWN) },
         onTaskDeleted = { _ -> DomainResult.Failure(TasksError.UNKNOWN) },
-        onTaskUpdated = { _ -> DomainResult.Failure(TasksError.UNKNOWN)},
+        onTaskUpdated = { _ -> DomainResult.Failure(TasksError.UNKNOWN) },
         updatingTask = Task(title = "test"),
         onClickCard = {},
         openUpdateDialog = true,
