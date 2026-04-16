@@ -155,7 +155,7 @@ fun Board(
                                 is DomainResult.Success<Project> -> "태스크가 수정되었습니다."
                             }
                             snackbarHostState.currentSnackbarData?.dismiss()
-                            snackbarHostState.showSnackbar(message = "태스크가 수정되었습니다.", withDismissAction = true)
+                            snackbarHostState.showSnackbar(message = message, withDismissAction = true)
                         }
                         closeUpdateDialog()
                     },
