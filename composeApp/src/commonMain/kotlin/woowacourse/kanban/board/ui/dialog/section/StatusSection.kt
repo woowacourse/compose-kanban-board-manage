@@ -15,6 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,7 +44,7 @@ fun StatusSection(modifier: Modifier = Modifier, selectedStatus: Status = Status
                     status = status,
                     selectedStatus = selectedStatus,
                     onStatusChange = onStatusChange,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).testTag("$status 버튼"),
                 )
             }
         }

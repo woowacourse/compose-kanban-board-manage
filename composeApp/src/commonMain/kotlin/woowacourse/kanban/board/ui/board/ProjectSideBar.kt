@@ -26,6 +26,7 @@ import kanbanboard.composeapp.generated.resources.Res
 import kanbanboard.composeapp.generated.resources.project_sidebar_subtitle
 import kanbanboard.composeapp.generated.resources.project_sidebar_title
 import org.jetbrains.compose.resources.stringResource
+import woowacourse.kanban.board.domain.model.User
 import woowacourse.kanban.board.ui.theme.CustomTheme
 
 @Composable
@@ -38,11 +39,15 @@ fun ProjectSideBar(
     Column(
         modifier = modifier,
     ) {
+        val currentProject = kanbanBoardState.currentProject.getOrElse {
+            Text("최소 하나의 프로젝트가 필요합니다!")
+            return@Column
+        }
         SideBarHeader(modifier = Modifier.padding(innerPadding))
         HorizontalDivider(modifier = Modifier.height(1.dp).background(CustomTheme.colors.gray.w100))
         ProjectTabs(
-            kanbanBoardState.allProjects,
-            kanbanBoardState.currentProject,
+            kanbanBoardState.allProjectNames,
+            currentProject.name,
             onProjectSelect,
             modifier = Modifier.padding(innerPadding),
         )
@@ -71,8 +76,8 @@ private fun SideBarHeader(modifier: Modifier = Modifier) {
 
 @Composable
 private fun ProjectTabs(
-    projects: List<KanbanProjectState>,
-    selectedProject: KanbanProjectState,
+    projectNames: List<String>,
+    selectedProjectName: String,
     onProjectSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -80,13 +85,13 @@ private fun ProjectTabs(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        projects.forEachIndexed { index, project ->
-            val isSelected = (project == selectedProject)
+        projectNames.forEachIndexed { index, projectName ->
+            val isSelected = (projectName == selectedProjectName)
             FilterChip(
                 selected = isSelected,
                 onClick = { onProjectSelect(index) },
-                label = { Text(project.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                modifier = Modifier.fillMaxWidth().semantics { contentDescription = "${project.name} 전환 버튼" },
+                label = { Text(projectName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                modifier = Modifier.fillMaxWidth().semantics { contentDescription = "$projectName 전환 버튼" },
                 colors = FilterChipDefaults.filterChipColors(
                     containerColor = CustomTheme.colors.white,
                     labelColor = CustomTheme.colors.blue.w700,
@@ -105,9 +110,20 @@ private fun ProjectTabs(
 @Preview(showBackground = true)
 @Composable
 private fun ProjectSideBarPreview() {
+    val users = listOf(
+        User.None,
+        User.Assignee("손흥민"),
+        User.Assignee("봉준호"),
+        User.Assignee("BTS"),
+        User.Assignee("스마일"),
+        User.Assignee("렛츠 고!"),
+    )
     ProjectSideBar(
         modifier = Modifier.width(255.dp).fillMaxHeight(),
-        kanbanBoardState = KanbanBoardState(KanbanProjectState("Compose1"), KanbanProjectState("Compose2")),
+        kanbanBoardState = KanbanBoardState(
+            KanbanProjectState(name = "Compose1", users = users),
+            KanbanProjectState(name = "Compose2", users = users),
+        ),
         onProjectSelect = {},
     )
 }

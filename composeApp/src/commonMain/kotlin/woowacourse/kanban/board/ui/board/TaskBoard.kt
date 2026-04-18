@@ -18,14 +18,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.board.domain.model.Status
 import woowacourse.kanban.board.domain.model.Task
+import woowacourse.kanban.board.domain.model.User
 import woowacourse.kanban.board.ui.theme.CustomTheme
 
 @Composable
 fun TaskBoard(
-    kanbanBoardState: KanbanBoardState,
+    kanbanProjectState: KanbanProjectState,
     modifier: Modifier = Modifier,
     getIsDropTarget: (Status) -> Boolean = { false },
     onBoundsChanged: (Rect, Status) -> Unit = { _, _ -> },
+    onTaskClick: (Task) -> Unit = {},
     onTaskDragStart: (Task) -> Unit = {},
     onTaskDragChange: (Offset) -> Unit = {},
     onTaskDragEnd: () -> Unit = {},
@@ -36,11 +38,11 @@ fun TaskBoard(
         modifier = modifier.fillMaxWidth().fillMaxHeight().background(CustomTheme.colors.gray.w50),
     ) {
         KanbanHeader(
-            title = kanbanBoardState.currentProject.name,
+            title = kanbanProjectState.name,
             onClickCreate = onClickCreate,
-            totalCount = kanbanBoardState.currentProject.totalCount,
-            completeCount = kanbanBoardState.currentProject.completeCount,
-            completeRatio = kanbanBoardState.currentProject.completeRatio,
+            totalCount = kanbanProjectState.totalCount,
+            completeCount = kanbanProjectState.completeCount,
+            completeRatio = kanbanProjectState.completeRatio,
         )
 
         Row(
@@ -52,7 +54,8 @@ fun TaskBoard(
                     modifier = Modifier.weight(1f, fill = false).widthIn(max = 320.dp).fillMaxHeight()
                         .semantics { contentDescription = "$status 태스크 목록" },
                     status = status,
-                    tasks = kanbanBoardState.currentProject.getTasks(status),
+                    tasks = kanbanProjectState.getTasks(status),
+                    onTaskClick = onTaskClick,
                     boxColor = status.getBoxColor(),
                     getIsDropTarget = { getIsDropTarget(status) },
                     onBoundsChanged = { rect -> onBoundsChanged(rect, status) },
@@ -69,5 +72,15 @@ fun TaskBoard(
 @Preview(showBackground = true, widthDp = 800)
 @Composable
 private fun TaskBoardPreview() {
-    TaskBoard(kanbanBoardState = KanbanBoardState(KanbanProjectState(name = "스마일은 천재인가?")))
+    TaskBoard(
+        kanbanProjectState =
+        KanbanProjectState(
+            name = "스마일은 천재인가?",
+            users = listOf(
+                User.None,
+                User.Assignee("손흥민"),
+                User.Assignee("봉준호"),
+            ),
+        ),
+    )
 }

@@ -3,8 +3,9 @@ package woowacourse.kanban.board.ui.board
 import androidx.compose.runtime.mutableStateListOf
 import woowacourse.kanban.board.domain.model.Status
 import woowacourse.kanban.board.domain.model.Task
+import woowacourse.kanban.board.domain.model.User
 
-class KanbanProjectState(val name: String, vararg tasks: Task) {
+class KanbanProjectState(val name: String, val users: List<User>, vararg tasks: Task) {
 
     private val tasks: MutableList<Task> = mutableStateListOf(*tasks)
 
@@ -15,7 +16,18 @@ class KanbanProjectState(val name: String, vararg tasks: Task) {
     fun addTask(task: Task) {
         tasks.add(task)
     }
+
     fun changeTaskStatus(task: Task, newStatus: Status) {
-        tasks[tasks.indexOf(task)] = task.copy(status = newStatus)
+        tasks[tasks.indexOf(task)] = task.moveTo(newStatus)
+    }
+
+    fun editTask(originalTask: Task, newTask: Task) {
+        tasks[tasks.indexOf(originalTask)] = newTask
+    }
+
+    fun deleteTask(task: Task): Boolean {
+        if (task.status in listOf(Status.DONE, Status.REVIEW)) return false
+        tasks.remove(task)
+        return true
     }
 }

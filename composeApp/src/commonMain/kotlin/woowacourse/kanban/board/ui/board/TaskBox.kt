@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
+import woowacourse.kanban.board.domain.model.DefaultTodoTask
 import woowacourse.kanban.board.domain.model.Status
 import woowacourse.kanban.board.domain.model.Tags
 import woowacourse.kanban.board.domain.model.Task
@@ -46,6 +47,7 @@ fun TaskBox(
     tasks: List<Task>,
     boxColor: TaskBoxColor,
     modifier: Modifier = Modifier,
+    onTaskClick: (Task) -> Unit = {},
     getIsDropTarget: () -> Boolean = { false },
     onBoundsChanged: (Rect) -> Unit = {},
     onTaskDragStart: (Task) -> Unit = {},
@@ -98,6 +100,7 @@ fun TaskBox(
             items(tasks, key = { it.id }) {
                 TaskCard(
                     task = it,
+                    onTaskClick = { onTaskClick(it) },
                     onDragStart = { onTaskDragStart(it) },
                     onDragChange = onTaskDragChange,
                     onDragEnd = onTaskDragEnd,
@@ -130,6 +133,12 @@ fun Status.getBoxColor(): TaskBoxColor = when (this) {
         headerBackground = CustomTheme.colors.green.w200,
         border = CustomTheme.colors.green.w100,
     )
+
+    Status.REVIEW -> TaskBoxColor(
+        background = CustomTheme.colors.purple.w300,
+        headerBackground = CustomTheme.colors.purple.w200,
+        border = CustomTheme.colors.purple.w600,
+    )
 }
 
 @Preview
@@ -138,15 +147,69 @@ private fun TaskBoxPreview() {
     TaskBox(
         status = Status.DONE,
         tasks = listOf(
-            Task(title = "Task 1", description = "asdfasd", tags = Tags(emptyList()), user = User("dino"), status = Status.TODO),
-            Task(title = "Task 2", description = "asdfasd", tags = Tags(emptyList()), user = User("dino"), status = Status.TODO),
-            Task(title = "Task 3", description = "asdfasd", tags = Tags(emptyList()), user = User("dino"), status = Status.TODO),
-            Task(title = "Task 1", description = "asdfasd", tags = Tags(emptyList()), user = User("dino"), status = Status.TODO),
-            Task(title = "Task 2", description = "asdfasd", tags = Tags(emptyList()), user = User("dino"), status = Status.TODO),
-            Task(title = "Task 3", description = "asdfasd", tags = Tags(emptyList()), user = User("dino"), status = Status.TODO),
-            Task(title = "Task 1", description = "asdfasd", tags = Tags(emptyList()), user = User("dino"), status = Status.TODO),
-            Task(title = "Task 2", description = "asdfasd", tags = Tags(emptyList()), user = User("dino"), status = Status.TODO),
-            Task(title = "Task 3", description = "asdfasd", tags = Tags(emptyList()), user = User("dino"), status = Status.TODO),
+            DefaultTodoTask(
+                title = "Task 1",
+                description = "asdfasd",
+                tags = Tags(emptyList()),
+                user = User.Assignee("dino"),
+                status = Status.TODO,
+            ),
+            DefaultTodoTask(
+                title = "Task 2",
+                description = "asdfasd",
+                tags = Tags(emptyList()),
+                user = User.Assignee("dino"),
+                status = Status.TODO,
+            ),
+            DefaultTodoTask(
+                title = "Task 3",
+                description = "asdfasd",
+                tags = Tags(emptyList()),
+                user = User.Assignee("dino"),
+                status = Status.TODO,
+            ),
+            DefaultTodoTask(
+                title = "Task 1",
+                description = "asdfasd",
+                tags = Tags(emptyList()),
+                user = User.Assignee("dino"),
+                status = Status.TODO,
+            ),
+            DefaultTodoTask(
+                title = "Task 2",
+                description = "asdfasd",
+                tags = Tags(emptyList()),
+                user = User.Assignee("dino"),
+                status = Status.TODO,
+            ),
+            DefaultTodoTask(
+                title = "Task 3",
+                description = "asdfasd",
+                tags = Tags(emptyList()),
+                user = User.Assignee("dino"),
+                status = Status.TODO,
+            ),
+            DefaultTodoTask(
+                title = "Task 1",
+                description = "asdfasd",
+                tags = Tags(emptyList()),
+                user = User.Assignee("dino"),
+                status = Status.TODO,
+            ),
+            DefaultTodoTask(
+                title = "Task 2",
+                description = "asdfasd",
+                tags = Tags(emptyList()),
+                user = User.Assignee("dino"),
+                status = Status.TODO,
+            ),
+            DefaultTodoTask(
+                title = "Task 3",
+                description = "asdfasd",
+                tags = Tags(emptyList()),
+                user = User.Assignee("dino"),
+                status = Status.TODO,
+            ),
         ),
         boxColor = Status.DONE.getBoxColor(),
     )

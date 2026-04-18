@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,27 +20,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kanbanboard.composeapp.generated.resources.Res
-import kanbanboard.composeapp.generated.resources.snackbar_create_new_task
-import kanbanboard.composeapp.generated.resources.snackbar_error_create_new_task
+import kanbanboard.composeapp.generated.resources.snackbar_move_general_error
+import kanbanboard.composeapp.generated.resources.snackbar_move_no_assignee_error
 import kanbanboard.composeapp.generated.resources.snackbar_move_task
 import kanbanboard.composeapp.generated.resources.snackbar_unknown_error
 import org.jetbrains.compose.resources.getString
-import woowacourse.kanban.board.domain.TaskCreator
+import woowacourse.kanban.board.domain.model.NoAssigneeException
 import woowacourse.kanban.board.domain.model.Status
 import woowacourse.kanban.board.domain.model.Task
-import woowacourse.kanban.board.ui.dialog.TaskCreateDialog
+import woowacourse.kanban.board.domain.model.User
+import woowacourse.kanban.board.ui.dialog.DialogState
+import woowacourse.kanban.board.ui.dialog.TaskDialog
+import woowacourse.kanban.board.ui.dialog.TaskDialogType
 import woowacourse.kanban.board.ui.theme.CustomTheme
 import woowacourse.kanban.board.ui.util.SnackBarEvent
 
 @Composable
-fun KanbanBoardScreen(initialKanbanBoardState: KanbanBoardState) {
-    val projectState = remember { initialKanbanBoardState }
-    var showDialog by remember { mutableStateOf(false) }
+fun KanbanBoardScreen(kanbanBoardState: KanbanBoardState) {
+    val kanbanBoardState = remember { kanbanBoardState }
+    val dialogState = remember { DialogState<TaskDialogType>() }
     val snackBarHostState = remember { SnackbarHostState() }
     var snackBarEvent: SnackBarEvent? by remember { mutableStateOf(null) }
 
@@ -51,6 +56,8 @@ fun KanbanBoardScreen(initialKanbanBoardState: KanbanBoardState) {
         currentDragPosition = null
         draggedTask = null
     }
+
+    val showSnackBar: (SnackBarEvent) -> Unit = { snackBarEvent = it }
 
     LaunchedEffect(snackBarEvent?.id) {
         snackBarEvent?.let {
@@ -67,33 +74,23 @@ fun KanbanBoardScreen(initialKanbanBoardState: KanbanBoardState) {
     }
 
     Box {
-        if (showDialog) {
-            TaskCreateDialog(
-                onDismissRequest = { showDialog = false },
-                onConfirm = { title, description, tags, status, assignee ->
-                    val result =
-                        TaskCreator.create(title = title, description = description, tags = tags, assignee = assignee, status = status)
-
-                    result.onSuccess { newTask ->
-                        projectState.currentProject.addTask(newTask)
-                        showDialog = false
-                        snackBarEvent =
-                            SnackBarEvent(
-                                strRes = Res.string.snackbar_create_new_task,
-                            )
-                    }.onFailure { exception ->
-                        snackBarEvent = SnackBarEvent(
-                            strRes = Res.string.snackbar_error_create_new_task,
-                            message = exception.message,
-                        )
-                    }
-                },
+        val currentDialog = dialogState.currentDialog
+        val currentProject = kanbanBoardState.currentProject.getOrElse {
+            Text("최소 하나의 프로젝트가 필요합니다!", modifier = Modifier.testTag("빈 프로젝트 에러"))
+            return@Box
+        }
+        if (currentDialog != null) {
+            TaskDialog(
+                kanbanProjectState = currentProject,
+                taskDialogType = currentDialog,
+                onDismiss = dialogState::closeDialog,
+                showSnackBar = showSnackBar,
             )
         }
         Row {
             ProjectSideBar(
-                kanbanBoardState = projectState,
-                onProjectSelect = projectState::selectProject,
+                kanbanBoardState = kanbanBoardState,
+                onProjectSelect = kanbanBoardState::selectProject,
                 modifier = Modifier
                     .width(255.dp)
                     .fillMaxHeight()
@@ -102,6 +99,7 @@ fun KanbanBoardScreen(initialKanbanBoardState: KanbanBoardState) {
             )
             VerticalDivider(modifier = Modifier.width(1.dp).background(CustomTheme.colors.gray.w100))
             TaskBoard(
+                kanbanProjectState = currentProject,
                 getIsDropTarget = { status ->
                     currentDragPosition?.let { columnBounds[status]?.contains(it) } ?: false
                 },
@@ -115,17 +113,21 @@ fun KanbanBoardScreen(initialKanbanBoardState: KanbanBoardState) {
 
                     draggedTask?.let { task ->
                         if (targetStatus != null && task.status != targetStatus) {
-                            projectState.currentProject.changeTaskStatus(task = task, newStatus = targetStatus)
-                            snackBarEvent = SnackBarEvent(
-                                strRes = Res.string.snackbar_move_task,
+                            handleTaskStatusTransition(
+                                projectState = currentProject,
+                                task = task,
+                                targetStatus = targetStatus,
+                                showSnackBar = showSnackBar,
                             )
                         }
                     }
                     resetDrag()
                 },
                 onTaskDragCancel = resetDrag,
-                kanbanBoardState = projectState,
-                onClickCreate = { showDialog = true },
+                onTaskClick = { task ->
+                    dialogState.openDialog(TaskDialogType.EditTask(task))
+                },
+                onClickCreate = { dialogState.openDialog(TaskDialogType.CreateTask) },
             )
         }
 
@@ -136,8 +138,53 @@ fun KanbanBoardScreen(initialKanbanBoardState: KanbanBoardState) {
     }
 }
 
+private fun handleTaskStatusTransition(
+    task: Task,
+    targetStatus: Status,
+    projectState: KanbanProjectState,
+    showSnackBar: (SnackBarEvent) -> Unit,
+) {
+    try {
+        projectState.changeTaskStatus(task = task, newStatus = targetStatus)
+        showSnackBar(
+            SnackBarEvent(
+                strRes = Res.string.snackbar_move_task,
+            ),
+        )
+    } catch (_: NoAssigneeException) {
+        showSnackBar(
+            SnackBarEvent(
+                strRes = Res.string.snackbar_move_no_assignee_error,
+            ),
+        )
+    } catch (_: IllegalArgumentException) {
+        showSnackBar(
+            SnackBarEvent(
+                strRes = Res.string.snackbar_move_general_error,
+            ),
+        )
+    }
+}
+
 @Composable
-@Preview
+@Preview(
+    widthDp = 1280,
+    showBackground = true,
+)
 private fun KanbanBoardScreenPreview() {
-    KanbanBoardScreen(initialKanbanBoardState = KanbanBoardState(KanbanProjectState(name = "허닛은 바보인가?")))
+    KanbanBoardScreen(
+        kanbanBoardState = KanbanBoardState(
+            KanbanProjectState(
+                name = "허닛은 바보인가?",
+                users = listOf(
+                    User.None,
+                    User.Assignee("손흥민"),
+                    User.Assignee("봉준호"),
+                    User.Assignee("BTS"),
+                    User.Assignee("스마일"),
+                    User.Assignee("렛츠 고!"),
+                ),
+            ),
+        ),
+    )
 }

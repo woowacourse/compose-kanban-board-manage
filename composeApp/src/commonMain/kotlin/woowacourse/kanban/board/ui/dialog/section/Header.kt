@@ -2,6 +2,7 @@ package woowacourse.kanban.board.ui.dialog.section
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -23,7 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 import woowacourse.kanban.board.ui.theme.CustomTheme
 
 @Composable
-fun Header(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
+fun TaskFormHeader(modifier: Modifier = Modifier, onDismiss: () -> Unit, content: @Composable RowScope.() -> Unit) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -31,12 +32,7 @@ fun Header(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = stringResource(Res.string.create_dialog_title),
-            fontSize = 28.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = CustomTheme.colors.gray.w600,
-        )
+        content()
         IconButton(
             onClick = onDismiss,
         ) {
@@ -50,8 +46,15 @@ fun Header(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
 
 @Composable
 @Preview(showBackground = true)
-private fun HeaderPreview() {
-    Header(
+private fun TaskFormHeaderPreview() {
+    TaskFormHeader(
         onDismiss = {},
-    )
+    ) {
+        Text(
+            text = stringResource(Res.string.create_dialog_title),
+            fontSize = 28.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = CustomTheme.colors.gray.w600,
+        )
+    }
 }
