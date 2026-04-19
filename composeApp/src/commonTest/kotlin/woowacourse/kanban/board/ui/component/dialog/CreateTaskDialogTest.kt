@@ -10,12 +10,12 @@ import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
-class TaskDialogTest {
+class CreateTaskDialogTest {
     @Test
     fun `초기 렌더링 시 제목이 비어있으므로 생성 버튼이 비활성화된다`() = runComposeUiTest {
         // Given
         setContent {
-            TaskDialog(
+            CreateTaskDialog(
                 onCreateClick = { _ -> },
                 onDismissClick = {},
             )
@@ -31,7 +31,7 @@ class TaskDialogTest {
     fun `제목을 입력하면 생성 버튼이 활성화된다`() = runComposeUiTest {
         // Given
         setContent {
-            TaskDialog(
+            CreateTaskDialog(
                 onCreateClick = { _ -> },
                 onDismissClick = {},
             )
@@ -48,7 +48,7 @@ class TaskDialogTest {
     fun `제목을 입력하고 태그 개수가 1개이면서 1~5자 이내일 경우 생성 버튼이 활성화된다`() = runComposeUiTest {
         // Given
         setContent {
-            TaskDialog(
+            CreateTaskDialog(
                 onCreateClick = { _ -> },
                 onDismissClick = {},
             )
@@ -67,7 +67,7 @@ class TaskDialogTest {
     fun `제목을 입력하고 6자 이상의 태그를 입력하면 생성 버튼이 비활성화되고 에러 메시지가 노출된다`() = runComposeUiTest {
         // Given
         setContent {
-            TaskDialog(
+            CreateTaskDialog(
                 onCreateClick = { _ -> },
                 onDismissClick = {},
             )
@@ -86,7 +86,7 @@ class TaskDialogTest {
     fun `제목을 입력하고 태그를 6개 입력하면 생성 버튼이 비활성화되고 에러 메시지가 노출된다`() = runComposeUiTest {
         // Given
         setContent {
-            TaskDialog(
+            CreateTaskDialog(
                 onCreateClick = { _ -> },
                 onDismissClick = {},
             )

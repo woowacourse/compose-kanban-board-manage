@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
+import woowacourse.kanban.board.domain.EditError
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
@@ -30,7 +31,8 @@ import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
 import woowacourse.kanban.board.ui.component.board.sidebar.SideBar
-import woowacourse.kanban.board.ui.component.dialog.TaskDialog
+import woowacourse.kanban.board.ui.component.dialog.CreateTaskDialog
+import woowacourse.kanban.board.ui.component.dialog.EditTaskDialog
 
 @Composable
 fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Compose1"))) {
@@ -58,6 +60,7 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
     }
 
     KanbanBoardContent(
+        editTargetTask = kanbanBoardState.editTargetTask,
         projectTitles = kanbanBoardState.getProjectsTitles(),
         projectSelectedIndex = kanbanBoardState.selectedProjectIndex,
         completeCount = completeCount,
@@ -68,8 +71,15 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
         onNewTaskClick = {
             kanbanBoardState.showNewTaskDialog()
         },
-        onDismissClick = {
+        onNewTaskDismissClick = {
             kanbanBoardState.hideNewTaskDialog()
+        },
+        onEditTaskClick = {
+            kanbanBoardState.showEditTaskDialog()
+            kanbanBoardState.updateEditTargetTask(it)
+        },
+        onEditTaskDismissClick = {
+            kanbanBoardState.hideEditTaskDialog()
         },
         snackHost = snackBarHostState,
         onCreateClick = {
@@ -78,16 +88,45 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
             snackBarChannel.trySend("새로운 태스크가 추가되었습니다.")
         },
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
-        onMoveTask = { task, targetStatus ->
-            kanbanBoardState.moveTask(task, targetStatus)
-            snackBarChannel.trySend("태스크가 이동되었습니다.")
+        onMoveTask = { taskId, targetStatus ->
+            val message = when (val result = kanbanBoardState.moveTask(taskId = taskId, targetStatus = targetStatus)) {
+                is EditUiEvent.Success -> "태스크가 이동되었습니다."
+                is EditUiEvent.Error -> {
+                    when (result.error) {
+                        EditError.UNASSIGNED -> "담당자를 지정해야 상태를 옮길 수 있습니다."
+                        EditError.INVALID_STATUS -> "해당 상태로 옮길 수 없습니다."
+                    }
+                }
+            }
+
+            snackBarChannel.trySend(message)
         },
         getTasksByStatus = { kanbanBoardState.getProjectTasksByStatus(it) },
+        isEditTaskDialog = kanbanBoardState.isEditTaskDialog,
+        onDeleteClick = {
+            val message = when (kanbanBoardState.deleteTask(task = it)) {
+                is DeleteUiEvent.Success -> "태스크가 삭제되었습니다."
+                is DeleteUiEvent.Error -> "해당 상태에서는 태스크 삭제가 불가합니다."
+            }
+
+            snackBarChannel.trySend(message)
+            kanbanBoardState.hideEditTaskDialog()
+        },
+        onEditClick = {
+            val message = when (kanbanBoardState.editTask(task = it)) {
+                is EditUiEvent.Success -> "태스크가 수정되었습니다."
+                is EditUiEvent.Error -> "해당 상태로 옮길 수 없습니다."
+            }
+
+            snackBarChannel.trySend(message)
+            kanbanBoardState.hideEditTaskDialog()
+        },
     )
 }
 
 @Composable
 private fun KanbanBoardContent(
+    editTargetTask: KanbanTask?,
     projectTitles: List<String>,
     projectSelectedIndex: Int,
     completeCount: Int,
@@ -97,9 +136,14 @@ private fun KanbanBoardContent(
     isNewTaskDialog: Boolean,
     snackHost: SnackbarHostState,
     onNewTaskClick: () -> Unit,
-    onDismissClick: () -> Unit,
+    onNewTaskDismissClick: () -> Unit,
+    isEditTaskDialog: Boolean,
+    onEditTaskClick: (KanbanTask) -> Unit,
+    onEditTaskDismissClick: () -> Unit,
     onCreateClick: (KanbanTask) -> Unit,
-    onMoveTask: (KanbanTask, Status) -> Unit,
+    onEditClick: (KanbanTask) -> Unit,
+    onDeleteClick: (KanbanTask) -> Unit,
+    onMoveTask: (Long, Status) -> Unit,
     updateSelectedProjectIndex: (Int) -> Unit,
     getTasksByStatus: (Status) -> List<KanbanTask>,
 ) {
@@ -160,7 +204,7 @@ private fun KanbanBoardContent(
 
                         draggedTask?.let { task ->
                             if (task.status != targetStatus) {
-                                onMoveTask(task, targetStatus ?: return@let)
+                                onMoveTask(task.id, targetStatus ?: return@let)
                             }
                         }
                         currentDragPosition = null
@@ -170,12 +214,24 @@ private fun KanbanBoardContent(
                         currentDragPosition = null
                         draggedTask = null
                     },
+                    onCardClick = {
+                        onEditTaskClick(it)
+                    },
                 )
             }
             if (isNewTaskDialog) {
-                TaskDialog(
-                    onDismissClick = onDismissClick,
+                CreateTaskDialog(
                     onCreateClick = onCreateClick,
+                    onDismissClick = onNewTaskDismissClick,
+                )
+            }
+
+            if (isEditTaskDialog && editTargetTask != null) {
+                EditTaskDialog(
+                    task = editTargetTask,
+                    onDismissClick = onEditTaskDismissClick,
+                    onEditClick = onEditClick,
+                    onDeleteClick = onDeleteClick,
                 )
             }
         }
@@ -186,6 +242,7 @@ private fun KanbanBoardContent(
 @Composable
 private fun KanbanBoardContentPreview() {
     KanbanBoardContent(
+        editTargetTask = null,
         projectTitles = listOf("1", "2"),
         projectSelectedIndex = 0,
         getTasksByStatus = {
@@ -242,8 +299,13 @@ private fun KanbanBoardContentPreview() {
         onNewTaskClick = { },
         onCreateClick = { },
         snackHost = SnackbarHostState(),
-        onDismissClick = { },
+        onNewTaskDismissClick = { },
         updateSelectedProjectIndex = { },
         onMoveTask = { _, _ -> },
+        onEditTaskClick = { },
+        onEditTaskDismissClick = { },
+        isEditTaskDialog = false,
+        onDeleteClick = { },
+        onEditClick = { },
     )
 }

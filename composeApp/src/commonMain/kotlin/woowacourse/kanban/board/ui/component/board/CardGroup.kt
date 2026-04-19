@@ -21,6 +21,7 @@ fun CardGroup(
     onTaskDragChange: (Offset) -> Unit = { },
     onTaskDragEnd: () -> Unit = { },
     onTaskDragCancel: () -> Unit = { },
+    onCardClick: (KanbanTask) -> Unit = { },
 ) {
     Row(
         modifier = modifier,
@@ -39,6 +40,7 @@ fun CardGroup(
                 onTaskDragChange = onTaskDragChange,
                 onTaskDragEnd = onTaskDragEnd,
                 onTaskDragCancel = onTaskDragCancel,
+                onCardClick = onCardClick,
             )
         }
     }

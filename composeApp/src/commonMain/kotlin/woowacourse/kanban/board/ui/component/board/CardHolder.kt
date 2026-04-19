@@ -50,6 +50,7 @@ fun CardHolder(
     onTaskDragChange: (Offset) -> Unit = { },
     onTaskDragEnd: () -> Unit = { },
     onTaskDragCancel: () -> Unit = { },
+    onCardClick: (KanbanTask) -> Unit = { },
 ) {
     val isDropTarget by remember {
         derivedStateOf {
@@ -106,6 +107,7 @@ fun CardHolder(
                     onDragChange = onTaskDragChange,
                     onDragEnd = onTaskDragEnd,
                     onDragCancel = onTaskDragCancel,
+                    onClick = { onCardClick(card) },
                 )
             }
         }

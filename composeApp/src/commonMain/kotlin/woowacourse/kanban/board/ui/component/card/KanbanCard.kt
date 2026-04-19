@@ -2,6 +2,7 @@ package woowacourse.kanban.board.ui.component.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -37,7 +39,8 @@ import woowacourse.kanban.board.domain.dialog.Status
 @Composable
 fun KanbanCard(
     title: String,
-    crewName: String,
+    crewName: String?,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     tags: List<String> = emptyList(),
     description: String? = null,
@@ -52,7 +55,9 @@ fun KanbanCard(
         modifier = modifier
             .width(286.dp)
             .background(Color.White, RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(10.dp))
             .border(Dp.Hairline, Color.Gray, RoundedCornerShape(10.dp))
+            .clickable(onClick = onClick)
             .padding(17.dp)
             .onGloballyPositioned { cardWindowPosition = it.positionInWindow() }
             .pointerInput(Unit) {
@@ -93,10 +98,11 @@ fun KanbanCard(
         if (tags.isNotEmpty()) {
             KanbanCardTags(tags = tags)
         }
+        if (crewName != null) {
+            HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
 
-        HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
-
-        KanbanCardProfile(crewName = crewName)
+            KanbanCardProfile(crewName = crewName)
+        }
     }
 }
 
@@ -155,6 +161,7 @@ private fun KanbanCardPreview(@PreviewParameter(KanbanCardPreviewParameterProvid
             crewName = card.assignee,
             tags = card.tags,
             description = card.description,
+            onClick = {},
         )
     }
 }

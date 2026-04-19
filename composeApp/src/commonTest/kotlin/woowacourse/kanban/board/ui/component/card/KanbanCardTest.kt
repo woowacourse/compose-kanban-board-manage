@@ -29,6 +29,7 @@ class KanbanCardTest {
                 description = task.description,
                 tags = task.tags,
                 crewName = task.assignee,
+                onClick = {},
             )
         }
 
@@ -58,6 +59,7 @@ class KanbanCardTest {
                 description = task.description,
                 tags = task.tags,
                 crewName = task.assignee,
+                onClick = {},
             )
         }
 
@@ -85,6 +87,7 @@ class KanbanCardTest {
                 description = task.description,
                 tags = task.tags,
                 crewName = task.assignee,
+                onClick = {},
             )
         }
 

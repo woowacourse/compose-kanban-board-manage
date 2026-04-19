@@ -3,11 +3,8 @@ package woowacourse.kanban.board.ui.component.dialog.component
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -15,8 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun StatusOptionCard(
-    text: String,
+fun EmptyAssigneeOptionCard(
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -27,19 +23,16 @@ fun StatusOptionCard(
         modifier = modifier,
     ) {
         Text(
-            text = text,
-            color = if (isSelected) Color.Blue else Black,
-            fontSize = 16.sp,
+            text = "없음",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
             modifier = Modifier
-                .align(Alignment.Center)
-                .padding(vertical = 14.dp, horizontal = 16.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+                .padding(23.dp),
         )
     }
 }
 
-private class StatusOptionCardParameterProvider : PreviewParameterProvider<Boolean> {
+private class EmptyAssigneeOptionCardParameterProvider : PreviewParameterProvider<Boolean> {
     override val values = sequenceOf(
         true,
         false,
@@ -48,9 +41,8 @@ private class StatusOptionCardParameterProvider : PreviewParameterProvider<Boole
 
 @Preview(showBackground = true)
 @Composable
-private fun StatusOptionCardPreview(@PreviewParameter(StatusOptionCardParameterProvider::class) isSelected: Boolean) {
-    StatusOptionCard(
-        text = "To Do",
+private fun EmptyAssigneeOptionCardPreview(@PreviewParameter(EmptyAssigneeOptionCardParameterProvider::class) isSelected: Boolean) {
+    EmptyAssigneeOptionCard(
         isSelected = isSelected,
         onClick = { },
     )
